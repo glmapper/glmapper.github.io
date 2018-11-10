@@ -91,15 +91,26 @@
 <meta name="description" content="SOFATracer 是一个用于分布式系统调用跟踪的组件，通过统一的 traceId 将调用链路中的各种网络调用情况以日志的方式记录下来或者上报到 zipkin，以达到透视化网络调用的目的。这种以日志的方式记录下来或者上报到zipkin通常称为 Report，即数据上报 SOFATracer 的数据上报是在遵循 OpenTracing 规范基础上扩展出来的能力，OpenTracing 规范本身只是">
 <meta name="keywords" content="SOFATracer,OpenTracing,zipkin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="sofatracertwo">
+<meta property="og:title" content="分布式链路跟踪组件 SOFATracer 和 Zipkin 模型转换原理">
 <meta property="og:url" content="http://www.glmapper.com/2018/11/10/sofatracertwo/index.html">
 <meta property="og:site_name" content="glmapper">
 <meta property="og:description" content="SOFATracer 是一个用于分布式系统调用跟踪的组件，通过统一的 traceId 将调用链路中的各种网络调用情况以日志的方式记录下来或者上报到 zipkin，以达到透视化网络调用的目的。这种以日志的方式记录下来或者上报到zipkin通常称为 Report，即数据上报 SOFATracer 的数据上报是在遵循 OpenTracing 规范基础上扩展出来的能力，OpenTracing 规范本身只是">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-11-10T05:22:49.000Z">
+<meta property="og:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1536236659627-31fa22c0-6cb0-4f8b-825c-5892aa266aac.png">
+<meta property="og:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1536236727855-6c02f1a7-3e6c-4236-b2d4-37dc4c69d57f.png">
+<meta property="og:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1536238542375-0bd31368-4f84-4504-99ee-d02fdc00b99e.png">
+<meta property="og:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1536241818520-0b112c9e-f785-4538-b507-e12a96854631.png">
+<meta property="og:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1536201415524-19bc4895-dac4-4582-b17c-48e2b39126e2.png">
+<meta property="og:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1536205560373-b3b5b362-8041-4077-8b4f-38b76bde25d7.png">
+<meta property="og:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1536206792096-48737dab-09e4-4825-8829-5b9af6668a1f.png">
+<meta property="og:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1536291774102-2ab76b17-f550-45b0-9d21-c3193f195e67.png">
+<meta property="og:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1537974797330-7db6f317-7b42-4758-819d-ae106cb22b84.png">
+<meta property="og:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1536298481412-5b52aedc-86f1-4dec-bae1-164dbd72e1d5.png">
+<meta property="og:updated_time" content="2018-11-10T09:53:05.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="sofatracertwo">
+<meta name="twitter:title" content="分布式链路跟踪组件 SOFATracer 和 Zipkin 模型转换原理">
 <meta name="twitter:description" content="SOFATracer 是一个用于分布式系统调用跟踪的组件，通过统一的 traceId 将调用链路中的各种网络调用情况以日志的方式记录下来或者上报到 zipkin，以达到透视化网络调用的目的。这种以日志的方式记录下来或者上报到zipkin通常称为 Report，即数据上报 SOFATracer 的数据上报是在遵循 OpenTracing 规范基础上扩展出来的能力，OpenTracing 规范本身只是">
+<meta name="twitter:image" content="https://cdn.nlark.com/lark/0/2018/png/97619/1536236659627-31fa22c0-6cb0-4f8b-825c-5892aa266aac.png">
 
 
 
@@ -135,7 +146,7 @@
 
 
 
-  <title>sofatracertwo | glmapper</title>
+  <title>分布式链路跟踪组件 SOFATracer 和 Zipkin 模型转换原理 | glmapper</title>
   
 
 
@@ -322,7 +333,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">sofatracertwo</h1>
+          <h1 class="post-title" itemprop="name headline">分布式链路跟踪组件 SOFATracer 和 Zipkin 模型转换原理</h1>
         
 
         <div class="post-meta">
@@ -393,7 +404,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4.2k
+                  4.1k
                 </span>
               
 
@@ -409,7 +420,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  16
+                  15
                 </span>
               
             </div>
@@ -431,105 +442,166 @@
 
       
         <p>SOFATracer 是一个用于分布式系统调用跟踪的组件，通过统一的 traceId 将调用链路中的各种网络调用情况以日志的方式记录下来或者上报到 zipkin，以达到透视化网络调用的目的。这种以日志的方式记录下来或者上报到zipkin通常称为 Report，即数据上报 SOFATracer 的数据上报是在遵循 OpenTracing 规范基础上扩展出来的能力，OpenTracing 规范本身只是约定了数据模型和行为。本文主要目的在于分析 SOFATracer 的数据上报功能部分，主要内容如下：</p>
-<p>基于 OpenTracing 规范的分布式链路跟踪解决方案<br>SOFATracer Report 数据上报模型<br>SOFATracer 和  Zipkin 模型转换原理</p>
-<p>基于 OpenTracing 规范的分布式链路跟踪解决方案</p>
-<p>OpenTracing 是一个轻量级的标准化层，它位于应用程序/类库和追踪或日志分析程序之间。为了解决不同的分布式追踪系统 API 不兼容的问题，OpenTracing 提供了一套平台无关、厂商无关的 API，同时也提供了统一的概念和数据标准。关于对 OpenTracing 标准的版本化描述可以参考 specification.md（<a href="https://github.com/opentracing/specification/blob/master/specification.md）。一些具体的概念下面将结合SOFATracer" target="_blank" rel="noopener">https://github.com/opentracing/specification/blob/master/specification.md）。一些具体的概念下面将结合SOFATracer</a> 的实现来一一说明。</p>
-<p>目前基于 OpenTracing 规范实现的链路跟踪组件有 Jaeger，Appdash，Apache SkyWalking ，Datadog 等。像谷歌的 StackDriver Tracer 实际上并不是遵循 OpenTracing 规范的，但是都源自于 Dapper 这篇论文。</p>
-<p>规范其实就是模型和行为的约束，在 OpenTracing 规范中有三种关键和相互关联的模型：Tracer、Span 和SpanContext；并且在规范中对于每个模型的行为也做了约定。</p>
-<p>Tracer</p>
-<p>Tracer 可以被认为是一个由多个 Span 组成的有向无环图。一个 Tracer 可以用来描述一个请求从发出到收到响应整个链路过程。前提是需要在适当的地方进行埋点。下图就是一条完整的链路的展示：</p>
-<p>在 SOFATracer 中 ，SofaTracer 实现了 Tracer 接口，实现了构建 span，数据载入（Inject）和 数据提取（Extract ) 的能力。</p>
-<p>Start a new Span ：创建一个新的 Span 。通过指定的 operationName 来创建一个新的 Span。operationName 表示由 Span 完成的具体的工作 ( 例如，RPC 方法名称、函数名称或一个较大的计算任务中的阶段的名称)。<br>Inject a SpanContext：将 SpanContext 注入到给定类型的 “carrier” 中，用于进行跨进程的传输。<br>Extract a SpanContext ：从载体中提取中 spanContext 实例对象。这个过程是注入的逆过程。spanContext 中包括了贯穿整个链路的 traceId ，变化的 spanId ，父 spanId 以及透传数据等。</p>
-<p>Span</p>
-<p>一个 span 代表系统中具有开始时间和执行时长的逻辑运行单元。span 之间通过嵌套或者顺序排列建立逻辑因果关系，然后再通过这种关系来构建整个调用链路（Tracer）。</p>
+<ul>
+<li>基于 OpenTracing 规范的分布式链路跟踪解决方案</li>
+<li>SOFATracer Report 数据上报模型</li>
+<li>SOFATracer 和  Zipkin 模型转换原理</li>
+</ul>
+<h2 id="基于-OpenTracing-规范的分布式链路跟踪解决方案"><a href="#基于-OpenTracing-规范的分布式链路跟踪解决方案" class="headerlink" title="基于 OpenTracing 规范的分布式链路跟踪解决方案"></a>基于 OpenTracing 规范的分布式链路跟踪解决方案</h2><p> OpenTracing 是一个轻量级的标准化层，它位于应用程序/类库和追踪或日志分析程序之间。为了解决不同的分布式追踪系统 API 不兼容的问题，OpenTracing 提供了一套平台无关、厂商无关的 API，同时也提供了统一的概念和数据标准。关于对 OpenTracing 标准的版本化描述可以参考 specification.md（<a href="https://github.com/opentracing/specification/blob/master/specification.md）。一些具体的概念下面将结合SOFATracer" target="_blank" rel="noopener">https://github.com/opentracing/specification/blob/master/specification.md）。一些具体的概念下面将结合SOFATracer</a> 的实现来一一说明。</p>
+<p> 目前基于 OpenTracing 规范实现的链路跟踪组件有 Jaeger，Appdash，Apache SkyWalking ，Datadog 等。像谷歌的 StackDriver Tracer 实际上并不是遵循 OpenTracing 规范的，但是都源自于 Dapper 这篇论文。</p>
+<p> 规范其实就是模型和行为的约束，在 OpenTracing 规范中有三种关键和相互关联的模型：Tracer、Span 和SpanContext；并且在规范中对于每个模型的行为也做了约定。</p>
+<h3 id="Tracer"><a href="#Tracer" class="headerlink" title="Tracer"></a>Tracer</h3><p> Tracer 可以被认为是一个由多个 Span 组成的有向无环图。一个 Tracer 可以用来描述一个请求从发出到收到响应整个链路过程。前提是需要在适当的地方进行埋点。下图就是一条完整的链路的展示：</p>
+<p><img src="https://cdn.nlark.com/lark/0/2018/png/97619/1536236659627-31fa22c0-6cb0-4f8b-825c-5892aa266aac.png" alt="img"></p>
+<p><img src="https://cdn.nlark.com/lark/0/2018/png/97619/1536236727855-6c02f1a7-3e6c-4236-b2d4-37dc4c69d57f.png" alt="img"></p>
+<p> 在 SOFATracer 中 ，SofaTracer 实现了 Tracer 接口，实现了构建 span，数据载入（Inject）和 数据提取（Extract ) 的能力。</p>
+<ul>
+<li>Start a new Span ：创建一个新的 Span 。通过指定的 operationName 来创建一个新的 Span。operationName 表示由 Span 完成的具体的工作 ( 例如，RPC 方法名称、函数名称或一个较大的计算任务中的阶段的名称)。</li>
+<li>Inject a SpanContext：将 SpanContext 注入到给定类型的 “carrier” 中，用于进行跨进程的传输。</li>
+<li>Extract a SpanContext ：从载体中提取中 spanContext 实例对象。这个过程是注入的逆过程。spanContext 中包括了贯穿整个链路的 traceId ，变化的 spanId ，父 spanId 以及透传数据等。</li>
+</ul>
+<h3 id="Span"><a href="#Span" class="headerlink" title="Span"></a>Span</h3><p> 一个 span 代表系统中具有开始时间和执行时长的逻辑运行单元。span 之间通过嵌套或者顺序排列建立逻辑因果关系，然后再通过这种关系来构建整个调用链路（Tracer）。</p>
+<p><img src="https://cdn.nlark.com/lark/0/2018/png/97619/1536238542375-0bd31368-4f84-4504-99ee-d02fdc00b99e.png" alt="img"> </p>
 <p>OpenTracing 规范 API 约定 Span 的模型如下（实际上就是 Span 接口中对应的方法，需要由遵循该规范的实现者必须提供的最小能力的集合）：</p>
-<p>Get the Span’s SpanContext： 通过 Span 获取 SpanContext （即使 span 已经结束，或者即将结束）<br>Finish：结束一个 Span 。Finish 必须是 span 实例的最后一个被调用的方法。但是在主线程处理失败或者其他程序错误发生时，Finish 方法可能不会被调用。在这种情况下，实现者应该明确的记录 Span，保证数据的持久化（这一点 SOFATracer 其实是没有做的）。<br>Set a K:V tag on the Span：为 Span 设置 tag 。tag 的 key 必须是 string 类型；value 必须是 string、boolean 或数字类型。通常会使用 Tag 来记录跟踪系统感兴趣的一些指标数据。<br>Add a new log event：为 Span 增加一个 log 事件，用于记录 Span 生命周期中发生的事件。<br>Set a Baggage item： 设置一个 string:string 类型的键值对，一般是业务数据在全链路数据透明传输，存储在 SpanContext 中。<br>Get a Baggage item： 通过 key 获取 Baggage 中的元素。</p>
-<p>SpanContext</p>
-<p>Span 上下文，几乎包含了需要在链路中传递的全部信息。另外，Span 间 References 就是通过 SpanContext 来建立关系的。根据 OpenTracing 规范要求，SpanContext 是不可变的，目的是防止由于 Span 的结束和相互关系，造成的复杂生命周期问题。</p>
-<p>SpanContext 表示必须传播到后代 Spans 和跨进程边界的 Span 状态。SpanContext 在逻辑上分为两部分：</p>
-<p>跨 Span 边界传播的用户级 “Baggage”<br>识别或以其他方式关联 Span 实例所需的任何 Tracer 实现特定字段（例如，trace_id，span_id，sampling，元组）</p>
+<ul>
+<li>Get the Span’s SpanContext： 通过 Span 获取 SpanContext （即使 span 已经结束，或者即将结束）</li>
+<li>Finish：结束一个 Span 。Finish 必须是 span 实例的最后一个被调用的方法。但是在主线程处理失败或者其他程序错误发生时，Finish 方法可能不会被调用。在这种情况下，实现者应该明确的记录 Span，保证数据的持久化（这一点 SOFATracer 其实是没有做的）。</li>
+<li>Set a K:V tag on the Span：为 Span 设置 tag 。tag 的 key 必须是 string 类型；value 必须是 string、boolean 或数字类型。通常会使用 Tag 来记录跟踪系统感兴趣的一些指标数据。</li>
+<li>Add a new log event：为 Span 增加一个 log 事件，用于记录 Span 生命周期中发生的事件。</li>
+<li>Set a Baggage item： 设置一个 string:string 类型的键值对，一般是业务数据在全链路数据透明传输，存储在 SpanContext 中。</li>
+<li>Get a Baggage item： 通过 key 获取 Baggage 中的元素。</li>
+</ul>
+<h3 id="SpanContext"><a href="#SpanContext" class="headerlink" title="SpanContext"></a>SpanContext</h3><p> Span 上下文，几乎包含了需要在链路中传递的全部信息。另外，Span 间 References 就是通过 SpanContext 来建立关系的。根据 OpenTracing 规范要求，SpanContext 是不可变的，目的是防止由于 Span 的结束和相互关系，造成的复杂生命周期问题。</p>
+<p> SpanContext 表示必须传播到后代 Spans 和跨进程边界的 Span 状态。SpanContext 在逻辑上分为两部分：</p>
+<ul>
+<li>跨 Span 边界传播的用户级 “Baggage”</li>
+<li>识别或以其他方式关联 Span 实例所需的任何 Tracer 实现特定字段（例如，trace_id，span_id，sampling，元组） </li>
+</ul>
 <p>Opentracing 中 SpanContext 接口中只有一个 baggageItems 方法，通过这个方法来遍历所有的 baggage 元素。</p>
-<p>Java<br>public interface SpanContext {<br>    Iterable&lt;Map.Entry&lt;String, String&gt;&gt; baggageItems();<br>}</p>
-<p>SOFATracer 扩展的 Tracer 的能力</p>
-<p>上面简单介绍了 OpenTracing 规范  API  对于 Tracer、Span、SpanContext 三个核心模型的规范定义。下面来看下 SOFATracer 是如何遵循规范并做扩展的。</p>
-<p>在 OpenTracing 规范 基础上，SOFATracer 提供了实现，并在规范基础上提供了扩展功能。本文主要介绍上图中标绿色的部分，即数据上报功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">SpanContext</span> </span>&#123;</span><br><span class="line">    Iterable&lt;Map.Entry&lt;String, String&gt;&gt; baggageItems();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="SOFATracer-扩展的-Tracer-的能力"><a href="#SOFATracer-扩展的-Tracer-的能力" class="headerlink" title="SOFATracer 扩展的 Tracer 的能力"></a>SOFATracer 扩展的 Tracer 的能力</h3><p>上面简单介绍了 OpenTracing 规范  API  对于 Tracer、Span、SpanContext 三个核心模型的规范定义。下面来看下 SOFATracer 是如何遵循规范并做扩展的。</p>
+<p><img src="https://cdn.nlark.com/lark/0/2018/png/97619/1536241818520-0b112c9e-f785-4538-b507-e12a96854631.png" alt="img"></p>
+<p>在 <a href="http://opentracing.io/documentation/pages/spec.html" target="_blank" rel="noopener">OpenTracing</a> 规范 基础上，SOFATracer 提供了实现，并在规范基础上提供了扩展功能。本文主要介绍上图中标绿色的部分，即数据上报功能。</p>
 <p>SOFATracer 中提供了 Report 接口，然后基于此接口扩展了两个实现：</p>
-<p>第一种 Report 扩展是基于 Disruptor（<a href="https://github.com/LMAX-Exchange/disruptor）" target="_blank" rel="noopener">https://github.com/LMAX-Exchange/disruptor）</a> 高性能无锁循环队列的异步落地磁盘的日志打印。<br>第二种 Report 扩展是提供远程上报，能够将 SOFATracer 的链路数据模型汇报到 Zipkin 中做调用链路的展示。</p>
+<ul>
+<li>第一种 Report 扩展是基于 Disruptor（<a href="https://github.com/LMAX-Exchange/disruptor）" target="_blank" rel="noopener">https://github.com/LMAX-Exchange/disruptor）</a> 高性能无锁循环队列的异步落地磁盘的日志打印。</li>
+<li>第二种 Report 扩展是提供远程上报，能够将 SOFATracer 的链路数据模型汇报到 Zipkin 中做调用链路的展示。 </li>
+</ul>
 <p>当然，SOFATracer 也允许用户自定义上报功能，只需要在自己的工程代码中实现 Report 接口即可，下面是 Report 接口的定义：</p>
-<p>Java<br>public interface Reporter {<br>    // 上报到远程服务器的持久化类型<br>    String REMOTE_REPORTER    = “REMOTE_REPORTER”;<br>    // 组合类型<br>    String COMPOSITE_REPORTER = “COMPOSITE_REPORTER”;<br>    // 获取 Reporter 实例类型<br>    String getReporterType();<br>    // 上报 span<br>    void report(SofaTracerSpan span);<br>    // 关闭上报 span 的能力<br>    void close();<br>}</p>
-<p>SOFATracer Report 数据上报模型</p>
-<p>上面提到 SOFATracer 的 Report 有两种机制，一种是落到磁盘，另外一种是上报到 zipkin。SOFATracer 中这两种方案并不是二选一的，而是可以同时使用多个实现。例如，我们希望上报数据到 zipkin，先引入 tracer-sofa-boot-starter 这个依赖，并进行相关 zipkin 的配置之后就可以将链路数据上报到 zipkin，如果没有引入依赖则不会上报。本节来分析下 SOFATracer 上报数据过程的具体逻辑。</p>
-<p>上面这张图描述了数据上报的几种方式：<br>绿色部分，上报 zipkin：这里其实就是实现上报 zipkin 的一个回调，当进行 reportSpan 操作时，会执行一个invokeReportListeners ，这个方法就是通知所有实现了 SpanReportListener 接口的类执行回调方法，然后在这个回调方法中将 span 数据上报到 zipkin。<br>红色部分，输出到磁盘：SOFATracer 为了提供更好的扩展能力，将输出日志的 Report 细分为 client 和 server 两种；并在 Tracer 基类中提供 generateClientStatReporter 和 generateServerStatReporter 两个抽象方法，供不同的组件自己来实现一些特殊化的定制。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Reporter</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 上报到远程服务器的持久化类型</span></span><br><span class="line">    String REMOTE_REPORTER    = <span class="string">"REMOTE_REPORTER"</span>;</span><br><span class="line">    <span class="comment">// 组合类型</span></span><br><span class="line">    String COMPOSITE_REPORTER = <span class="string">"COMPOSITE_REPORTER"</span>;</span><br><span class="line">    <span class="comment">// 获取 Reporter 实例类型</span></span><br><span class="line">    <span class="function">String <span class="title">getReporterType</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 上报 span</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">report</span><span class="params">(SofaTracerSpan span)</span></span>;</span><br><span class="line">    <span class="comment">// 关闭上报 span 的能力</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="SOFATracer-Report-数据上报模型"><a href="#SOFATracer-Report-数据上报模型" class="headerlink" title="SOFATracer Report 数据上报模型"></a>SOFATracer Report 数据上报模型</h2><p> 上面提到 SOFATracer 的 Report 有两种机制，一种是落到磁盘，另外一种是上报到 zipkin。SOFATracer 中这两种方案并不是二选一的，而是可以同时使用多个实现。例如，我们希望上报数据到 zipkin，先引入 tracer-sofa-boot-starter 这个依赖，并进行相关 zipkin 的配置之后就可以将链路数据上报到 zipkin，如果没有引入依赖则不会上报。本节来分析下 SOFATracer 上报数据过程的具体逻辑。</p>
+<p><img src="https://cdn.nlark.com/lark/0/2018/png/97619/1536201415524-19bc4895-dac4-4582-b17c-48e2b39126e2.png" alt="img"></p>
+<p> 上面这张图描述了数据上报的几种方式：</p>
+<ul>
+<li>绿色部分，上报 zipkin：这里其实就是实现上报 zipkin 的一个回调，当进行 reportSpan 操作时，会执行一个invokeReportListeners ，这个方法就是通知所有实现了 SpanReportListener 接口的类执行回调方法，然后在这个回调方法中将 span 数据上报到 zipkin。</li>
+<li><p>红色部分，输出到磁盘：SOFATracer 为了提供更好的扩展能力，将输出日志的 Report 细分为 client 和 server 两种；并在 Tracer 基类中提供 generateClientStatReporter 和 generateServerStatReporter 两个抽象方法，供不同的组件自己来实现一些特殊化的定制。</p>
 <p>关于何时进行上报，其实这个在 Opentracing API 的规范中已经给出了明确的时机。在上面的介绍中提到，“Finish必须是 span 实例的最后一个被调用的方法”，当 finish 方法被调用时也就意味着一个 span 生命周期的结束，为了保证 span 数据的完整性和正确性，SOFATracer reportSpan 的逻辑就是在 finish 方法被调用时触发执行。</p>
-<p>数据落地磁盘</p>
-<p>SOFATracer 日志落盘是基于 Disruptor 高性能无锁循环队列实现的，提供了异步打印日志到本地磁盘的能力。</p>
-<p>append : 追溯 Report，无论是 clientReport 还是 serverReport ，底层均依赖 DiskReporterImpl 的实现。DiskReporterImpl 是 SOFATracer 统筹处理日志落盘的类。clientReport 和 serverReport 的最终调用都会走到DiskReporterImpl 中的 digestReport 这个方法。digestReport 中会将当前 span append 到环形缓冲队列中，append 操作就是发布一个事件的过程。</p>
-<p>consume：consume 是 Disruptor 中的对应的消费模型；SOFATracer 中这个消费者就是将 SofaTracerSpan 中的数据写到日志文件中的。</p>
+</li>
+</ul>
+<h3 id="数据落地磁盘"><a href="#数据落地磁盘" class="headerlink" title="数据落地磁盘"></a>数据落地磁盘</h3><p> SOFATracer 日志落盘是基于<a href="https://github.com/LMAX-Exchange/disruptor" target="_blank" rel="noopener">Disruptor</a>高性能无锁循环队列实现的，提供了异步打印日志到本地磁盘的能力。</p>
+<p><img src="https://cdn.nlark.com/lark/0/2018/png/97619/1536205560373-b3b5b362-8041-4077-8b4f-38b76bde25d7.png" alt="img"> </p>
+<p><strong>append</strong> : 追溯 Report，无论是 clientReport 还是 serverReport ，底层均依赖 DiskReporterImpl 的实现。DiskReporterImpl 是 SOFATracer 统筹处理日志落盘的类。clientReport 和 serverReport 的最终调用都会走到DiskReporterImpl 中的 digestReport 这个方法。digestReport 中会将当前 span append 到环形缓冲队列中，append 操作就是发布一个事件的过程。</p>
+<p><strong>consume</strong>：consume 是 Disruptor 中的对应的消费模型；SOFATracer 中这个消费者就是将 SofaTracerSpan 中的数据写到日志文件中的。</p>
 <p>事件发布过程：</p>
-<p>数据上报 zipkin</p>
-<p>前面提到，上报 zipkin 的是通过 onSpanReport 这个回调函数完成的。tracer-sofa-boot-starter 这个依赖中提供了 SpanReportListener 接口实现 ZipkinSofaTracerSpanRemoteReporter 。而在 onSpanReport 这个回调函数中，又将具体上报委托给了 AsyncReporter 来处理。</p>
-<p>Java<br>@Override<br>public void onSpanReport(SofaTracerSpan span) {<br>    if (span == null) {<br>        return;<br>    }<br>    //convert<br>    Span zipkinSpan = convertToZipkinSpan(span);<br>    this.delegate.report(zipkinSpan);<br>}</p>
+<p><img src="https://cdn.nlark.com/lark/0/2018/png/97619/1536206792096-48737dab-09e4-4825-8829-5b9af6668a1f.png" alt="img"></p>
+<h3 id="数据上报-zipkin"><a href="#数据上报-zipkin" class="headerlink" title="数据上报 zipkin"></a>数据上报 zipkin</h3><p> 前面提到，上报 zipkin 的是通过 onSpanReport 这个回调函数完成的。tracer-sofa-boot-starter 这个依赖中提供了 SpanReportListener 接口实现 ZipkinSofaTracerSpanRemoteReporter 。而在 onSpanReport 这个回调函数中，又将具体上报委托给了 AsyncReporter 来处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSpanReport</span><span class="params">(SofaTracerSpan span)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (span == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//convert</span></span><br><span class="line">    Span zipkinSpan = convertToZipkinSpan(span);</span><br><span class="line">    <span class="keyword">this</span>.delegate.report(zipkinSpan);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>构建 AsyncReporter 对象需要两个参数：</p>
-<p>sender： 数据发送器，SOFATracer 中，sender 的是通过 RestTemplate 以 http 方式 来与 zipkin 进行通信传输的。<br>url：Zipkin 默认的 Collector 使用 http 协议里收集 Trace 信息，客户端调用 /api/v1/spans 或 /api/v2/spans 来上报 tracer 信息。这里我们使用的是 Zipkin V2 的 API。</p>
+<ul>
+<li>sender： 数据发送器，SOFATracer 中，sender 的是通过 RestTemplate 以 http 方式 来与 zipkin 进行通信传输的。</li>
+<li>url：Zipkin 默认的 Collector 使用 http 协议里收集 Trace 信息，客户端调用 /api/v1/spans 或 /api/v2/spans 来上报 tracer 信息。这里我们使用的是 Zipkin V2 的 API。</li>
+</ul>
 <p>AsyncReporter 中实际构建的是 BoundedAsyncReporter 对象 ， 并且在构建一个异步报告器是，会根据messageTimeoutNanos 是否大于 0 来决定是否起一个守护线程 flushThread；flushThread 作用是一直循环调用 BoundedAsyncReporter 的 flush 方法，将内存中的 Span 信息上报给 Zipkin。具体细节这里不展开分析。</p>
-<p>SOFATracer 和  Zipkin 模型转换原理</p>
-<p>在上小节中贴出的小段代码中，除了构建 delegate 对象用于执行上报外；另一个关键就是 SOFATracer 的 Span 模型转换成 Zipkin Span 模型。SOFATracer 从 2.2.0 版本之后支持 Zipkin v2 的模型 ，对于 Zipkin v1 的模型不在提供支持。</p>
-<p>Zipkin v2的模型</p>
-<p>下面是 zipkin GitHub 上提供的 Zipkin v2 的模型的结构化数据 Demo。(关于 Zipkin 的 Span 模型支持可以查看 Simplified span2 format #1499:<a href="https://github.com/openzipkin/zipkin/issues/1499" target="_blank" rel="noopener">https://github.com/openzipkin/zipkin/issues/1499</a>) </p>
-<p>JSON<br>{<br>  “kind”: “CLIENT”,<br>  “traceId”: “5af7183fb1d4cf5f”,<br>  “parentId”: “6b221d5bc9e6496c”,<br>  “id”: “352bff9a74ca9ad2”,<br>  “name”: “query”,<br>  “timestamp”: 1461750040359000,<br>  “duration”: 5000,<br>  “localEndpoint”: {<br>    “serviceName”: “zipkin-server”,<br>    “ipv4”: “172.19.0.3”,<br>    “port”: 9411<br>  },<br>  “remoteEndpoint”: {<br>    “serviceName”: “mysql”,<br>    “ipv4”: “172.19.0.2”,<br>    “port”: 3306<br>  },<br>  “tags”: {<br>    “jdbc.query”: “//….discard”<br>  }<br>}</p>
-<p>Zipkin v2 的模型结构较为简洁，整体看起来并没有什么繁重，这种对于使用者来说是很友好的，方便理解。其实在Zipkin v1 模型时，其整个模型也是比较复杂的，zipkin 社区对于 Zipkin 数据模型的变更也有讨论，见 Zipkin v2 span model #939:<a href="https://github.com/openzipkin/zipkin/issues/939" target="_blank" rel="noopener">https://github.com/openzipkin/zipkin/issues/939</a> ；像现在 v2 模型中的 tags，替换了原本 v1 中的 binaryAnnotations，binaryAnnotations 的存在是 v1 模型复杂的重要原因。详见 去除原因（<a href="https://github.com/openzipkin/zipkin/releases/tag/2.10.1）。" target="_blank" rel="noopener">https://github.com/openzipkin/zipkin/releases/tag/2.10.1）。</a></p>
-<p>SofaTracerSpan 模型</p>
-<p>SofaTracerSpan 是基于 Opentracing 标准来的。但是 Opentracing 标准并没有规定一个 Span 模型必须有哪些属性。所以各个基于该标准的产品在于 Span 的模型上是不统一的，大多会基于其本身产生的场景带有一些特殊的属性。</p>
-<p>JSON<br>{<br>    “client”:true,<br>    “server”:false,<br>    “durationMicroseconds”:775,<br>    “endTime”:1536288243446,<br>    “logType”:”httpclient-digest.log”,<br>    “operationName”:”GET”,<br>    “logs”:[<br>     // …<br>    ],<br>    “sofaTracer”:{<br>        “clientReporter”:{},<br>        “tracerTags”:{},<br>        “tracerType”:”httpclient”<br>    },<br>    “sofaTracerSpanContext”:{<br>        // sofaTracerSpanContext info<br>    },<br>    “spanReferences”:[],<br>    “startTime”:1536288242671,<br>    “tagsWithBool”:{},<br>    “tagsWithNumber”:{},<br>    “tagsWithStr”:{},<br>    “thisAsParentWhenExceedLayer”:{}<br>}</p>
+<h2 id="SOFATracer-和-Zipkin-模型转换原理"><a href="#SOFATracer-和-Zipkin-模型转换原理" class="headerlink" title="SOFATracer 和  Zipkin 模型转换原理"></a>SOFATracer 和  Zipkin 模型转换原理</h2><p> 在上小节中贴出的小段代码中，除了构建 delegate 对象用于执行上报外；另一个关键就是 SOFATracer 的 Span 模型转换成 Zipkin Span 模型。SOFATracer 从 2.2.0 版本之后支持 Zipkin v2 的模型 ，对于 Zipkin v1 的模型不在提供支持。</p>
+<h4 id="Zipkin-v2的模型"><a href="#Zipkin-v2的模型" class="headerlink" title="Zipkin v2的模型"></a>Zipkin v2的模型</h4><p> 下面是 zipkin GitHub 上提供的 Zipkin v2 的模型的结构化数据 Demo。<a href="https://github.com/openzipkin/zipkin/issues/1499" target="_blank" rel="noopener">关于 Zipkin 的 Span 模型支持可以查看 Simplified span2 format #1499</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"kind"</span>: <span class="string">"CLIENT"</span>,</span><br><span class="line">  <span class="string">"traceId"</span>: <span class="string">"5af7183fb1d4cf5f"</span>,</span><br><span class="line">  <span class="string">"parentId"</span>: <span class="string">"6b221d5bc9e6496c"</span>,</span><br><span class="line">  <span class="string">"id"</span>: <span class="string">"352bff9a74ca9ad2"</span>,</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"query"</span>,</span><br><span class="line">  <span class="string">"timestamp"</span>: <span class="number">1461750040359000</span>,</span><br><span class="line">  <span class="string">"duration"</span>: <span class="number">5000</span>,</span><br><span class="line">  <span class="string">"localEndpoint"</span>: &#123;</span><br><span class="line">    <span class="string">"serviceName"</span>: <span class="string">"zipkin-server"</span>,</span><br><span class="line">    <span class="string">"ipv4"</span>: <span class="string">"172.19.0.3"</span>,</span><br><span class="line">    <span class="string">"port"</span>: <span class="number">9411</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"remoteEndpoint"</span>: &#123;</span><br><span class="line">    <span class="string">"serviceName"</span>: <span class="string">"mysql"</span>,</span><br><span class="line">    <span class="string">"ipv4"</span>: <span class="string">"172.19.0.2"</span>,</span><br><span class="line">    <span class="string">"port"</span>: <span class="number">3306</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"tags"</span>: &#123;</span><br><span class="line">    <span class="string">"jdbc.query"</span>: <span class="string">"//....discard"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Zipkin v2 的模型结构较为简洁，整体看起来并没有什么繁重，这种对于使用者来说是很友好的，方便理解。其实在Zipkin v1 模型时，其整个模型也是比较复杂的，zipkin 社区对于 Zipkin 数据模型的变更也有讨论，见 <a href="https://github.com/openzipkin/zipkin/issues/939" target="_blank" rel="noopener">Zipkin v2 span model #939</a> ；像现在 v2 模型中的 tags，替换了原本 v1 中的 binaryAnnotations，binaryAnnotations 的存在是 v1 模型复杂的重要原因。详见 <a href="https://github.com/openzipkin/zipkin/releases/tag/2.10.1" target="_blank" rel="noopener">去除原因</a>。</p>
+<h4 id="SofaTracerSpan-模型"><a href="#SofaTracerSpan-模型" class="headerlink" title="SofaTracerSpan 模型"></a>SofaTracerSpan 模型</h4><p>SofaTracerSpan 是基于 Opentracing 标准来的。但是 Opentracing 标准并没有规定一个 Span 模型必须有哪些属性。所以各个基于该标准的产品在于 Span 的模型上是不统一的，大多会基于其本身产生的场景带有一些特殊的属性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">"client"</span>:<span class="keyword">true</span>,</span><br><span class="line">    <span class="string">"server"</span>:<span class="keyword">false</span>,</span><br><span class="line">    <span class="string">"durationMicroseconds"</span>:<span class="number">775</span>,</span><br><span class="line">    <span class="string">"endTime"</span>:<span class="number">1536288243446</span>,</span><br><span class="line">    <span class="string">"logType"</span>:<span class="string">"httpclient-digest.log"</span>,</span><br><span class="line">    <span class="string">"operationName"</span>:<span class="string">"GET"</span>,</span><br><span class="line">    <span class="string">"logs"</span>:[</span><br><span class="line">     <span class="comment">// ...</span></span><br><span class="line">    ], </span><br><span class="line">    <span class="string">"sofaTracer"</span>:&#123;</span><br><span class="line">        <span class="string">"clientReporter"</span>:&#123;&#125;,</span><br><span class="line">        <span class="string">"tracerTags"</span>:&#123;&#125;,</span><br><span class="line">        <span class="string">"tracerType"</span>:<span class="string">"httpclient"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"sofaTracerSpanContext"</span>:&#123;</span><br><span class="line">        <span class="comment">// sofaTracerSpanContext info</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"spanReferences"</span>:[],</span><br><span class="line">    <span class="string">"startTime"</span>:<span class="number">1536288242671</span>,</span><br><span class="line">    <span class="string">"tagsWithBool"</span>:&#123;&#125;,</span><br><span class="line">    <span class="string">"tagsWithNumber"</span>:&#123;&#125;,</span><br><span class="line">    <span class="string">"tagsWithStr"</span>:&#123;&#125;,</span><br><span class="line">    <span class="string">"thisAsParentWhenExceedLayer"</span>:&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>SOFATracer 的 Span 模型相较于 Opentracing 规范模型和 Zipkin v2 的模型来说，记录的数据信息更加丰富，且在 Opentracing 规范的基础上扩展了一套自己的 API，可以让使用者能够更加方便的在自己的代码中来获取链路中的信息；在日志中展示更多的 span 信息，能够帮助我们去了解一些调用细节，在发生问题时，也提供了更多排查问题的依据信息。</p>
-<p>模型转换对照</p>
-<p>为了使得 SOFATracer 的数据能够被 zipkin 解析，需要将 SOFATracer 的 Span 模型转换成 zipkin v2 的数据模型。<br>Zipkin v2 Span Model</p>
-<p>SOFATracer Span Model</p>
-<p>备注</p>
-<p>traceId</p>
-<p>traceId</p>
-<p>traceId</p>
-<p>id</p>
-<p>spanId</p>
-<p>spanId</p>
-<p>parentId</p>
-<p>parentId</p>
-<p>父spanId</p>
-<p>name</p>
-<p>operationName</p>
-<p>span 名，用来描述当前span 的行为</p>
-<p>duration</p>
-<p>-</p>
-<p>当前span的时间跨度;这里通过span的（结束时间-开始时间）获取</p>
-<p>timestamp</p>
-<p>timestamp</p>
-<p>当前span的开始时间</p>
-<p>localEndPoint</p>
-<p>operationName&amp;host&amp;logData</p>
-<p>标明这个span的来源</p>
-<p>remoteEndPoint</p>
-<p>-</p>
-<p>被调用方的服务名和地址</p>
-<p>tags</p>
-<p>bizBaggage &amp; tags</p>
-<p>额外的用于描述span的信息<br>整体来看，Span 模型相似度是很高，但是实际上并不能直接将某些相同的字段直接进行值复制；这里有一个 案例：ISSUE#57（<a href="https://github.com/alipay/sofa-tracer/issues/57）" target="_blank" rel="noopener">https://github.com/alipay/sofa-tracer/issues/57）</a> 。</p>
-<p>traceId 和 spanId 处理</p>
-<p>zipkin 在自己的模型里做了很多特殊的处理。比如 traceId 需满足16 或者 32 位，长度不够的会高位补 0；所以在使用 SOFATracer 时，日志中的 traceId 和上报到 zipkin 的 traceId 长度不一致是合理的。</p>
+<h4 id="模型转换对照"><a href="#模型转换对照" class="headerlink" title="模型转换对照"></a>模型转换对照</h4><p>为了使得 SOFATracer 的数据能够被 zipkin 解析，需要将 SOFATracer 的 Span 模型转换成 zipkin v2 的数据模型。</p>
+<table>
+<thead>
+<tr>
+<th><strong>Zipkin v2 Span Model</strong></th>
+<th><strong>SOFATracer Span Model</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>traceId</td>
+<td>traceId</td>
+<td>traceId</td>
+</tr>
+<tr>
+<td>id</td>
+<td>spanId</td>
+<td>spanId</td>
+</tr>
+<tr>
+<td>parentId</td>
+<td>parentId</td>
+<td>父spanId</td>
+</tr>
+<tr>
+<td>name</td>
+<td>operationName</td>
+<td>span 名，用来描述当前span 的行为</td>
+</tr>
+<tr>
+<td>duration</td>
+<td>-</td>
+<td>当前span的时间跨度;这里通过span的（结束时间-开始时间）获取</td>
+</tr>
+<tr>
+<td>timestamp</td>
+<td>timestamp</td>
+<td>当前span的开始时间</td>
+</tr>
+<tr>
+<td>localEndPoint</td>
+<td>operationName&amp;host&amp;logData</td>
+<td>标明这个span的来源</td>
+</tr>
+<tr>
+<td>remoteEndPoint</td>
+<td>-</td>
+<td>被调用方的服务名和地址</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>bizBaggage &amp; tags</td>
+<td>额外的用于描述span的信息</td>
+</tr>
+</tbody>
+</table>
+<p>整体来看，Span 模型相似度是很高，但是实际上并不能直接将某些相同的字段直接进行值复制；这里有一个 案例：<a href="https://github.com/alipay/sofa-tracer/issues/57" target="_blank" rel="noopener">ISSUE#57</a> 。 </p>
+<h4 id="traceId-和-spanId-处理"><a href="#traceId-和-spanId-处理" class="headerlink" title="traceId 和 spanId 处理"></a>traceId 和 spanId 处理</h4><p>zipkin 在自己的模型里做了很多特殊的处理。比如 traceId 需满足16 或者 32 位，长度不够的会高位补 0；所以在使用 SOFATracer 时，日志中的 traceId 和上报到 zipkin 的 traceId 长度不一致是合理的。</p>
 <p>关于 spanId，我们期望在 zipkin 中展示是以（0.1,0.1.1,…）这种形式来描述，能够直观的看到 span 之间的依赖关系。但是目前使用的 zipkin 模型并不能满足我们的需求，主要原因在于虽然 zipkin 在 v2 模型中虽然支持 string 类型的 id ，但是其长度限制是16位，对于 SOFATracer 来说，如果存在较长的链路调用，会导致层次丢失。另外，如果上报 zipkin 的 span 的 parentId 为 0，那么 zipkin 将会不进行设置；而 SOFATracer 的第一个 span 的 id 就是从 0 开始的，所以会导致链路构建失败，如果我们尝试通过改变起始 id 来改变，会对整个模型产生影响。经过验证测试，我们最终采用的方案是使用冲突较小的 FNV64 Hash 算法将 String 类型转换成 long 型来描述我们的 spanId。</p>
-<p>SOFARPC 上报的数据处理</p>
-<p>在整个模型转换中，比较核心的就是如何兼容 SOFARPC 上报的数据。Zipkin 在构建链路数时，其基本的模型是 client-server-client-server-.. 这种模式；不会出现 a server calling a server 这种情况，也就是带有kind = server 的 span 的 父span 应该是 kind = client。</p>
-<p>SOFARPC 对于一个 rpc span 上报了两个 span 信息，这两个 span 除了 kind 类型不同之外，其他的信息是一样的。当数据上报给 zipkin 之后，zipkin 通过自己的算法来构建依赖树时，会对上报的 SOFARPC 数据处理有问题。下图是没有适配 SOFARPC 生成的链路：</p>
-<p>这里可以看出，从 mvc 到 rpc 之间的关系被‘切断’了。</p>
+<h4 id="SOFARPC-上报的数据处理"><a href="#SOFARPC-上报的数据处理" class="headerlink" title="SOFARPC 上报的数据处理"></a>SOFARPC 上报的数据处理</h4><p>在整个模型转换中，比较核心的就是如何兼容 SOFARPC 上报的数据。Zipkin 在构建链路数时，其基本的模型是 <code>client-server-client-server-..</code> 这种模式；不会出现 a server calling a server 这种情况，也就是带有kind = server 的 span 的 父span 应该是 kind = client。</p>
+<p>SOFARPC 对于一个 rpc span 上报了两个 span 信息，这两个 span 除了 kind 类型不同之外，其他的信息是一样的。当数据上报给 zipkin 之后，zipkin 通过自己的算法来构建依赖树时，会对上报的 SOFARPC 数据处理有问题。下图是没有适配 SOFARPC 生成的链路: </p>
+<p><img src="https://cdn.nlark.com/lark/0/2018/png/97619/1536291774102-2ab76b17-f550-45b0-9d21-c3193f195e67.png" alt="img"></p>
+<p>这里可以看出，从 mvc 到 rpc 之间的关系被‘切断’了。 </p>
 <p>造成上述问题的原因在于，SOFATracer 上报数据到 zipkin 时，在 v2 模型中，zipkin 会通过广度优先遍历来构建依赖树，实际上在展示 services 或者 dependencies 时，zipkin ui 中的展示会依赖 endpiont 中的 serviceName ；两个条件：</p>
-<p>SOFARPC 的 span 有两个（client&amp;server），但是这两个 span 具有相同的 spanId 和 parentId，span.kind 不同。<br>zipkin 在构建依赖树时，依赖于 endpiont 中的 serviceName。该 servieName 依赖于 idToNode（Node.TreeBuilder 中的属性，Map 结构，映射关系为 spanId -&gt; span）。</p>
-<p>Java<br> Node<v> previous = idToNode.put(id, node);<br> if (previous != null)<br>    node.setValue(mergeFunction.merge(previous.value, node.value));</v></p>
+<ul>
+<li>SOFARPC 的 span 有两个（client&amp;server），但是这两个 span 具有相同的 spanId 和 parentId，span.kind 不同。</li>
+<li>zipkin 在构建依赖树时，依赖于 endpiont 中的 serviceName。该 servieName 依赖于 idToNode（Node.TreeBuilder 中的属性，Map 结构，映射关系为 spanId -&gt; span）。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Node&lt;V&gt; previous = idToNode.put(id, node);</span><br><span class="line"><span class="keyword">if</span> (previous != <span class="keyword">null</span>) </span><br><span class="line">node.setValue(mergeFunction.merge(previous.value, node.value));</span><br></pre></td></tr></table></figure>
 <p>这里当前 node 为 rpc server 类型时，previous 返回结果不为 null，会执行 merge 操作，该 merge 操作的核心就是设置当前 rpc node 的 remoteEndpoint，值为 rpc client 的 localEndpoint。</p>
-<p>这样会有一个问题，就是 RPC 的 client 和 server Span 在 Zipkin 模型中的会被合并成一个 span；这样就会导致 server -&gt; server 的情况，与 zipkin 的 client -&gt; server 链路模型有冲突。如下图（绿色为SOFATracer span，黄色为 zipkin span）：</p>
-<p>通过分析 zipkin 的构建过程，适配 SOFARPC 上报数据时，SOFARPC server span 的 remoteEndpoint 不能依赖 SOFARPC client span 的 localEndpoint，而应该依赖 SOFARPC client parentSpan 的 localEndpoint。下图为 SOFARPC 适配之后的依赖关系图：</p>
-<p>总结</p>
-<p>本文从 OpenTracing 规范说起，对 OpenTracing 规范中的模型和行为进行了简单的描述。结合 OpenTracing 规范，介绍了蚂蚁金服 SOFATracer 分布式链路跟踪的模型实现。在此基础上，对 SOFATracer 的数据上报功能进行了详细的分析，包括基于 disruptor 实现的异步日志落盘和上报数据到zipkin；最后对 SOFATracer 和  Zipkin 模型转换原理进行了说明，并对 SOFARPC 模型数据的上报处理进行了解析。</p>
-<p>相关文档链接</p>
-<p>SOFATracer GitHub : <a href="https://github.com/alipay/sofa-tracer" target="_blank" rel="noopener">https://github.com/alipay/sofa-tracer</a><br>Zipkin 官网 ： <a href="https://zipkin.io/" target="_blank" rel="noopener">https://zipkin.io/</a><br>Zipkin GitHub : <a href="https://github.com/openzipkin/zipkin" target="_blank" rel="noopener">https://github.com/openzipkin/zipkin</a><br>opentracing 规范 : <a href="http://opentracing.io/documentation/pages/spec.html" target="_blank" rel="noopener">http://opentracing.io/documentation/pages/spec.html</a><br>opentracing 官网 : <a href="http://opentracing.io/" target="_blank" rel="noopener">http://opentracing.io/</a><br>disruptor : <a href="https://github.com/LMAX-Exchange/disruptor" target="_blank" rel="noopener">https://github.com/LMAX-Exchange/disruptor</a></p>
+<p> 这样会有一个问题，就是 RPC 的 client 和 server Span 在 Zipkin 模型中的会被合并成一个 span；这样就会导致 server -&gt; server 的情况，与 zipkin 的 client -&gt; server 链路模型有冲突。如下图（绿色为SOFATracer span，黄色为 zipkin span）： </p>
+<p><img src="https://cdn.nlark.com/lark/0/2018/png/97619/1537974797330-7db6f317-7b42-4758-819d-ae106cb22b84.png" alt="img"></p>
+<p> 通过分析 zipkin 的构建过程，适配 SOFARPC 上报数据时，SOFARPC server span 的 remoteEndpoint 不能依赖 SOFARPC client span 的 localEndpoint，而应该依赖 SOFARPC client parentSpan 的 localEndpoint。下图为 SOFARPC 适配之后的依赖关系图：</p>
+<p><img src="https://cdn.nlark.com/lark/0/2018/png/97619/1536298481412-5b52aedc-86f1-4dec-bae1-164dbd72e1d5.png" alt="img"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p> 本文从 OpenTracing 规范说起，对 OpenTracing 规范中的模型和行为进行了简单的描述。结合 OpenTracing 规范，介绍了蚂蚁金服 SOFATracer 分布式链路跟踪的模型实现。在此基础上，对 SOFATracer 的数据上报功能进行了详细的分析，包括基于 disruptor 实现的异步日志落盘和上报数据到zipkin；最后对 SOFATracer 和  Zipkin 模型转换原理进行了说明，并对 SOFARPC 模型数据的上报处理进行了解析。</p>
+<h2 id="相关文档链接"><a href="#相关文档链接" class="headerlink" title="相关文档链接"></a>相关文档链接</h2><ul>
+<li><a href="https://github.com/alipay/sofa-tracer" target="_blank" rel="noopener">SOFATracer GitHub</a></li>
+<li><a href="https://zipkin.io/" target="_blank" rel="noopener">Zipkin 官网</a></li>
+<li><a href="https://github.com/openzipkin/zipkin" target="_blank" rel="noopener">Zipkin GitHub</a></li>
+<li><a href="http://opentracing.io/documentation/pages/spec.html" target="_blank" rel="noopener">opentracing 规范</a></li>
+<li><a href="http://opentracing.io/" target="_blank" rel="noopener">opentracing 官网</a></li>
+<li><a href="https://github.com/LMAX-Exchange/disruptor" target="_blank" rel="noopener">disruptor</a></li>
+</ul>
 
       
     </div>
@@ -637,8 +709,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -745,6 +826,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于-OpenTracing-规范的分布式链路跟踪解决方案"><span class="nav-number">1.</span> <span class="nav-text">基于 OpenTracing 规范的分布式链路跟踪解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tracer"><span class="nav-number">1.1.</span> <span class="nav-text">Tracer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Span"><span class="nav-number">1.2.</span> <span class="nav-text">Span</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SpanContext"><span class="nav-number">1.3.</span> <span class="nav-text">SpanContext</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SOFATracer-扩展的-Tracer-的能力"><span class="nav-number">1.4.</span> <span class="nav-text">SOFATracer 扩展的 Tracer 的能力</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SOFATracer-Report-数据上报模型"><span class="nav-number">2.</span> <span class="nav-text">SOFATracer Report 数据上报模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据落地磁盘"><span class="nav-number">2.1.</span> <span class="nav-text">数据落地磁盘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据上报-zipkin"><span class="nav-number">2.2.</span> <span class="nav-text">数据上报 zipkin</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SOFATracer-和-Zipkin-模型转换原理"><span class="nav-number">3.</span> <span class="nav-text">SOFATracer 和  Zipkin 模型转换原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Zipkin-v2的模型"><span class="nav-number">3.0.1.</span> <span class="nav-text">Zipkin v2的模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SofaTracerSpan-模型"><span class="nav-number">3.0.2.</span> <span class="nav-text">SofaTracerSpan 模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模型转换对照"><span class="nav-number">3.0.3.</span> <span class="nav-text">模型转换对照</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#traceId-和-spanId-处理"><span class="nav-number">3.0.4.</span> <span class="nav-text">traceId 和 spanId 处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SOFARPC-上报的数据处理"><span class="nav-number">3.0.5.</span> <span class="nav-text">SOFARPC 上报的数据处理</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关文档链接"><span class="nav-number">5.</span> <span class="nav-text">相关文档链接</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
