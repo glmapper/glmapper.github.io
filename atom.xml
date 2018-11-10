@@ -5,9 +5,9 @@
   <subtitle>大家都喊我磊叔</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://yoursite.com/"/>
+  <link href="http://www.glmapper.com/"/>
   <updated>2018-11-10T06:25:40.000Z</updated>
-  <id>http://yoursite.com/</id>
+  <id>http://www.glmapper.com/</id>
   
   <author>
     <name>GuoLei Song</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>菜鸟成长系列-策略模式</title>
-    <link href="http://yoursite.com/2018/11/10/java-design-model-strategy/"/>
-    <id>http://yoursite.com/2018/11/10/java-design-model-strategy/</id>
+    <link href="http://www.glmapper.com/2018/11/10/java-design-model-strategy/"/>
+    <id>http://www.glmapper.com/2018/11/10/java-design-model-strategy/</id>
     <published>2018-11-10T06:24:27.000Z</published>
     <updated>2018-11-10T06:25:40.000Z</updated>
     
@@ -37,19 +37,19 @@
     
     </summary>
     
-      <category term="架构之路" scheme="http://yoursite.com/categories/%E6%9E%B6%E6%9E%84%E4%B9%8B%E8%B7%AF/"/>
+      <category term="架构之路" scheme="http://www.glmapper.com/categories/%E6%9E%B6%E6%9E%84%E4%B9%8B%E8%B7%AF/"/>
     
     
-      <category term="java" scheme="http://yoursite.com/tags/java/"/>
+      <category term="java" scheme="http://www.glmapper.com/tags/java/"/>
     
-      <category term="设计模式" scheme="http://yoursite.com/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+      <category term="设计模式" scheme="http://www.glmapper.com/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
     
   </entry>
   
   <entry>
     <title>菜鸟成长系列-模板方法模式</title>
-    <link href="http://yoursite.com/2018/11/10/java-design-model-modulemethod/"/>
-    <id>http://yoursite.com/2018/11/10/java-design-model-modulemethod/</id>
+    <link href="http://www.glmapper.com/2018/11/10/java-design-model-modulemethod/"/>
+    <id>http://www.glmapper.com/2018/11/10/java-design-model-modulemethod/</id>
     <published>2018-11-10T06:23:37.000Z</published>
     <updated>2018-11-10T06:24:05.000Z</updated>
     
@@ -66,19 +66,19 @@
     
     </summary>
     
-      <category term="架构之路" scheme="http://yoursite.com/categories/%E6%9E%B6%E6%9E%84%E4%B9%8B%E8%B7%AF/"/>
+      <category term="架构之路" scheme="http://www.glmapper.com/categories/%E6%9E%B6%E6%9E%84%E4%B9%8B%E8%B7%AF/"/>
     
     
-      <category term="java" scheme="http://yoursite.com/tags/java/"/>
+      <category term="java" scheme="http://www.glmapper.com/tags/java/"/>
     
-      <category term="设计模式" scheme="http://yoursite.com/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+      <category term="设计模式" scheme="http://www.glmapper.com/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
     
   </entry>
   
   <entry>
     <title>菜鸟成长系列-观察者模式</title>
-    <link href="http://yoursite.com/2018/11/10/java-design-model-obs/"/>
-    <id>http://yoursite.com/2018/11/10/java-design-model-obs/</id>
+    <link href="http://www.glmapper.com/2018/11/10/java-design-model-obs/"/>
+    <id>http://www.glmapper.com/2018/11/10/java-design-model-obs/</id>
     <published>2018-11-10T06:22:46.000Z</published>
     <updated>2018-11-10T06:23:14.000Z</updated>
     
@@ -93,19 +93,19 @@
     
     </summary>
     
-      <category term="架构之路" scheme="http://yoursite.com/categories/%E6%9E%B6%E6%9E%84%E4%B9%8B%E8%B7%AF/"/>
+      <category term="架构之路" scheme="http://www.glmapper.com/categories/%E6%9E%B6%E6%9E%84%E4%B9%8B%E8%B7%AF/"/>
     
     
-      <category term="java" scheme="http://yoursite.com/tags/java/"/>
+      <category term="java" scheme="http://www.glmapper.com/tags/java/"/>
     
-      <category term="设计模式" scheme="http://yoursite.com/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+      <category term="设计模式" scheme="http://www.glmapper.com/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
     
   </entry>
   
   <entry>
     <title>SpringMVC源码系列：九大组件小记</title>
-    <link href="http://yoursite.com/2018/11/10/spring-base-webmvc5/"/>
-    <id>http://yoursite.com/2018/11/10/spring-base-webmvc5/</id>
+    <link href="http://www.glmapper.com/2018/11/10/spring-base-webmvc5/"/>
+    <id>http://www.glmapper.com/2018/11/10/spring-base-webmvc5/</id>
     <published>2018-11-10T06:21:07.000Z</published>
     <updated>2018-11-10T06:21:22.000Z</updated>
     
@@ -121,21 +121,21 @@
     
     </summary>
     
-      <category term="spring mvc" scheme="http://yoursite.com/categories/spring-mvc/"/>
+      <category term="spring mvc" scheme="http://www.glmapper.com/categories/spring-mvc/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
-      <category term="web" scheme="http://yoursite.com/tags/web/"/>
+      <category term="web" scheme="http://www.glmapper.com/tags/web/"/>
     
-      <category term="mvc" scheme="http://yoursite.com/tags/mvc/"/>
+      <category term="mvc" scheme="http://www.glmapper.com/tags/mvc/"/>
     
   </entry>
   
   <entry>
     <title>SpringMVC源码系列：AbstractUrlHandlerMapping</title>
-    <link href="http://yoursite.com/2018/11/10/spring-base-webmvc4/"/>
-    <id>http://yoursite.com/2018/11/10/spring-base-webmvc4/</id>
+    <link href="http://www.glmapper.com/2018/11/10/spring-base-webmvc4/"/>
+    <id>http://www.glmapper.com/2018/11/10/spring-base-webmvc4/</id>
     <published>2018-11-10T06:20:26.000Z</published>
     <updated>2018-11-10T06:20:45.000Z</updated>
     
@@ -150,21 +150,21 @@
     
     </summary>
     
-      <category term="spring mvc" scheme="http://yoursite.com/categories/spring-mvc/"/>
+      <category term="spring mvc" scheme="http://www.glmapper.com/categories/spring-mvc/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
-      <category term="web" scheme="http://yoursite.com/tags/web/"/>
+      <category term="web" scheme="http://www.glmapper.com/tags/web/"/>
     
-      <category term="mvc" scheme="http://yoursite.com/tags/mvc/"/>
+      <category term="mvc" scheme="http://www.glmapper.com/tags/mvc/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：注解说明</title>
-    <link href="http://yoursite.com/2018/11/10/springbase13/"/>
-    <id>http://yoursite.com/2018/11/10/springbase13/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase13/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase13/</id>
     <published>2018-11-10T06:18:34.000Z</published>
     <updated>2018-11-10T06:18:54.000Z</updated>
     
@@ -180,17 +180,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>java-up-juc2</title>
-    <link href="http://yoursite.com/2018/11/10/java-up-juc2/"/>
-    <id>http://yoursite.com/2018/11/10/java-up-juc2/</id>
+    <link href="http://www.glmapper.com/2018/11/10/java-up-juc2/"/>
+    <id>http://www.glmapper.com/2018/11/10/java-up-juc2/</id>
     <published>2018-11-10T06:17:41.000Z</published>
     <updated>2018-11-10T06:18:01.000Z</updated>
     
@@ -205,23 +205,23 @@
     
     </summary>
     
-      <category term="JUC" scheme="http://yoursite.com/categories/JUC/"/>
+      <category term="JUC" scheme="http://www.glmapper.com/categories/JUC/"/>
     
     
-      <category term="java" scheme="http://yoursite.com/tags/java/"/>
+      <category term="java" scheme="http://www.glmapper.com/tags/java/"/>
     
-      <category term="线程" scheme="http://yoursite.com/tags/%E7%BA%BF%E7%A8%8B/"/>
+      <category term="线程" scheme="http://www.glmapper.com/tags/%E7%BA%BF%E7%A8%8B/"/>
     
-      <category term="thread" scheme="http://yoursite.com/tags/thread/"/>
+      <category term="thread" scheme="http://www.glmapper.com/tags/thread/"/>
     
-      <category term="并发编程" scheme="http://yoursite.com/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+      <category term="并发编程" scheme="http://www.glmapper.com/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
     
   </entry>
   
   <entry>
     <title>JUC·Executor 框架</title>
-    <link href="http://yoursite.com/2018/11/10/java-up-juc1/"/>
-    <id>http://yoursite.com/2018/11/10/java-up-juc1/</id>
+    <link href="http://www.glmapper.com/2018/11/10/java-up-juc1/"/>
+    <id>http://www.glmapper.com/2018/11/10/java-up-juc1/</id>
     <published>2018-11-10T06:16:22.000Z</published>
     <updated>2018-11-10T06:17:25.000Z</updated>
     
@@ -236,23 +236,23 @@
     
     </summary>
     
-      <category term="JUC" scheme="http://yoursite.com/categories/JUC/"/>
+      <category term="JUC" scheme="http://www.glmapper.com/categories/JUC/"/>
     
     
-      <category term="java" scheme="http://yoursite.com/tags/java/"/>
+      <category term="java" scheme="http://www.glmapper.com/tags/java/"/>
     
-      <category term="线程" scheme="http://yoursite.com/tags/%E7%BA%BF%E7%A8%8B/"/>
+      <category term="线程" scheme="http://www.glmapper.com/tags/%E7%BA%BF%E7%A8%8B/"/>
     
-      <category term="thread" scheme="http://yoursite.com/tags/thread/"/>
+      <category term="thread" scheme="http://www.glmapper.com/tags/thread/"/>
     
-      <category term="并发编程" scheme="http://yoursite.com/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+      <category term="并发编程" scheme="http://www.glmapper.com/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：BeanWrapper</title>
-    <link href="http://yoursite.com/2018/11/10/springbase12/"/>
-    <id>http://yoursite.com/2018/11/10/springbase12/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase12/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase12/</id>
     <published>2018-11-10T06:15:19.000Z</published>
     <updated>2018-11-10T06:15:49.000Z</updated>
     
@@ -270,17 +270,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：依赖注入（四）-总结</title>
-    <link href="http://yoursite.com/2018/11/10/springbase11/"/>
-    <id>http://yoursite.com/2018/11/10/springbase11/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase11/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase11/</id>
     <published>2018-11-10T06:14:46.000Z</published>
     <updated>2018-11-10T06:15:03.000Z</updated>
     
@@ -297,17 +297,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：依赖注入（三）-属性注入</title>
-    <link href="http://yoursite.com/2018/11/10/springbase10/"/>
-    <id>http://yoursite.com/2018/11/10/springbase10/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase10/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase10/</id>
     <published>2018-11-10T06:14:10.000Z</published>
     <updated>2018-11-10T06:14:31.000Z</updated>
     
@@ -322,17 +322,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：依赖注入（二）createBean</title>
-    <link href="http://yoursite.com/2018/11/10/springbase9/"/>
-    <id>http://yoursite.com/2018/11/10/springbase9/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase9/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase9/</id>
     <published>2018-11-10T06:13:30.000Z</published>
     <updated>2018-11-10T06:13:54.000Z</updated>
     
@@ -347,17 +347,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：依赖注入（一）getBean</title>
-    <link href="http://yoursite.com/2018/11/10/springbase8/"/>
-    <id>http://yoursite.com/2018/11/10/springbase8/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase8/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase8/</id>
     <published>2018-11-10T06:12:44.000Z</published>
     <updated>2018-11-10T06:13:02.000Z</updated>
     
@@ -372,17 +372,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：依赖注入-引言</title>
-    <link href="http://yoursite.com/2018/11/10/springbase7/"/>
-    <id>http://yoursite.com/2018/11/10/springbase7/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase7/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase7/</id>
     <published>2018-11-10T06:11:50.000Z</published>
     <updated>2018-11-10T06:12:19.000Z</updated>
     
@@ -399,17 +399,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：Spring的版本变更</title>
-    <link href="http://yoursite.com/2018/11/10/springbase0/"/>
-    <id>http://yoursite.com/2018/11/10/springbase0/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase0/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase0/</id>
     <published>2018-11-10T06:10:54.000Z</published>
     <updated>2018-11-10T06:11:14.000Z</updated>
     
@@ -424,17 +424,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：BeanDefinition载入(下)</title>
-    <link href="http://yoursite.com/2018/11/10/springbase5/"/>
-    <id>http://yoursite.com/2018/11/10/springbase5/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase5/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase5/</id>
     <published>2018-11-10T06:08:17.000Z</published>
     <updated>2018-11-10T06:08:56.000Z</updated>
     
@@ -449,17 +449,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：BeanDefinition载入（中）</title>
-    <link href="http://yoursite.com/2018/11/10/springbase6/"/>
-    <id>http://yoursite.com/2018/11/10/springbase6/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase6/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase6/</id>
     <published>2018-11-10T06:08:00.000Z</published>
     <updated>2018-11-10T06:10:14.000Z</updated>
     
@@ -477,17 +477,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：BeanDefinition载入(上)</title>
-    <link href="http://yoursite.com/2018/11/10/springbase4/"/>
-    <id>http://yoursite.com/2018/11/10/springbase4/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase4/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase4/</id>
     <published>2018-11-10T06:07:03.000Z</published>
     <updated>2018-11-10T06:07:27.000Z</updated>
     
@@ -502,17 +502,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：BeanFactory的创建</title>
-    <link href="http://yoursite.com/2018/11/10/springbase3/"/>
-    <id>http://yoursite.com/2018/11/10/springbase3/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase3/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase3/</id>
     <published>2018-11-10T06:05:50.000Z</published>
     <updated>2018-11-10T06:06:13.000Z</updated>
     
@@ -527,17 +527,17 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring源码系列：BeanDefinition 源码解析</title>
-    <link href="http://yoursite.com/2018/11/10/springbase2/"/>
-    <id>http://yoursite.com/2018/11/10/springbase2/</id>
+    <link href="http://www.glmapper.com/2018/11/10/springbase2/"/>
+    <id>http://www.glmapper.com/2018/11/10/springbase2/</id>
     <published>2018-11-10T06:05:02.000Z</published>
     <updated>2018-11-10T06:05:27.000Z</updated>
     
@@ -553,10 +553,10 @@
     
     </summary>
     
-      <category term="spring" scheme="http://yoursite.com/categories/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
     
     
-      <category term="spring" scheme="http://yoursite.com/tags/spring/"/>
+      <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
     
   </entry>
   
