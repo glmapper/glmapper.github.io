@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="spring,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="glmapper" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Spring是一个开放源代码的设计层面框架，它解决的是业务逻辑层和其他各层的松耦合问题，因此它将面向接口的编程思想贯穿整个系统应用。Spring是于2003 年兴起的一个轻量级的Java 开发框架，由Rod Johnson创建。简单来说，Spring是一个分层的JavaSE/EEfull-stack(一站式) 轻量级开源框架【来自百度百科】。 目前Spring已经发展到5.0.4 版本了，今天咱们">
+<meta name="keywords" content="spring">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring源码系列：Spring的版本变更">
+<meta property="og:url" content="http://yoursite.com/2018/11/10/springbase0/index.html">
+<meta property="og:site_name" content="glmapper">
+<meta property="og:description" content="Spring是一个开放源代码的设计层面框架，它解决的是业务逻辑层和其他各层的松耦合问题，因此它将面向接口的编程思想贯穿整个系统应用。Spring是于2003 年兴起的一个轻量级的Java 开发框架，由Rod Johnson创建。简单来说，Spring是一个分层的JavaSE/EEfull-stack(一站式) 轻量级开源框架【来自百度百科】。 目前Spring已经发展到5.0.4 版本了，今天咱们">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/1/31/1614be600a754d65?w=555&h=438&f=png&s=71797">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/1/31/1614be8dc0897ca1?w=573&h=425&f=png&s=143803">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/1/31/1614bf499bb3d118?w=555&h=428&f=png&s=83101">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/1/31/1614c0070748eada?w=720&h=540&f=png&s=42346">
+<meta property="og:updated_time" content="2018-11-10T06:11:14.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring源码系列：Spring的版本变更">
+<meta name="twitter:description" content="Spring是一个开放源代码的设计层面框架，它解决的是业务逻辑层和其他各层的松耦合问题，因此它将面向接口的编程思想贯穿整个系统应用。Spring是于2003 年兴起的一个轻量级的Java 开发框架，由Rod Johnson创建。简单来说，Spring是一个分层的JavaSE/EEfull-stack(一站式) 轻量级开源框架【来自百度百科】。 目前Spring已经发展到5.0.4 版本了，今天咱们">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/1/31/1614be600a754d65?w=555&h=438&f=png&s=71797">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/10/springbase0/">
+
+
+
+
+
+  <title>Spring源码系列：Spring的版本变更 | glmapper</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/glmapper" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">glmapper</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">大家都喊我磊叔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/10/springbase0/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="GuoLei Song">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="glmapper">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring源码系列：Spring的版本变更</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-10T14:10:54+08:00">
+                2018-11-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/spring/" itemprop="url" rel="index">
+                    <span itemprop="name">spring</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Spring是一个开放源代码的设计层面框架，它解决的是业务逻辑层和其他各层的松耦合问题，因此它将面向接口的编程思想贯穿整个系统应用。Spring是于2003 年兴起的一个轻量级的Java 开发框架，由Rod Johnson创建。简单来说，Spring是一个分层的JavaSE/EEfull-stack(一站式) 轻量级开源框架【来自百度百科】。</p>
+<p>目前Spring已经发展到5.0.4 版本了，今天咱们就来聊一聊spring各个版本都提供了哪些新的特性。</p>
+<h2 id="spring-2-x"><a href="#spring-2-x" class="headerlink" title="spring 2.x"></a>spring 2.x</h2><p>spring的2.x包括下面两个：</p>
+<ul>
+<li>2.0.0-2.0.8</li>
+<li>2.5.0-2.5.6<br>此时的spring还是很年轻的，所包含的模块也不是很多。如下图：</li>
+</ul>
+<p><img src="https://user-gold-cdn.xitu.io/2018/1/31/1614be600a754d65?w=555&amp;h=438&amp;f=png&amp;s=71797" alt=""></p>
+<p><strong>2.0 新特性</strong></p>
+<ul>
+<li>XML Schema的新XML配置语法的出现</li>
+<li><p>新的Bean的作用域</p>
+<p>  以前的Spring版本对IoC容器级支持两个不同的bean作用域（singleton和prototype）。Spring 2.0在这方面进行了改进，不仅根据部署Spring的环境（例如Web环境中的请求和会话作用域Bean）提供了一些额外的作用域，还提供了“挂钩”），使Spring用户可以创建自己的范围。<br>  应该注意的是，虽然singleton和prototype作用域bean的底层（和内部）实现已经改变，但是所述改变对于最终用户是完全透明的…不需要改变现有的配置，并且不存在现有的配置将会中断。<br><img src="https://user-gold-cdn.xitu.io/2018/1/31/1614be8dc0897ca1?w=573&amp;h=425&amp;f=png&amp;s=143803" alt=""></p>
+</li>
+<li>可扩展的XML</li>
+<li>支持@AspectJ方面</li>
+<li>更加简单XML配置(aop&amp;事务)</li>
+<li>异步JMS</li>
+<li>Spring MVC的表单标签库</li>
+<li>Java 5（Tiger）支持</li>
+<li>Spring 2.0现在支持用Java以外的语言编写的bean，目前支持的动态语言是JRuby，Groovy和BeanShell</li>
+<li>提供了一个关于任务调度的抽象概念</li>
+<li>引入了对各种注释的支持，用于配置目的，例如@ Transactional， @Required和@PersistenceContext / @PersistenceUnit。</li>
+<li><strong>2.5 新特性</strong></li>
+<li>在Spring 2.0在整个框架中对Java 5的深入支持之后，Spring 2.5引入了对Java 6的专门支持。</li>
+<li>@Autowired结合对JSR-250注释@Resource，@ PostConstruct和@PreDestroy的支持 。</li>
+<li><p>在类路径中自动检测组件</p>
+<p>  Spring 2.5引入了支持组件扫描：在类路径中自动检测带注释的组件。典型地，这样的组件类将与定型如进行注释@Component， @Repository，@Service， @Controller。根据应用程序的上下文配置，这些组件类将被自动检测并转换为Spring bean定义，而不需要为每个这样的bean显式配置。</p>
+</li>
+<li><p>支持bean名称切入点元素</p>
+<p>  Spring 2.5引入了对bean（…） pointcut元素的支持，根据Spring定义的bean名称匹配特定的命名bean</p>
+</li>
+<li>支持AspectJ加载时织入</li>
+<li>Spring 2.5显着扩展了SimpleJdbcTemplate的功能， 并引入了 SimpleJdbcCall和SimpleJdbcInsert 操作对象。</li>
+<li><p>基于注释的控制器。</p>
+<p>  Spring 2.5为MVC控制器引入了一个基于注释的编程模型，使用@ RequestMapping，@ RequestParam，@ ModelAttribute等注解。这个注解支持可用于Servlet MVC和Portlet MVC。以这种风格实现的控制器不必扩展特定的基类或实现特定的接口。此外，他们通常不直接依赖于Servlet或Portlet API，尽管他们可以很容易地访问Servlet或Portlet设施。</p>
+</li>
+<li>引入了Spring TestContext框架</li>
+</ul>
+<h2 id="Spring-3-x"><a href="#Spring-3-x" class="headerlink" title="Spring 3.x"></a>Spring 3.x</h2><p>spring 3.x包括以下几个系列：</p>
+<ul>
+<li>3.0.0-3.0.7</li>
+<li>3.1.0-3.1.4</li>
+<li>3.2.0-3.2.18</li>
+</ul>
+<p>在2.x的模块上页拓展了新的模块</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/1/31/1614bf499bb3d118?w=555&amp;h=428&amp;f=png&amp;s=83101" alt=""></p>
+<p><strong>3.0.x 新特性</strong></p>
+<ul>
+<li>针对Java 5更新的核心API</li>
+<li>spring 表达语言</li>
+<li>基于Java的bean元数据和在组件中定义bean元数据</li>
+<li>通用型转换系统和现场格式化系统</li>
+<li>全面的REST支持</li>
+<li>声明式模型验证</li>
+<li>早期支持Java EE 6</li>
+<li>支持嵌入式数据库</li>
+</ul>
+<p><strong>3.1.x 新特性</strong></p>
+<ul>
+<li>缓存抽象</li>
+<li>Bean定义配置文件</li>
+<li>环境抽象</li>
+<li>PropertySource抽象</li>
+<li>Spring的XML名称空间的代码等价物</li>
+<li>支持Hibernate 4.x</li>
+<li>TestContext框架支持@Configuration类和bean定义配置文件</li>
+<li>更简洁的构造函数注入的命名空间</li>
+<li>支持针对非标准JavaBeans设置器的注入</li>
+<li>支持Servlet 3基于代码的Servlet Container配置</li>
+<li>支持Servlet 3 MultipartResolver</li>
+<li>没有persistence.xml的JPA EntityManagerFactory引导</li>
+<li>用于注释的控制器处理的新的基于HandlerMethod的支持类</li>
+<li>Flash属性和RedirectAttributes(请求重定向参数的支持)</li>
+<li><p>“consumes” and “produces” conditions in @RequestMapping</p>
+<p>  改进了对通过’Content-Type’标题指定方法消耗的媒体类型以及通过标题指定的可生成类型的支持’Accept’ </p>
+</li>
+<li>URI模板变量增强</li>
+<li>@Valid on @RequestBody控制器方法参数</li>
+<li>控制器方法参数上的@RequestPart注释</li>
+<li>UriComponentsBuilder和UriComponents</li>
+</ul>
+<p><strong>3.2.x 新特性</strong></p>
+<ul>
+<li>支持基于Servlet 3的异步请求处理</li>
+<li>Spring MVC测试框架</li>
+<li>@ControllerAdvice注解</li>
+<li>基于代码的Servlet 3+容器初始化的抽象基类</li>
+<li>ResponseEntityExceptionHandler类引入</li>
+<li>在RestTemplate和中的 @RequestBody参数支持泛型类型</li>
+<li>JackJSON 2和相关的改进</li>
+<li>@RequestBody改进</li>
+<li>HTTP PATCH方法</li>
+<li>使用注释点和bean定义方法的元注释</li>
+<li>初步支持JCache 0.5</li>
+<li>全球日期和时间格式</li>
+<li>整个框架的并发优化</li>
+<li>新的基于Gradle的构建和移动到GitHub</li>
+<li>精炼的Java SE 7 / OpenJDK 7支持</li>
+</ul>
+<h2 id="Spring-4-x"><a href="#Spring-4-x" class="headerlink" title="Spring 4.x"></a>Spring 4.x</h2><p>spring 4包括以下系列版本：</p>
+<ul>
+<li>4.0.0-4.0.9</li>
+<li>4.1.0-4.1.9</li>
+<li>4.2.0-4.2.9</li>
+<li>4.3.0-4.3.13</li>
+</ul>
+<p><img src="https://user-gold-cdn.xitu.io/2018/1/31/1614c0070748eada?w=720&amp;h=540&amp;f=png&amp;s=42346" alt=""><br><strong>spring 4.0.x 新特性</strong></p>
+<ul>
+<li><p>删除弃用的软件包和方法</p>
+<p>  可选的第三方依赖已被提升到2010/2011最低（即Spring 4通常只支持2010年末或之后发布的版本）：特别是，Hibernate 3.6+，EhCache 2.1+，Quartz 1.8+，Groovy 1.8+和Joda-Time 2.0+。作为规则的一个例外，Spring 4需要最近的Hibernate Validator 4.3+，并且对Jackson的支持已经集中在2.0+以上（当前Spring 3.2已经保留了对Jackson 1.8 / 1.9的支持;现在只是弃用了形成）。</p>
+</li>
+<li><p>Java 8（以及6和7）</p>
+<p>  可以使用Spring的回调接口使用 lambda表达式和方法引用</p>
+</li>
+<li><p>Java EE 6和7</p>
+<p>  Java EE 6或更高版本现在被认为是Spring Framework 4的基准，JPA 2.0和Servlet 3.0规范特别相关。为了与Google App Engine和较早的应用程序服务器保持兼容，可以将Spring 4应用程序部署到Servlet 2.5环境中。不过，强烈建议使用Servlet 3.0+，这是Spring开发环境中测试设置的测试和模拟包中的先决条件。</p>
+</li>
+<li>Groovy Bean定义DSL</li>
+<li><p>核心容器改进</p>
+<ul>
+<li>Spring现在将泛型类型作为注入Beans时限定符的形式 。例如，如果您正在使用Spring Data Repository，则现在可以轻松注入一个特定的实现： @Autowired Repository<customer> customerRepository。</customer></li>
+<li>如果您使用Spring的元注释支持，现在可以开发自定义注释来 显示源注释中的特定属性。</li>
+<li>bean现在可以在自动装配到列表和数组中时进行排序。无论是标注和接口的支持。 @OrderOrdered</li>
+<li>该@Lazy注释现在可以在注入点使用，以及对@Bean 定义。</li>
+<li>该@Description批注已经推出了使用基于Java的配置开发。</li>
+<li>已经通过注释添加 了有条件地过滤bean的通用模型@Conditional。这与@Profile支持类似，但允许以编程方式开发用户定义的策略。</li>
+<li>基于CGLIB的代理类不再需要默认的构造函数。支持通过提供objenesis 其重新打包库在线，并将其作为Spring框架的一部分。有了这个策略，所有的构造函数都不再被调用代理实例。</li>
+<li>整个框架现在都有管理时区的支持，例如LocaleContext。</li>
+</ul>
+</li>
+<li><p>web 模块支持</p>
+<ul>
+<li>可以在Spring MVC应用程序中使用新的@RestController注释，不需要添加@ResponseBody到每个 @RequestMapping方法中。</li>
+<li>该AsyncRestTemplate已添加，允许异步非阻塞支持开发REST客户端时。</li>
+<li>开发Spring MVC应用程序时提供了全面的时区支持。</li>
+</ul>
+</li>
+<li><p>测试改进</p>
+</li>
+<li>WebSocket，SockJS和STOMP消息传递</li>
+</ul>
+<p><strong>spring 4.1.x 新特性</strong></p>
+<ul>
+<li>JMS改进</li>
+<li>缓存改进</li>
+<li>网络改进</li>
+<li>WebSocket消息传递改进</li>
+<li>测试改进</li>
+</ul>
+<p><strong>spring 4.2.x 新特性</strong></p>
+<p><a href="https://docs.spring.io/spring/docs/4.3.9.RELEASE/spring-framework-reference/html/new-in-4.2.html#v4_2-Core-Container-Improvements" target="_blank" rel="noopener">Spring 4 官方文档</a></p>
+<ul>
+<li>核心容器改进</li>
+<li>数据访问改进</li>
+</ul>
+<p><strong>spring 4.3.x 新特性</strong></p>
+<ul>
+<li>支持新的包和服务</li>
+<li>相关改进</li>
+</ul>
+<p>目前还没有用过spring5，总会有憧憬。当我们使用spring越来越简单时，危机也在一步步逼近；看到表象，进一步，再进一步！</p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------生活本该如此，本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring/" rel="tag"><i class="fa fa-tag"></i> spring</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/10/springbase5/" rel="next" title="Spring源码系列：BeanDefinition载入(下)">
+                <i class="fa fa-chevron-left"></i> Spring源码系列：BeanDefinition载入(下)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/10/springbase7/" rel="prev" title="Spring源码系列：依赖注入-引言">
+                Spring源码系列：依赖注入-引言 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">GuoLei Song</p>
+              <p class="site-description motion-element" itemprop="description">从平凡的世界中全身而退</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/glmapper" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.weibo.com/u/2412872703" target="_blank" title="微博">
+                      
+                        <i class="fa fa-fw fa-Weibo"></i>微博</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://juejin.im/user/58fcc0768d6d810058965a06" target="_blank" title="掘金">
+                      
+                        <i class="fa fa-fw fa-spinner"></i>掘金</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#spring-2-x"><span class="nav-number">1.</span> <span class="nav-text">spring 2.x</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-3-x"><span class="nav-number">2.</span> <span class="nav-text">Spring 3.x</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-4-x"><span class="nav-number">3.</span> <span class="nav-text">Spring 4.x</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GuoLei Song</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>|
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+-->
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共132.4k字</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="聊一聊,session,cookie,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="glmapper" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="本来是想写aop设计机制的，但是最近被session这个东西搞得有点头大，所以就抽点时间来整理下关于session的一些东西。  目录 从http协议的无状态性说起 无连接和无状态 持久连接 http无状态 如何保持状态信息   Cookie Cookie机制原理 Cookie在servlet-api中的定义 Cookie属性 创建Cookie Cookie更新 Cookie删除 从请求中获取C">
+<meta name="keywords" content="聊一聊,session,cookie">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聊一聊session和cookie">
+<meta property="og:url" content="http://yoursite.com/2018/11/10/sessionone/index.html">
+<meta property="og:site_name" content="glmapper">
+<meta property="og:description" content="本来是想写aop设计机制的，但是最近被session这个东西搞得有点头大，所以就抽点时间来整理下关于session的一些东西。  目录 从http协议的无状态性说起 无连接和无状态 持久连接 http无状态 如何保持状态信息   Cookie Cookie机制原理 Cookie在servlet-api中的定义 Cookie属性 创建Cookie Cookie更新 Cookie删除 从请求中获取C">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/5/13/163551ad5795255d?w=1444&h=170&f=png&s=58043">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/5/13/163562469179fe66?w=1160&h=798&f=png&s=44700">
+<meta property="og:updated_time" content="2018-11-10T05:24:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="聊一聊session和cookie">
+<meta name="twitter:description" content="本来是想写aop设计机制的，但是最近被session这个东西搞得有点头大，所以就抽点时间来整理下关于session的一些东西。  目录 从http协议的无状态性说起 无连接和无状态 持久连接 http无状态 如何保持状态信息   Cookie Cookie机制原理 Cookie在servlet-api中的定义 Cookie属性 创建Cookie Cookie更新 Cookie删除 从请求中获取C">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/5/13/163551ad5795255d?w=1444&h=170&f=png&s=58043">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/10/sessionone/">
+
+
+
+
+
+  <title>聊一聊session和cookie | glmapper</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/glmapper" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">glmapper</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">大家都喊我磊叔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/10/sessionone/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="GuoLei Song">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="glmapper">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">聊一聊session和cookie</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-10T13:23:29+08:00">
+                2018-11-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/session/" itemprop="url" rel="index">
+                    <span itemprop="name">session</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>本来是想写aop设计机制的，但是最近被session这个东西搞得有点头大，所以就抽点时间来整理下关于session的一些东西。</p>
+</blockquote>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="">从http协议的无状态性说起</a><ul>
+<li><a href="">无连接和无状态</a></li>
+<li><a href="">持久连接</a></li>
+<li><a href="">http无状态</a></li>
+<li><a href="">如何保持状态信息</a></li>
+</ul>
+</li>
+<li>Cookie<ul>
+<li><a href="">Cookie机制原理</a></li>
+<li><a href="">Cookie在servlet-api中的定义</a></li>
+<li><a href="">Cookie属性</a></li>
+<li><a href="">创建Cookie</a></li>
+<li><a href="">Cookie更新</a></li>
+<li><a href="">Cookie删除</a></li>
+<li><a href="">从请求中获取Cookie</a></li>
+<li><a href="">Cookie同源与跨域</a></li>
+<li><a href="">Cookie数量&amp;大小限制及处理策略</a></li>
+</ul>
+</li>
+<li>Session<ul>
+<li><a href="">session机制原理</a></li>
+<li><a href="">HttpSession</a></li>
+<li><a href="">创建session</a></li>
+<li><a href="">生命周期</a></li>
+<li><a href="">session的有效期</a></li>
+<li><a href="">分布式session</a><h2 id="从http协议的无状态性说起"><a href="#从http协议的无状态性说起" class="headerlink" title="从http协议的无状态性说起"></a>从http协议的无状态性说起</h2></li>
+</ul>
+</li>
+</ul>
+<p>HTTP是一种无状态协议。关于这个无状态之前我也不太理解，因为HTTP底层是TCP，既然是TCP，就是长连接，这个过程是保持连接状态的，又为什么说http是无状态的呢？先来搞清楚这两个概念：</p>
+<h3 id="无连接和无状态"><a href="#无连接和无状态" class="headerlink" title="无连接和无状态"></a>无连接和无状态</h3><ul>
+<li><p>无连接</p>
+<p>  每次连接只处理一个请求，服务端处理完客户端一次请求，等到客户端作出回应之后便断开连接；</p>
+</li>
+<li><p>无状态</p>
+<p>  是指服务端对于客户端每次发送的请求都认为它是一个新的请求，上一次会话和下一次会话没有联系；</p>
+</li>
+</ul>
+<p>无连接的维度是连接，无状态的维度是请求；http是基于tcp的，而从http1.1开始默认使用持久连接；在这个连接过程中，客户端可以向服务端发送多次请求，但是各个请求之间的并没有什么联系；这样来考虑，就很好理解无状态这个概念了。</p>
+<h3 id="持久连接"><a href="#持久连接" class="headerlink" title="持久连接"></a>持久连接</h3><p><code>持久连接，本质上是客户端与服务器通信的时候，建立一个持久化的TCP连接，这个连接不会随着请求结束而关闭，通常会保持连接一段时间。</code></p>
+<p>现有的持久连接类型有两种：HTTP/1.0+的keep-alive和HTTP/1.1的persistent。</p>
+<ul>
+<li>HTTP/1.0+的keep-alive</li>
+</ul>
+<p>先来开一张图：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/5/13/163551ad5795255d?w=1444&amp;h=170&amp;f=png&amp;s=58043" alt=""><br>这张图是请求<a href="http://www.baidu.com时的请求头信息。这里面我们需要注意的是：" target="_blank" rel="noopener">www.baidu.com时的请求头信息。这里面我们需要注意的是：</a></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">connection: keep-alive</span><br></pre></td></tr></table></figure>
+<p>我们每次发送一个HTTP请求，会附带一个connection:keep-alive，这个参数就是声明一个持久连接。</p>
+<ul>
+<li>HTTP/1.1的persistent</li>
+</ul>
+<p>HTTP/1.1的持久连接默认是开启的，只有首部中包含connection：close，才会事务结束之后关闭连接。当然服务器和客户端仍可以随时关闭持久连接。</p>
+<p>当发送了connection：close首部之后客户端就没有办法在那条连接上发送更多的请求了。当然根据持久连接的特性，一定要传输正确的content-length。</p>
+<p>还有根据HTTP/1.1的特性，是不应该和HTTP/1.0客户端建立持久连接的。最后，一定要做好重发的准备。</p>
+<h3 id="http无状态"><a href="#http无状态" class="headerlink" title="http无状态"></a>http无状态</h3><p>OK，首先来明确下，这个状态的主体指的是什么？应该是信息，这些信息是由服务端所维护的与客户端交互的信息（也称为状态信息）；<br>因为HTTP本身是不保存任何用户的状态信息的，所以HTTP是无状态的协议。</p>
+<h3 id="如何保持状态信息"><a href="#如何保持状态信息" class="headerlink" title="如何保持状态信息"></a>如何保持状态信息</h3><p>在聊这个这个问题之前，我们来考虑下为什么http自己不来做这个事情：也就是让http变成有状态的。</p>
+<ul>
+<li><p>http本身来实现状态维护</p>
+<p>  从上面关于无状态的理解，如果现在需要让http自己变成有状态的，就意味着http协议需要保存交互的状态信息；暂且不说这种方式是否合适，但从维护状态信息这一点来说，代价就很高，因为既然保存了状态信息，那后续的一些行为必定也会受到状态信息的影响。</p>
+<p>  从历史角度来说，最初的http协议只是用来浏览静态文件的，无状态协议已经足够，这样实现的负担也很轻。但是随着web技术的不断发展，越来越多的场景需要状态信息能够得以保存；一方面是http本身不会去改变它的这种无状态的特性（至少目前是这样的），另一方面业务场景又迫切的需要保持状态；那么这个时候就需要来“装饰”一下http，引入一些其他机制来实现有状态。</p>
+</li>
+<li><p>cookie和session体系</p>
+<p>  通过引入cookie和session体系机制来维护状态信息。即用户第一次访问服务器的时候，服务器响应报头通常会出现一个Set-Cookie响应头，这里其实就是在本地设置一个cookie，当用户再次访问服务器的时候，http会附带这个cookie过去，cookie中存有sessionId这样的信息来到服务器这边确认是否属于同一次会话。</p>
+</li>
+</ul>
+<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><p> cookie是由服务器发送给客户端（浏览器）的小量信息，以{key：value}的形式存在。</p>
+<h3 id="Cookie机制原理"><a href="#Cookie机制原理" class="headerlink" title="Cookie机制原理"></a>Cookie机制原理</h3><p> 客户端请求服务器时，如果服务器需要记录该用户状态，就使用response向客户端浏览器颁发一个Cookie。而客户端浏览器会把Cookie保存起来。当浏览器再请求 服务器时，浏览器把请求的网址连同该Cookie一同提交给服务器。服务器通过检查该Cookie来获取用户状态。</p>
+<p> 我们通过看下servlet-api中Cookie类的定义及属性，来更加具体的了解Cookie。</p>
+<h3 id="Cookie在servlet-api中的定义"><a href="#Cookie在servlet-api中的定义" class="headerlink" title="Cookie在servlet-api中的定义"></a>Cookie在servlet-api中的定义</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Cookie</span> <span class="keyword">implements</span> <span class="title">Cloneable</span>, <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = -<span class="number">6454587001725327448L</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TSPECIALS;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String LSTRING_FILE =</span><br><span class="line">    <span class="string">"javax.servlet.http.LocalStrings"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ResourceBundle lStrings =</span><br><span class="line">    ResourceBundle.getBundle(<span class="string">"javax.servlet.http.LocalStrings"</span>);</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String value;</span><br><span class="line">    <span class="keyword">private</span> String comment;</span><br><span class="line">    <span class="keyword">private</span> String domain;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> maxAge = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">private</span> String path;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> secure;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> version = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> isHttpOnly = <span class="keyword">false</span>;</span><br><span class="line">    <span class="comment">//....省略其他方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Cookie属性"><a href="#Cookie属性" class="headerlink" title="Cookie属性"></a>Cookie属性</h3><ul>
+<li><p>name</p>
+<p>  cookie的名字，Cookie一旦创建，名称便不可更改</p>
+</li>
+<li><p>value</p>
+<p>  cookie值</p>
+</li>
+<li><p>comment</p>
+<p>  该Cookie的用处说明。浏览器显示Cookie信息的时候显示该说明</p>
+</li>
+<li><p>domain</p>
+<p>  可以访问该Cookie的域名。如果设置为“.baidu.com”，则所有以“baidu.com”结尾的域名都可以访问该Cookie；第一个字符必须为“.”</p>
+</li>
+<li><p>maxAge</p>
+<p>  Cookie失效的时间，单位秒。</p>
+<ul>
+<li>正数，则超过maxAge秒之后失效。</li>
+<li>负数，该Cookie为临时Cookie，关闭浏览器即失效，浏览器也不会以任何形式保存该Cookie。</li>
+<li>为0，表示删除该Cookie。</li>
+</ul>
+</li>
+<li><p>path</p>
+<p>  该Cookie的使用路径。例如：</p>
+<ul>
+<li>path=/，说明本域名下contextPath都可以访问该Cookie。</li>
+<li><p>path=/app/，则只有contextPath为“/app”的程序可以访问该Cookie</p>
+<p>path设置时，其以“/”结尾.</p>
+</li>
+</ul>
+</li>
+<li><p>secure</p>
+<p>  该Cookie是否仅被使用安全协议传输。这里的安全协议包括HTTPS，SSL等。默认为false。</p>
+</li>
+<li><p>version</p>
+<p>  该Cookie使用的版本号。</p>
+<ul>
+<li>0 表示遵循Netscape的Cookie规范，目前大多数用的都是这种规范；</li>
+<li><p>1 表示遵循W3C的RFC2109规范；规范过于严格，实施起来很难。</p>
+<p>在servlet规范中默认是0；</p>
+</li>
+</ul>
+</li>
+<li><p>isHttpOnly</p>
+<p>  HttpOnly属性是用来限制非HTTP协议程序接口对客户端Cookie进行访问；也就是说如果想要在客户端取到httponly的Cookie的唯一方法就是使用AJAX，将取Cookie的操作放到服务端，接收客户端发送的ajax请求后将取值结果通过HTTP返回客户端。这样能有效的防止XSS攻击。</p>
+</li>
+</ul>
+<p>上述的这些属性，除了name与value属性会被提交外，其他的属性对于客户端来说都是不可读的，也是不可被提交的。</p>
+<h3 id="创建Cookie"><a href="#创建Cookie" class="headerlink" title="创建Cookie"></a>创建Cookie</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"cookieSessionId"</span>,<span class="string">"qwertyuiop"</span>);</span><br><span class="line">cookie.setDomain(<span class="string">".baidu.com"</span>);             <span class="comment">// 设置域名</span></span><br><span class="line">cookie.setPath(<span class="string">"/"</span>);                        <span class="comment">// 设置路径</span></span><br><span class="line">cookie.setMaxAge(Integer.MAX_VALUE);        <span class="comment">// 设置有效期为永久</span></span><br><span class="line">response.addCookie(cookie);                 <span class="comment">// 回写到客户端</span></span><br></pre></td></tr></table></figure>
+<p>创建Cookie只能通过上述方式来创建，因为在Cookie类中只提供了这样一个构造函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Cookie的构造函数</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Cookie</span><span class="params">(String name, String value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (name != <span class="keyword">null</span> &amp;&amp; name.length() != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">//判断下是不是token</span></span><br><span class="line">        <span class="comment">//判断是不是和Cookie的属性字段重复</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.isToken(name) &amp;&amp; !name.equalsIgnoreCase(<span class="string">"Comment"</span>) &amp;&amp;</span><br><span class="line">        !name.equalsIgnoreCase(<span class="string">"Discard"</span>) &amp;&amp;</span><br><span class="line">        !name.equalsIgnoreCase(<span class="string">"Domain"</span>) &amp;&amp;</span><br><span class="line">        !name.equalsIgnoreCase(<span class="string">"Expires"</span>) &amp;&amp;</span><br><span class="line">        !name.equalsIgnoreCase(<span class="string">"Max-Age"</span>) &amp;&amp;</span><br><span class="line">        !name.equalsIgnoreCase(<span class="string">"Path"</span>) &amp;&amp;</span><br><span class="line">        !name.equalsIgnoreCase(<span class="string">"Secure"</span>) &amp;&amp;</span><br><span class="line">        !name.equalsIgnoreCase(<span class="string">"Version"</span>) &amp;&amp; !name.startsWith(<span class="string">"$"</span>)) &#123;</span><br><span class="line">            <span class="keyword">this</span>.name = name;</span><br><span class="line">            <span class="keyword">this</span>.value = value;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            String errMsg =</span><br><span class="line">            lStrings.getString(<span class="string">"err.cookie_name_is_token"</span>);</span><br><span class="line">            Object[] errArgs = <span class="keyword">new</span> Object[]&#123;name&#125;;</span><br><span class="line">            errMsg = MessageFormat.format(errMsg, errArgs);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(errMsg);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(lStrings.getString</span><br><span class="line">        (<span class="string">"err.cookie_name_blank"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Cookie更新"><a href="#Cookie更新" class="headerlink" title="Cookie更新"></a>Cookie更新</h3><p>在源码中可以知道，Cookie本身并没有提供修改的方法；在实际应用中，一般通过使用相同name的Cookie来覆盖原来的Cookie,以达到更新的目的。</p>
+<p>但是这个修改的前提是需要具有相同domain，path的 Set-Cookie 消息头</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"cookieSessionId"</span>,<span class="string">"new-qwertyuiop"</span>);</span><br><span class="line">response.addCookie(cookie);</span><br></pre></td></tr></table></figure>
+<h3 id="Cookie删除"><a href="#Cookie删除" class="headerlink" title="Cookie删除"></a>Cookie删除</h3><p>与Cookie更新一样，Cookie本身也没有提供删除的方法；但是从前面分析Cookie属性时了解到，删除Cookie可以通过将maxAge设置为0即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"cookieSessionId"</span>,<span class="string">"new-qwertyuiop"</span>);</span><br><span class="line">cookie.setMaxAge(<span class="number">0</span>);</span><br><span class="line">response.addCookie(cookie);</span><br></pre></td></tr></table></figure>
+<p>上面的删除是我们自己可控的；但是也存在一些我们不可控或者说无意识情况下的删除操作：</p>
+<ul>
+<li>如果maxAge是负值，则cookie在浏览器关闭时被删除</li>
+<li>持久化cookie在到达失效日期时会被删除</li>
+<li>浏览器中的 cookie 数量达到上限，那么 cookie 会被删除以为新建的 cookie 创建空间。</li>
+</ul>
+<p>其实很多情况下，我们关注的都是后者。关于数量上限后面会说到。</p>
+<h3 id="从请求中获取Cookie"><a href="#从请求中获取Cookie" class="headerlink" title="从请求中获取Cookie"></a>从请求中获取Cookie</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cookie[] cookies = request.getCookies();</span><br></pre></td></tr></table></figure>
+<h3 id="Cookie同源与跨域"><a href="#Cookie同源与跨域" class="headerlink" title="Cookie同源与跨域"></a>Cookie同源与跨域</h3><p>我们知道浏览器的同源策略：</p>
+<blockquote>
+<p>URL由协议、域名、端口和路径组成，如果两个URL的协议、域名和端口相同，则表示他们同源。浏览器的同源策略，限制了来自不同源的”document”或脚本，对当前”document”读取或设置某些属性。 </p>
+</blockquote>
+<p>对于Cookie来说，Cookie的同源只关注域名，是忽略协议和端口的。所以一般情况下，<a href="https://localhost:80/和http://localhost:8080/的Cookie是共享的。" target="_blank" rel="noopener">https://localhost:80/和http://localhost:8080/的Cookie是共享的。</a></p>
+<p>Cookie是不可跨域的；在没有经过任何处理的情况下，二级域名不同也是不行的。(wenku.baidu.com和baike.baidu.com)。</p>
+<h3 id="Cookie数量-amp-大小限制及处理策略"><a href="#Cookie数量-amp-大小限制及处理策略" class="headerlink" title="Cookie数量&amp;大小限制及处理策略"></a>Cookie数量&amp;大小限制及处理策略</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>IE6.0</th>
+<th>IE7.0/8.0</th>
+<th>Opera</th>
+<th>FF</th>
+<th>Safari</th>
+<th>Chrome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>个数/个</td>
+<td>20/域</td>
+<td>50/域</td>
+<td>30/域</td>
+<td>50/域</td>
+<td>无限制</td>
+<td>53/域</td>
+</tr>
+<tr>
+<td>大小/Byte</td>
+<td>4095</td>
+<td>4095</td>
+<td>4096</td>
+<td>4097</td>
+<td>4097</td>
+<td>4097</td>
+</tr>
+</tbody>
+</table>
+<p><code>注：数据来自网络，仅供参考</code></p>
+<p>因为浏览器对于Cookie在数量上是有限制的，如果超过了自然会有一些剔除策略。在这篇文章中<a href="https://www.nczonline.net/blog/2008/05/17/browser-cookie-restrictions/" target="_blank" rel="noopener">Browser cookie restrictions</a>提到的剔除策略如下：</p>
+<blockquote>
+<p>The least recently used (LRU) approach automatically kicks out the oldest cookie when the cookie limit has been reached in order to allow the newest cookie some space. Internet Explorer and Opera use this approach.</p>
+</blockquote>
+<p>最近最少使用（LRU）方法：在达到cookie限制时自动地剔除最老的cookie，以便腾出空间给许最新的cookie。Internet Explorer和Opera使用这种方法。</p>
+<blockquote>
+<p>Firefox does something strange: it seems to randomly decide which cookies to keep although the last cookie set is always kept. There doesn’t seem to be any scheme it’s following at all. The takeaway? Don’t go above the cookie limit in Firefox.</p>
+</blockquote>
+<p>Firefox决定随机删除Cookie集中的一个Cookie，并没有什么章法。所以最好不要超过Firefox中的Cookie限制。</p>
+<p>超过大小长度的话就是直接被截取丢弃；</p>
+<h2 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h2><p>Cookie机制弥补了HTTP协议无状态的不足。在Session出现之前，基本上所有的网站都采用Cookie来跟踪会话。</p>
+<p>与Cookie不同的是，session是以服务端保存状态的。</p>
+<h3 id="session机制原理"><a href="#session机制原理" class="headerlink" title="session机制原理"></a>session机制原理</h3><p>当客户端请求创建一个session的时候，服务器会先检查这个客户端的请求里是否已包含了一个session标识 - sessionId，</p>
+<ul>
+<li>如果已包含这个sessionId，则说明以前已经为此客户端创建过session，服务器就按照sessionId把这个session检索出来使用（如果检索不到，可能会新建一个）</li>
+<li>如果客户端请求不包含sessionId，则为此客户端创建一个session并且生成一个与此session相关联的sessionId</li>
+</ul>
+<p>sessionId的值一般是一个既不会重复，又不容易被仿造的字符串，这个sessionId将被在本次响应中返回给客户端保存。保存sessionId的方式大多情况下用的是cookie。</p>
+<h3 id="HttpSession"><a href="#HttpSession" class="headerlink" title="HttpSession"></a>HttpSession</h3><p>HttpSession和Cookie一样，都是javax.servlet.http下面的；Cookie是一个类，它描述了Cookie的很多内部细节。而HttpSession是一个接口，它为session的实现提供了一些行为约束。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HttpSession</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回session的创建时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getCreationTime</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回一个sessionId,唯一标识</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getId</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *返回客户端最后一次发送与该 session 会话相关的请求的时间</span></span><br><span class="line"><span class="comment">     *自格林尼治标准时间 1970 年 1 月 1 日午夜算起，以毫秒为单位。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getLastAccessedTime</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回当前session所在的ServletContext</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ServletContext <span class="title">getServletContext</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMaxInactiveInterval</span><span class="params">(<span class="keyword">int</span> interval)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回 Servlet 容器在客户端访问时保持 session</span></span><br><span class="line"><span class="comment">     * 会话打开的最大时间间隔</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMaxInactiveInterval</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> HttpSessionContext <span class="title">getSessionContext</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回在该 session会话中具有指定名称的对象，</span></span><br><span class="line"><span class="comment">     * 如果没有指定名称的对象，则返回 null。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getAttribute</span><span class="params">(String name)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getValue</span><span class="params">(String name)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回 String 对象的枚举，String 对象包含所有绑定到该 session</span></span><br><span class="line"><span class="comment">     * 会话的对象的名称。</span></span><br><span class="line"><span class="comment">     */</span>    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Enumeration&lt;String&gt; <span class="title">getAttributeNames</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> String[] getValueNames();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAttribute</span><span class="params">(String name, Object value)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">putValue</span><span class="params">(String name, Object value)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeAttribute</span><span class="params">(String name)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeValue</span><span class="params">(String name)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 指示该 session 会话无效，并解除绑定到它上面的任何对象。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">invalidate</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 如果客户端不知道该 session 会话，或者如果客户选择不参入该</span></span><br><span class="line"><span class="comment">     * session 会话，则该方法返回 true。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isNew</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="创建session"><a href="#创建session" class="headerlink" title="创建session"></a>创建session</h3><p>创建session的方式是通过request来创建；<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1、创建Session对象</span></span><br><span class="line">HttpSession session = request.getSession(); </span><br><span class="line"><span class="comment">// 2、创建Session对象</span></span><br><span class="line">HttpSession session = request.getSession(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure></p>
+<p>这两种是一样的；如果session不存在，就新建一个；如果是false的话，标识如果不存在就返回null；</p>
+<h3 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h3><p>session的生命周期指的是从Servlet容器创建session对象到销毁的过程。Servlet容器会依据session对象设置的存活时间，在达到session时间后将session对象销毁。session生成后，只要用户继续访问，服务器就会更新session的最后访问时间，并维护该session。</p>
+<p>之前在单进程应用中，session我一般是存在内存中的，不会做持久化操作或者说使用三方的服务来存session信息，如redis。但是在分布式场景下，这种存在本机内存中的方式显然是不适用的，因为session无法共享。这个后面说。</p>
+<h3 id="session的有效期"><a href="#session的有效期" class="headerlink" title="session的有效期"></a>session的有效期</h3><p>session一般在内存中存放，内存空间本身大小就有一定的局限性，因此session需要采用一种过期删除的机制来确保session信息不会一直累积，来防止内存溢出的发生。</p>
+<p>session的超时时间可以通过maxInactiveInterval属性来设置。</p>
+<p>如果我们想让session失效的话，也可以当通过调用session的invalidate()来完成。</p>
+<h3 id="分布式session"><a href="#分布式session" class="headerlink" title="分布式session"></a>分布式session</h3><p>首先是为什么会有这样的概念出现？</p>
+<p>先考虑这样一个问题，现在我的应用需要部署在3台机器上。是不是出现这样一种情况，我第一次登陆，请求去了机器1，然后再机器1上创建了一个session；但是我第二次访问时，请求被路由到机器2了，但是机器2上并没有我的session信息，所以得重新登录。当然这种可以通过nginx的IP HASH负载策略来解决。对于同一个IP请求都会去同一个机器。</p>
+<p>但是业务发展的越来越大，拆分的越来越多，机器数不断增加；很显然那种方案就不行了。那么这个时候就需要考虑是不是应该将session信息放在一个独立的机器上，所以分布式session要解决的问题其实就是分布式环境下的session共享的问题。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/5/13/163562469179fe66?w=1160&amp;h=798&amp;f=png&amp;s=44700" alt=""></p>
+<p>上图中的关于session独立部署的方式有很多种，可以是一个独立的数据库服务，也可以是一个缓存服务(redis，目前比较常用的一种方式，即使用Redis来作为session缓存服务器)。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://www.cnblogs.com/icelin/p/3974935.html" target="_blank" rel="noopener">https://www.cnblogs.com/icelin/p/3974935.html</a></li>
+<li><a href="https://www.nczonline.net/blog/2008/05/17/browser-cookie-restrictions/" target="_blank" rel="noopener">https://www.nczonline.net/blog/2008/05/17/browser-cookie-restrictions/</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------生活本该如此，本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/聊一聊/" rel="tag"><i class="fa fa-tag"></i> 聊一聊</a>
+          
+            <a href="/tags/session/" rel="tag"><i class="fa fa-tag"></i> session</a>
+          
+            <a href="/tags/cookie/" rel="tag"><i class="fa fa-tag"></i> cookie</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/10/springaoptwo/" rel="next" title="聊一聊 AOP：Advice 源码解析">
+                <i class="fa fa-chevron-left"></i> 聊一聊 AOP：Advice 源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/10/nginxone/" rel="prev" title="nginx反向代理和负载均衡策略实战案例">
+                nginx反向代理和负载均衡策略实战案例 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">GuoLei Song</p>
+              <p class="site-description motion-element" itemprop="description">从平凡的世界中全身而退</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/glmapper" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.weibo.com/u/2412872703" target="_blank" title="微博">
+                      
+                        <i class="fa fa-fw fa-Weibo"></i>微博</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://juejin.im/user/58fcc0768d6d810058965a06" target="_blank" title="掘金">
+                      
+                        <i class="fa fa-fw fa-spinner"></i>掘金</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从http协议的无状态性说起"><span class="nav-number">2.</span> <span class="nav-text">从http协议的无状态性说起</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#无连接和无状态"><span class="nav-number">2.1.</span> <span class="nav-text">无连接和无状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#持久连接"><span class="nav-number">2.2.</span> <span class="nav-text">持久连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http无状态"><span class="nav-number">2.3.</span> <span class="nav-text">http无状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何保持状态信息"><span class="nav-number">2.4.</span> <span class="nav-text">如何保持状态信息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cookie"><span class="nav-number">3.</span> <span class="nav-text">Cookie</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie机制原理"><span class="nav-number">3.1.</span> <span class="nav-text">Cookie机制原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie在servlet-api中的定义"><span class="nav-number">3.2.</span> <span class="nav-text">Cookie在servlet-api中的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie属性"><span class="nav-number">3.3.</span> <span class="nav-text">Cookie属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建Cookie"><span class="nav-number">3.4.</span> <span class="nav-text">创建Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie更新"><span class="nav-number">3.5.</span> <span class="nav-text">Cookie更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie删除"><span class="nav-number">3.6.</span> <span class="nav-text">Cookie删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从请求中获取Cookie"><span class="nav-number">3.7.</span> <span class="nav-text">从请求中获取Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie同源与跨域"><span class="nav-number">3.8.</span> <span class="nav-text">Cookie同源与跨域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie数量-amp-大小限制及处理策略"><span class="nav-number">3.9.</span> <span class="nav-text">Cookie数量&amp;大小限制及处理策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Session"><span class="nav-number">4.</span> <span class="nav-text">Session</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#session机制原理"><span class="nav-number">4.1.</span> <span class="nav-text">session机制原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HttpSession"><span class="nav-number">4.2.</span> <span class="nav-text">HttpSession</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建session"><span class="nav-number">4.3.</span> <span class="nav-text">创建session</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生命周期"><span class="nav-number">4.4.</span> <span class="nav-text">生命周期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#session的有效期"><span class="nav-number">4.5.</span> <span class="nav-text">session的有效期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式session"><span class="nav-number">4.6.</span> <span class="nav-text">分布式session</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GuoLei Song</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>|
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+-->
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共132.4k字</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

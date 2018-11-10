@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="SOFATracer,OpenTracing,Disruptor,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="glmapper" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="OpenTraceing 规范 OpenTracing语义标准 语义惯例 官方文档  SOFATracer 对 OpenTraceing 的实现 SOFATracer  就是根据 OpenTracing 规范 衍生出来的分布式 链路跟 踪的解决方案。   GitHub SOFATrcer  概念OpenTracing 标准中有三个重要的相互关联的类型，分别是Tracer, Span和 SpanCo">
+<meta name="keywords" content="SOFATracer,OpenTracing,Disruptor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SOFATracer 中 Disruptor 实践">
+<meta property="og:url" content="http://yoursite.com/2018/11/10/sofatracerone/index.html">
+<meta property="og:site_name" content="glmapper">
+<meta property="og:description" content="OpenTraceing 规范 OpenTracing语义标准 语义惯例 官方文档  SOFATracer 对 OpenTraceing 的实现 SOFATracer  就是根据 OpenTracing 规范 衍生出来的分布式 链路跟 踪的解决方案。   GitHub SOFATrcer  概念OpenTracing 标准中有三个重要的相互关联的类型，分别是Tracer, Span和 SpanCo">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/4/16504080427c32c5?w=1046&h=768&f=png&s=52527">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/4/165040897c8cd0fd?w=429&h=184&f=png&s=70264">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/4/165040ee8a2eae73?w=1240&h=750&f=png&s=312558">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/4/1650414723061ce7?w=992&h=744&f=png&s=310780">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/4/1650415d0682db8f?w=1934&h=560&f=png&s=203628">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/4/165041aeac0dc066?w=576&h=158&f=png&s=40516">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/4/165041c4514a3102?w=1060&h=1012&f=png&s=80785">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/4/1650426cfb443c99?w=1088&h=708&f=png&s=1217313">
+<meta property="og:updated_time" content="2018-11-10T04:31:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SOFATracer 中 Disruptor 实践">
+<meta name="twitter:description" content="OpenTraceing 规范 OpenTracing语义标准 语义惯例 官方文档  SOFATracer 对 OpenTraceing 的实现 SOFATracer  就是根据 OpenTracing 规范 衍生出来的分布式 链路跟 踪的解决方案。   GitHub SOFATrcer  概念OpenTracing 标准中有三个重要的相互关联的类型，分别是Tracer, Span和 SpanCo">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/8/4/16504080427c32c5?w=1046&h=768&f=png&s=52527">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/10/sofatracerone/">
+
+
+
+
+
+  <title>SOFATracer 中 Disruptor 实践 | glmapper</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/glmapper" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">glmapper</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">大家都喊我磊叔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/10/sofatracerone/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="GuoLei Song">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="glmapper">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SOFATracer 中 Disruptor 实践</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-10T12:26:20+08:00">
+                2018-11-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/链路跟踪/" itemprop="url" rel="index">
+                    <span itemprop="name">链路跟踪</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="OpenTraceing-规范"><a href="#OpenTraceing-规范" class="headerlink" title="OpenTraceing 规范"></a>OpenTraceing 规范</h2><ul>
+<li><a href="https://github.com/opentracing-contrib/opentracing-specification-zh/blob/master/specification.md" target="_blank" rel="noopener">OpenTracing语义标准</a></li>
+<li><a href="https://github.com/opentracing-contrib/opentracing-specification-zh/blob/master/semantic_conventions.md" target="_blank" rel="noopener">语义惯例</a></li>
+<li><a href="http://opentracing.io/documentation/pages/spec" target="_blank" rel="noopener">官方文档</a></li>
+</ul>
+<h2 id="SOFATracer-对-OpenTraceing-的实现"><a href="#SOFATracer-对-OpenTraceing-的实现" class="headerlink" title="SOFATracer 对 OpenTraceing 的实现"></a>SOFATracer 对 OpenTraceing 的实现</h2><blockquote>
+<p>SOFATracer  就是根据 OpenTracing 规范 衍生出来的分布式 链路跟 踪的解决方案。</p>
+</blockquote>
+<ul>
+<li><a href="https://github.com/alipay/sofa-tracer" target="_blank" rel="noopener">GitHub SOFATrcer</a></li>
+</ul>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p><code>OpenTracing</code> 标准中有三个重要的相互关联的类型，分别是<code>Tracer</code>, <code>Span</code>和 <code>SpanContext</code>。</p>
+<blockquote>
+<p>【下面的概念说明过程中，如不做说明，所使用的案例代码均以SOFATracer中的实现为例。】</p>
+</blockquote>
+<h3 id="Tracer"><a href="#Tracer" class="headerlink" title="Tracer"></a>Tracer</h3><p>一个 <code>trace</code> 代表一个潜在的，分布式的，存在并行数据或并行执行轨迹（潜在的分布式、并行）的系统。一个<code>trace</code>可以认为是多个<code>span</code>的有向无环图（<code>DAG</code>）。</p>
+<p>Tracer接口用来创建Span，以及处理如何处理Inject(serialize) 和 Extract (deserialize)，用于跨进程边界传递。</p>
+<p><code>SOFATracer</code> 中 <code>SofaTracer</code>这个类实现了 <code>opentracing</code> 的 <code>Tracer</code> 接口，并在此规范接口上做了一些扩展。看下<code>Tracer</code> 中声明的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Tracer</span> </span>&#123;</span><br><span class="line">    <span class="comment">//启动一个新的span</span></span><br><span class="line">    <span class="function">SpanBuilder <span class="title">buildSpan</span><span class="params">(String operationName)</span></span>;</span><br><span class="line">    <span class="comment">//将SpanContext上下文Inject（注入）到carrier</span></span><br><span class="line">    &lt;C&gt; <span class="function"><span class="keyword">void</span> <span class="title">inject</span><span class="params">(SpanContext spanContext, Format&lt;C&gt; format, C carrier)</span></span>;</span><br><span class="line">    <span class="comment">//将SpanContext上下文从carrier中Extract（提取）</span></span><br><span class="line">    &lt;C&gt; <span class="function">SpanContext <span class="title">extract</span><span class="params">(Format&lt;C&gt; format, C carrier)</span></span>;   </span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">SpanBuilder</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 省略</span></span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以从接口定义来看，要实现一个Tracer，必须要实现其以下的几个能力：</p>
+<h4 id="启动一个新的span"><a href="#启动一个新的span" class="headerlink" title="启动一个新的span"></a>启动一个新的span</h4><p><code>SOFATracer</code> 实现了 <code>Tracer</code> 中 <code>buildSpan</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> SpanBuilder <span class="title">buildSpan</span><span class="params">(String operationName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> SofaTracerSpanBuilder(operationName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>operationName</code> :操作名称，字符串类型，表示由Span完成的工作 (例如，RPC方法名称、函数名称或一个较大的计算任务中的阶段的名称)。操作名称应该用泛化的字符串形式标识出一个Span实例。</p>
+<p>何为泛化的字符串形式，比如现在有一个操作：获取用户 ；下面有几种标识方式：</p>
+<ul>
+<li>1、/get</li>
+<li>2、/get/user</li>
+<li>3、/get/user/123</li>
+</ul>
+<p>方式1过于抽象，方式3过于具体。方式2是正确的操作名。</p>
+<h4 id="将SpanContext上下文Inject（注入）到carrier"><a href="#将SpanContext上下文Inject（注入）到carrier" class="headerlink" title="将SpanContext上下文Inject（注入）到carrier"></a>将SpanContext上下文Inject（注入）到carrier</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> &lt;C&gt; <span class="function"><span class="keyword">void</span> <span class="title">inject</span><span class="params">(SpanContext spanContext, Format&lt;C&gt; format, C carrier)</span> </span>&#123;</span><br><span class="line">    RegistryExtractorInjector&lt;C&gt; registryInjector = TracerFormatRegistry.getRegistry(format);</span><br><span class="line">    <span class="keyword">if</span> (registryInjector == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Unsupported injector format: "</span> + format);</span><br><span class="line">    &#125;</span><br><span class="line">    registryInjector.inject((SofaTracerSpanContext) spanContext, carrier);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>SpanContext</code> :实例</li>
+<li><code>format</code>（格式化）描述，一般会是一个字符串常量，但不做强制要求。通过此描述，通知Tracer实现，如何对SpanContext进行编码放入到carrier中。<br>carrier，根据format确定。Tracer实现根据format声明的格式，将SpanContext序列化到carrier对象中。</li>
+</ul>
+<blockquote>
+<p>RegistryExtractorInjector 见后面</p>
+</blockquote>
+<h4 id="将SpanContext上下文从carrier中Extract（提取）"><a href="#将SpanContext上下文从carrier中Extract（提取）" class="headerlink" title="将SpanContext上下文从carrier中Extract（提取）"></a>将SpanContext上下文从carrier中Extract（提取）</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> &lt;C&gt; <span class="function">SpanContext <span class="title">extract</span><span class="params">(Format&lt;C&gt; format, C carrier)</span> </span>&#123;</span><br><span class="line">    RegistryExtractorInjector&lt;C&gt; registryExtractor = TracerFormatRegistry.getRegistry(format);</span><br><span class="line">    <span class="keyword">if</span> (registryExtractor == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Unsupported extractor format: "</span> + format);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> registryExtractor.extract(carrier);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>格式描述符(<code>format descriptor</code>)(通常但不一定是字符串常量)，告诉<code>Tracer</code>的实现如何在载体对象中对<code>SpanContext</code>进行编码</li>
+<li>载体(<code>carrier</code>)，其类型由格式描述符指定<code>。Tracer</code>的实现将根据格式描述对此载体对象中的<code>SpanContext</code>进行编码</li>
+</ul>
+<p>返回一个<code>SpanContext</code>实例，可以使用这个<code>SpanContext</code>实例，通过<code>Tracer</code>创建新的<code>Span</code>。</p>
+<h4 id="Format"><a href="#Format" class="headerlink" title="Format"></a>Format</h4><p>从<code>Tracer</code>的注入和提取来看，<code>format</code>都是必须的。</p>
+<p><code>Inject</code>（注入）和<code>Extract</code>（提取）依赖于可扩展的<code>format</code>参数。<code>forma</code>t参数规定了另一个参数<code>&quot;carrier&quot;</code>的类型，同时约束了<code>&quot;carrier&quot;</code>中<code>SpanContext</code>是如何编码的。所有的<code>Tracer</code>实现，都必须支持下面的<code>format</code>。</p>
+<ul>
+<li><code>Text Map</code>: 基于字符串：字符串的<code>map</code>,对于<code>key</code>和<code>value</code>不约束字符集。</li>
+<li><code>HTTP Headers</code>: 适合作为<code>HTTP</code>头信息的，基于字符串：字符串的<code>map</code>。（<code>RFC 7230.</code>在工程实践中，如何处理<code>HTTP</code>头具有多样性，强烈建议<code>tracer</code>的使用者谨慎使用<code>HTTP</code>头的键值空间和转义符）</li>
+<li><code>Binary</code>: 一个简单的二进制大对象，记录<code>SpanContext</code>的信息。</li>
+</ul>
+<p>在上面的注入和提取代码中，有如下代码片段：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//注入</span></span><br><span class="line">RegistryExtractorInjector&lt;C&gt; registryInjector  = </span><br><span class="line">    TracerFormatRegistry.getRegistry(format);</span><br><span class="line"><span class="comment">//提取</span></span><br><span class="line">RegistryExtractorInjector&lt;C&gt; registryExtractor = </span><br><span class="line">    TracerFormatRegistry.getRegistry(format);</span><br></pre></td></tr></table></figure>
+<p>来通过<code>TracerFormatRegistry</code>这个类来来看下 <code>SOFATracer</code> 中的 <code>Format</code> 的具体实现。</p>
+<h4 id="X-B3"><a href="#X-B3" class="headerlink" title="X-B3"></a>X-B3</h4><p>在看<code>Format</code>之前，先了解下<code>X-B3</code>。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Expose-Headers</span>: </span><br><span class="line"><span class="attribute">X-B3-TraceId,X-B3-ParentSpanId,X-B3-SpanId</span></span><br></pre></td></tr></table></figure>
+<p><code>HTTP</code>请求时其<code>span</code>参数通过<code>http headers</code>来传递追踪信息；<code>header</code>中对应的<code>key</code>分别是:</p>
+<ul>
+<li>X-B3-TraceId: 64 encoded bits（id被encode为hex Strings）</li>
+<li>X-B3-SpanId : 64 encoded bits</li>
+<li>X-B3-ParentSpanId: 64 encoded bits</li>
+<li>X-B3-Sampled:(是否采样) Boolean (either “1” or “0”)（下面的调用是否进行采样）</li>
+<li>X-B3-Flags:a Long</li>
+</ul>
+<h4 id="SOFATracer-中的-Format"><a href="#SOFATracer-中的-Format" class="headerlink" title="SOFATracer 中的 Format"></a>SOFATracer 中的 Format</h4><p>具体代码在 <code>tracer-core -&gt; com.alipay.common.tracer.core.registy</code> 包下:</p>
+<ul>
+<li>TextMapFormatter</li>
+<li>TextMapB3Formatter</li>
+<li>HttpHeadersFormatter</li>
+<li>HttpHeadersB3Formatter</li>
+<li>BinaryFormater</li>
+</ul>
+<p><strong>BinaryFormater</strong>：这个的注入和提取实现没有编解码一说；本身就是基于二进制流的操作。</p>
+<p><strong>TextMapB3Formatter/TextMapFormatter</strong> 和 <strong>HttpHeadersB3Formatter/HttpHeadersFormatter</strong> 区别就在于编解码不同。<code>HttpHeadersB3Formatter</code>使用的是 <code>URLDecoder.decode</code> &amp;&amp; <code>URLDecoder.encode</code> ; <code>TextMapB3Formatter</code> 返回的是值本身（如果为空或者<code>null</code>则返回空字符串）。</p>
+<p><strong>TextMapFormatter</strong>和<strong>TextMapB3Formatter</strong>区别在于注入或者提取是使用的<code>key</code>不用。<code>TextMapB3Formatter</code>中使用的是 <code>x-b3-{}</code> 的字符串作为<code>key</code>。</p>
+<h3 id="Span"><a href="#Span" class="headerlink" title="Span"></a>Span</h3><p>一个<code>span</code>代表系统中具有开始时间和执行时长的逻辑运行单元。<code>span</code>之间通过嵌套或者顺序排列建立逻辑因果关系。当<code>Span</code>结束后(<code>span.finish()</code>)，除了通过<code>Span</code>获取<code>SpanContext</code>外，下列其他所有方法都不允许被调用。</p>
+<p>同样先来看下<code>opentracing</code>规范<code>api</code> 定义的 <code>span</code> 的定义及方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Span</span> <span class="keyword">extends</span> <span class="title">Closeable</span> </span>&#123;</span><br><span class="line">    <span class="function">SpanContext <span class="title">context</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">finish</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">finish</span><span class="params">(<span class="keyword">long</span> finishMicros)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">setTag</span><span class="params">(String key, String value)</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">setTag</span><span class="params">(String key, <span class="keyword">boolean</span> value)</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">setTag</span><span class="params">(String key, Number value)</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">log</span><span class="params">(Map&lt;String, ?&gt; fields)</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">log</span><span class="params">(<span class="keyword">long</span> timestampMicroseconds, Map&lt;String, ?&gt; fields)</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">log</span><span class="params">(String event)</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">log</span><span class="params">(<span class="keyword">long</span> timestampMicroseconds, String event)</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">setBaggageItem</span><span class="params">(String key, String value)</span></span>;</span><br><span class="line">    <span class="function">String <span class="title">getBaggageItem</span><span class="params">(String key)</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">setOperationName</span><span class="params">(String operationName)</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">log</span><span class="params">(String eventName, <span class="comment">/* @Nullable */</span> Object payload)</span></span>;</span><br><span class="line">    <span class="function">Span <span class="title">log</span><span class="params">(<span class="keyword">long</span> timestampMicroseconds, String eventName, <span class="comment">/* @Nullable */</span> Object payload)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="通过Span获取SpanContext"><a href="#通过Span获取SpanContext" class="headerlink" title="通过Span获取SpanContext"></a>通过Span获取SpanContext</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SOFATracerSpan</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> SpanContext <span class="title">context</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.sofaTracerSpanContext;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回值，<code>Span</code>构建时传入的<code>SpanContext</code>。这个返回值在<code>Span</code>结束后(<code>span.finish()</code>)，依然可以使用。</p>
+<h4 id="复写操作名"><a href="#复写操作名" class="headerlink" title="复写操作名"></a>复写操作名</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Span <span class="title">setOperationName</span><span class="params">(String operationName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.operationName = operationName;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>operationName</strong>:新的操作名，覆盖构建<code>Span</code>时，传入的操作名。</p>
+<h4 id="结束Span"><a href="#结束Span" class="headerlink" title="结束Span"></a>结束Span</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">finish</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.finish(System.currentTimeMillis());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">finish</span><span class="params">(<span class="keyword">long</span> endTime)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.setEndTime(endTime);</span><br><span class="line">    <span class="comment">//关键记录:report span</span></span><br><span class="line">    <span class="keyword">this</span>.sofaTracer.reportSpan(<span class="keyword">this</span>);</span><br><span class="line">    SpanExtensionFactory.logStoppedSpan(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有一个可选参数，如果指定完成时间则使用当前指定的时间；如果省略此参数，使用当前时间作为完成时间。<code>finish</code>方法中会将当前<code>span</code>进行<code>report</code>操作。</p>
+<h4 id="为Span设置tag"><a href="#为Span设置tag" class="headerlink" title="为Span设置tag"></a>为Span设置tag</h4><p><code>Tag</code>是一个<code>key:value</code>格式的数据。<code>key</code>必须是<code>String</code>类型，<code>value</code>可以是<strong>字符串、布尔或者数字</strong>。</p>
+<ul>
+<li>字符串类型的value 设置tag</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Span <span class="title">setTag</span><span class="params">(String key, String value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (StringUtils.isBlank(key) || StringUtils.isBlank(value)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.tagsWithStr.put(key, value);</span><br><span class="line">    <span class="comment">//注意:server 还是 client 在 OpenTracing 标准中是用 tags 标识的,所以在这里进行判断</span></span><br><span class="line">    <span class="keyword">if</span> (isServer()) &#123;</span><br><span class="line">        Reporter serverReporter = <span class="keyword">this</span>.sofaTracer.getServerReporter();</span><br><span class="line">        <span class="keyword">if</span> (serverReporter != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">this</span>.setLogType(serverReporter.getReporterType());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isClient()) &#123;</span><br><span class="line">        Reporter clientReporter = <span class="keyword">this</span>.sofaTracer.getClientReporter();</span><br><span class="line">        <span class="keyword">if</span> (clientReporter != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">this</span>.setLogType(clientReporter.getReporterType());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>布尔类型的value 设置tag</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Span <span class="title">setTag</span><span class="params">(String key, <span class="keyword">boolean</span> value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.tagsWithBool.put(key, value);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>数字类型的value 设置tag</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Span <span class="title">setTag</span><span class="params">(String key, Number number)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (number == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.tagsWithNumber.put(key, number);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Log结构化数据"><a href="#Log结构化数据" class="headerlink" title="Log结构化数据"></a>Log结构化数据</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Span <span class="title">log</span><span class="params">(<span class="keyword">long</span> currentTime, Map&lt;String, ?&gt; map)</span> </span>&#123;</span><br><span class="line">    AssertUtils.isTrue(currentTime &gt;= startTime, <span class="string">"current time must greater than start time"</span>);</span><br><span class="line">    <span class="keyword">this</span>.logs.add(<span class="keyword">new</span> LogData(currentTime, map));</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Span <span class="title">log</span><span class="params">(Map&lt;String, ?&gt; map)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.log(System.currentTimeMillis(), map);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Map&lt;String, ?&gt; map</strong> : 键必须是字符串类型，值可以是任意类型</li>
+<li><strong>currentTime</strong> : 时间戳。如果指定时间戳，那么它必须在<code>span</code>的开始和结束时间之内。</li>
+</ul>
+<h4 id="设置一个baggage（随行数据）元素"><a href="#设置一个baggage（随行数据）元素" class="headerlink" title="设置一个baggage（随行数据）元素"></a>设置一个baggage（随行数据）元素</h4><p><code>Baggage</code>元素是一个键值对集合，将这些值设置给给定的<code>Span</code>，<code>Span</code>的<code>SpanContext</code>，以及所有和此<code>Span</code>有直接或者间接关系的本地<code>Span</code>。 也就是说，<code>baggage</code>元素随<code>trace</code>一起保持在带内传递。（译者注：带内传递，在这里指，随应用程序调用过程一起传递）</p>
+<p><code>Baggage</code>元素为<code>OpenTracing</code>的实现全栈集成，提供了强大的功能 （例如：任意的应用程序数据，可以在移动端创建它，显然的，它会一直传递了系统最底层的存储系统。由于它如此强大的功能，他也会产生巨大的开销，请小心使用此特性。</p>
+<p>再次强调，请谨慎使用此特性。每一个键值都会被拷贝到每一个本地和远程的下级相关的<code>span</code>中，因此，总体上，他会有明显的网络和<code>CPU</code>开销。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Span <span class="title">setBaggageItem</span><span class="params">(String key, String value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.sofaTracerSpanContext.setBizBaggageItem(key, value);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="SofaTracerSpan-中的属性"><a href="#SofaTracerSpan-中的属性" class="headerlink" title="SofaTracerSpan 中的属性"></a>SofaTracerSpan 中的属性</h4><ul>
+<li>sofaTracer  : 当前 tracer</li>
+<li>spanReferences : 当前span的关系，ChildOf(引用) or FollowsFrom（跟随）</li>
+<li>tagsWithStr : String 类型的tag 集合</li>
+<li>tagsWithBool : 布尔类型的tag集合</li>
+<li>tagsWithNumber : 数值类型的tag集合</li>
+<li>logs : log结构化数据列表，通过span.log（map）操作的map,均存储在logs中。</li>
+<li>operationName：当前span的操作名</li>
+<li>sofaTracerSpanContext：当前 spanContext</li>
+<li>startTime : 当前span 开始时间</li>
+<li>endTime  : 当前span 结束时间，在finish方法中传入。</li>
+<li>logType : report时才有意义:摘要日志类型,日志能够正确打印的关键信息；当前 span 的日志类型,如:客户端为 rpc-client-digest.log,服务端为 rpc-server-digest.log</li>
+<li>parentSofaTracerSpan：父亲 span,当作为客户端结束并弹出线程上下文时,需要将父亲 span 再放入</li>
+</ul>
+<h4 id="SpanContext"><a href="#SpanContext" class="headerlink" title="SpanContext"></a>SpanContext</h4><p><code>opentracing</code> 中 <code>SpanContext</code> 接口中只有一个<code>baggageItems</code>方法，通过这个方法来遍历所有的<code>baggage</code>元素。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">SpanContext</span> </span>&#123;</span><br><span class="line">    Iterable&lt;Map.Entry&lt;String, String&gt;&gt; baggageItems();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>相对于<code>OpenTracing</code>中其他的功能，<code>SpanContext</code>更多的是一个“概念”。也就是说，<code>OpenTracing</code>实现中，需要重点考虑，并提供一套自己的<code>API</code>。</p>
+<p><code>OpenTracing</code>的使用者仅仅需要，在创建<code>span</code>、向传输协议<code>Inject</code>（注入）和从传输协议中<code>Extract</code>（提取）时，使用<code>SpanContext</code>和<code>references</code>，</p>
+<p><code>OpenTracing</code>要求，<code>SpanContext</code>是不可变的，目的是防止由于<code>Span</code>的结束和相互关系，造成的复杂生命周期问题。</p>
+<h2 id="Disruptor-简介"><a href="#Disruptor-简介" class="headerlink" title="Disruptor 简介"></a>Disruptor 简介</h2><blockquote>
+<p>A High Performance Inter-Thread Messaging Library 高性能的线程间消息传递库</p>
+</blockquote>
+<p>关于 Disruptor 的 一些原理分析可以参考：<a href="https://ifeve.com/disruptor/" target="_blank" rel="noopener">disruptor</a></p>
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><p>先通过 <code>Disruptor</code> 的一个小例子来有个直观的认识；先看下它的构造函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Disruptor</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> EventFactory&lt;T&gt; eventFactory,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> <span class="keyword">int</span> ringBufferSize,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> ThreadFactory threadFactory,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> ProducerType producerType,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> WaitStrategy waitStrategy)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(</span><br><span class="line">        RingBuffer.create(producerType, eventFactory, ringBufferSize, waitStrategy),</span><br><span class="line">        <span class="keyword">new</span> BasicExecutor(threadFactory));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>eventFactory : 在环形缓冲区中创建事件的 <code>factory</code></li>
+<li>ringBufferSize:环形缓冲区的大小，必须是2的幂。</li>
+<li>threadFactory：用于为处理器创建线程。</li>
+<li>producerType：生成器类型以支持使用正确的<code>sequencer</code>和<code>publisher</code>创建<code>RingBuffer</code>；枚举类型，<code>SINGLE</code>、<code>MULTI</code>两个项。对应于 <code>SingleProducerSequencer</code>和<code>MultiProducerSequencer</code>两种<code>Sequencer</code>。</li>
+<li>waitStrategy : 等待策略；</li>
+</ul>
+<p>如果我们想构造一个<code>disruptor</code>,那么我们就需要上面的这些组件。从<code>eventFactory</code>来看，还需要一个具体的<code>Event</code>来作为消息事件的载体。【下面按照官方给的案例进行简单的修改作为示例】</p>
+<h3 id="消息事件-LongEvent-，能够被消费的数据载体"><a href="#消息事件-LongEvent-，能够被消费的数据载体" class="headerlink" title="消息事件 LongEvent ，能够被消费的数据载体"></a>消息事件 LongEvent ，能够被消费的数据载体</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LongEvent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> value;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">long</span> value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="创建消息事件的factory"><a href="#创建消息事件的factory" class="headerlink" title="创建消息事件的factory"></a>创建消息事件的factory</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LongEventFactory</span> <span class="keyword">implements</span> <span class="title">EventFactory</span>&lt;<span class="title">LongEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LongEvent <span class="title">newInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> LongEvent();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ConsumerThreadFactory"><a href="#ConsumerThreadFactory" class="headerlink" title="ConsumerThreadFactory"></a>ConsumerThreadFactory</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerThreadFactory</span> <span class="keyword">implements</span> <span class="title">ThreadFactory</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AtomicInteger index = <span class="keyword">new</span> AtomicInteger(<span class="number">1</span>);</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Thread <span class="title">newThread</span><span class="params">(Runnable r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Thread(r, <span class="string">"disruptor-thread-"</span> + index.getAndIncrement());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>OK ，上面的这些可以满足创建一个<code>disruptor</code>了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> ringBufferCapacity = <span class="number">8</span>;</span><br><span class="line"><span class="comment">//消息事件生产Factory</span></span><br><span class="line">LongEventFactory longEventFactory = <span class="keyword">new</span> LongEventFactory();</span><br><span class="line"><span class="comment">//执行事件处理器线程Factory</span></span><br><span class="line">ConsumerThreadFactory consumerThreadFactory = <span class="keyword">new</span> ConsumerThreadFactory();</span><br><span class="line"><span class="comment">//用于环形缓冲区的等待策略。</span></span><br><span class="line">WaitStrategy waitStrategy = <span class="keyword">new</span> BlockingWaitStrategy();</span><br><span class="line"></span><br><span class="line"><span class="comment">//构建disruptor</span></span><br><span class="line">Disruptor&lt;LongEvent&gt; disruptor = <span class="keyword">new</span> Disruptor&lt;&gt;(</span><br><span class="line">    longEventFactory,</span><br><span class="line">    ringBufferCapacity,</span><br><span class="line">    longEventThreadFactory,</span><br><span class="line">    ProducerType.SINGLE,</span><br><span class="line">    waitStrategy);</span><br></pre></td></tr></table></figure>
+<p>现在是已经有了 <code>disruptor</code> 了，然后通过：<code>start</code> 来启动：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//启动 disruptor</span></span><br><span class="line"> disruptor.start();</span><br></pre></td></tr></table></figure>
+<p>到这里，已经构建了一个<code>disruptor</code>；但是目前怎么使用它来发布消息和消费消息呢？</p>
+<h3 id="发布消息"><a href="#发布消息" class="headerlink" title="发布消息"></a>发布消息</h3><p>下面在 <code>for</code> 循环中 发布 5 条数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">RingBuffer&lt;LongEvent&gt; ringBuffer = disruptor.getRingBuffer();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">long</span> l = <span class="number">0</span>; l &lt; <span class="number">5</span>; l++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">long</span> sequence = ringBuffer.next();</span><br><span class="line">    LongEvent event = ringBuffer.get(sequence);</span><br><span class="line">    event.set(<span class="number">100</span>+l);</span><br><span class="line">    System.out.println(<span class="string">"publish event :"</span> + l);</span><br><span class="line">    ringBuffer.publish(sequence);</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消息已经发布，下面需要设定当前<code>disruptor</code>的消费处理器。前面已经有个<code>LongEvent</code> 和 <code>EventFactory</code> ; 在<code>disruptor</code>中是通过 <code>EventHandler</code> 来进行消息消费的。</p>
+<h3 id="编写消费者代码"><a href="#编写消费者代码" class="headerlink" title="编写消费者代码"></a>编写消费者代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LongEventHandler</span> <span class="keyword">implements</span> <span class="title">EventHandler</span>&lt;<span class="title">LongEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(LongEvent event, <span class="keyword">long</span> sequence, <span class="keyword">boolean</span> endOfBatch)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Event: "</span> + event.getValue()+<span class="string">" -&gt; "</span> + Thread.currentThread().getName());</span><br><span class="line">        Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将 <code>eventHandler</code> 设置到 <code>disruptor</code> 的处理链上</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将处理事件的事件处理程序 -&gt; 消费事件的处理程序</span></span><br><span class="line">LongEventHandler longEventHandler = <span class="keyword">new</span> LongEventHandler();</span><br><span class="line">disruptor.handleEventsWith(longEventHandler);</span><br></pre></td></tr></table></figure>
+<h3 id="运行结果（这里）："><a href="#运行结果（这里）：" class="headerlink" title="运行结果（这里）："></a>运行结果（这里）：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">publish event :0</span><br><span class="line">Event: 0 -&gt; disruptor-thread-1</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :1</span><br><span class="line">Event: 1 -&gt; disruptor-thread-1</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :2</span><br><span class="line">Event: 2 -&gt; disruptor-thread-1</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :3</span><br><span class="line">Event: 3 -&gt; disruptor-thread-1</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :4</span><br><span class="line">Event: 4 -&gt; disruptor-thread-1</span><br><span class="line">--------------------------------&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="基本概念和原理"><a href="#基本概念和原理" class="headerlink" title="基本概念和原理"></a>基本概念和原理</h2><h3 id="Disruptor"><a href="#Disruptor" class="headerlink" title="Disruptor"></a>Disruptor</h3><p>整个基于<code>ringBuffer</code>实现的生产者消费者模式的容器。主要属性</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> RingBuffer&lt;T&gt; ringBuffer;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Executor executor;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ConsumerRepository&lt;T&gt; consumerRepository = <span class="keyword">new</span> ConsumerRepository&lt;&gt;();</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> AtomicBoolean started = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line"><span class="keyword">private</span> ExceptionHandler&lt;? <span class="keyword">super</span> T&gt; exceptionHandler = <span class="keyword">new</span> ExceptionHandlerWrapper&lt;&gt;();</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>ringBuffer</code>：内部持有一个 <code>RingBuffer</code> 对象，<code>Disruptor</code> 内部的事件发布都是依赖这个<code>RingBuffer</code>对象完成的。</li>
+<li><code>executor</code>：消费事件的线程池</li>
+<li><code>consumerRepository</code>：提供存储库机制，用于将<code>EventHandler</code>与<code>EventProcessor</code>关联起来</li>
+<li><code>started</code> : 用于标志当前<code>Disruptor</code>是否已经启动</li>
+<li><code>exceptionHandler</code> : 异常处理器，用于处理<code>BatchEventProcessor</code>事件周期中 <code>uncaught exceptions</code> 。</li>
+</ul>
+<h3 id="RingBuffer"><a href="#RingBuffer" class="headerlink" title="RingBuffer"></a>RingBuffer</h3><p>环形队列[实现上是一个数组]，可以类比为<code>BlockingQueue</code>之类的队列，<code>ringBuffer</code>的使用，使得内存被循环使用，减少了某些场景的内存分配回收扩容等耗时操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">RingBuffer</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">RingBufferFields</span>&lt;<span class="title">E</span>&gt; </span></span><br><span class="line"><span class="class"><span class="keyword">implements</span> <span class="title">Cursored</span>, <span class="title">EventSequencer</span>&lt;<span class="title">E</span>&gt;, <span class="title">EventSink</span>&lt;<span class="title">E</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>E：在事件的交换或并行协调期间存储用于共享的数据的实现 -&gt; 消息事件</li>
+</ul>
+<h3 id="Sequencer"><a href="#Sequencer" class="headerlink" title="Sequencer"></a>Sequencer</h3><p> <code>RingBuffer</code> 中 生产者的顶级父接口，其直接实现有<code>SingleProducerSequencer</code>和<code>MultiProducerSequencer</code>；对应 <code>SINGLE</code>、<code>MULTI</code> 两个枚举值。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/8/4/16504080427c32c5?w=1046&amp;h=768&amp;f=png&amp;s=52527" alt=""></p>
+<h3 id="EventHandler"><a href="#EventHandler" class="headerlink" title="EventHandler"></a>EventHandler</h3><p>事件处置器，改接口用于对外扩展来实现具体的消费逻辑。如上面 <code>demo</code> 中的 <code>LongEventHandler</code> ;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//回调接口，用于处理&#123;@link RingBuffer&#125;中可用的事件</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">EventHandler</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(T event, <span class="keyword">long</span> sequence, <span class="keyword">boolean</span> endOfBatch)</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>event</code> : <code>RingBuffer</code> 已经发布的事件</li>
+<li><code>sequence</code> : 正在处理的事件 的序列号</li>
+<li><code>endOfBatch</code> : 用来标识否是来自 <code>RingBuffer</code> 的批次中的最后一个事件</li>
+</ul>
+<h3 id="SequenceBarrier"><a href="#SequenceBarrier" class="headerlink" title="SequenceBarrier"></a>SequenceBarrier</h3><p>消费者路障。规定了消费者如何向下走。事实上，该路障算是变向的锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ProcessingSequenceBarrier</span> <span class="keyword">implements</span> <span class="title">SequenceBarrier</span> </span>&#123;</span><br><span class="line">    <span class="comment">//当等待（探测）的需要不可用时，等待的策略</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WaitStrategy waitStrategy;</span><br><span class="line">    <span class="comment">//依赖的其它Consumer的序号，这个用于依赖的消费的情况，</span></span><br><span class="line">    <span class="comment">//比如A、B两个消费者，只有A消费完，B才能消费。</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sequence     dependentSequence;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span>   alerted = <span class="keyword">false</span>;</span><br><span class="line">    <span class="comment">//Ringbuffer的写入指针</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sequence     cursorSequence;</span><br><span class="line">    <span class="comment">//RingBuffer对应的Sequencer</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sequencer    sequencer;</span><br><span class="line">    <span class="comment">//exclude method</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>waitStrategy</code> 决定了消费者采用何种等待策略。</p>
+<h3 id="WaitStrategy"><a href="#WaitStrategy" class="headerlink" title="WaitStrategy"></a>WaitStrategy</h3><blockquote>
+<p>Strategy employed for making {@link EventProcessor}s wait on a cursor {@link Sequence}.</p>
+</blockquote>
+<p><code>EventProcessor</code> 的等待策略；具体实现在 <code>disruptor</code> 中有8种，</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/8/4/165040897c8cd0fd?w=429&amp;h=184&amp;f=png&amp;s=70264" alt=""></p>
+<p>这些等待策略不同的核心体现是在如何实现 <code>waitFor</code> 这个方法上。</p>
+<h3 id="EventProcessor"><a href="#EventProcessor" class="headerlink" title="EventProcessor"></a>EventProcessor</h3><p>事件处理器，实际上可以理解为消费者模型的框架，实现了线程<code>Runnable</code>的<code>run</code>方法，将循环判断等操作封在了里面。该接口有三个实现类:</p>
+<p><strong>1、BatchEventProcessor</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">BatchEventProcessor</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">EventProcessor</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AtomicBoolean           running          = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">private</span> ExceptionHandler&lt;? <span class="keyword">super</span> T&gt;   exceptionHandler = <span class="keyword">new</span> FatalExceptionHandler();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> DataProvider&lt;T&gt;         dataProvider;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> SequenceBarrier         sequenceBarrier;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> EventHandler&lt;? <span class="keyword">super</span> T&gt; eventHandler;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sequence                sequence         = <span class="keyword">new</span> Sequence(                                      Sequencer.INITIAL_CURSOR_VALUE);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> TimeoutHandler          timeoutHandler;</span><br><span class="line">    <span class="comment">//exclude method</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>ExceptionHandler：异常处理器</li>
+<li>DataProvider：数据来源，对应 <code>RingBuffer</code></li>
+<li>EventHandler：处理 <code>Event</code> 的回调对象</li>
+<li>SequenceBarrier：对应的序号屏障</li>
+<li>TimeoutHandler：超时处理器，默认情况为空，如果要设置，只需要要将关联的<code>EventHandler</code>实现<code>TimeOutHandler</code>即可。</li>
+</ul>
+<p>如果我们选择使用 <code>EventHandler</code> 的时候，默认使用的就是 <code>BatchEventProcessor</code>，它与<code>EventHandler</code>是一一对应，并且是单线程执行。</p>
+<p>如果某个<code>RingBuffer</code>有多个<code>BatchEventProcessor</code>，那么就会每个<code>BatchEventProcessor</code>对应一个线程。</p>
+<p><strong>2、WorkProcessor</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">WorkProcessor</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">EventProcessor</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AtomicBoolean running = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sequence sequence = <span class="keyword">new</span> Sequence(Sequencer.INITIAL_CURSOR_VALUE);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RingBuffer&lt;T&gt; ringBuffer;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> SequenceBarrier  sequenceBarrier;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WorkHandler&lt;? <span class="keyword">super</span> T&gt; workHandler;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ExceptionHandler&lt;? <span class="keyword">super</span> T&gt; exceptionHandler;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sequence workSequence;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> EventReleaser eventReleaser = <span class="keyword">new</span> EventReleaser() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">release</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                sequence.set(Long.MAX_VALUE);</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> TimeoutHandler timeoutHandler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>基本和 <code>BatchEventProcessor</code> 类似，不同在于，用于处理<code>Event</code>的回调对象是<code>WorkHandler</code>。</p>
+<h3 id="原理图"><a href="#原理图" class="headerlink" title="原理图"></a>原理图</h3><p><img src="https://user-gold-cdn.xitu.io/2018/8/4/165040ee8a2eae73?w=1240&amp;h=750&amp;f=png&amp;s=312558" alt=""></p>
+<h2 id="无消费者情况下，生产者保持生产，但是-remainingCapacity-保持不变"><a href="#无消费者情况下，生产者保持生产，但是-remainingCapacity-保持不变" class="headerlink" title="无消费者情况下，生产者保持生产，但是 remainingCapacity 保持不变"></a>无消费者情况下，生产者保持生产，但是 <code>remainingCapacity</code> 保持不变</h2><p>在写<code>demo</code>的过程中，本来想通过不设定 消费者 来观察 <code>RingBuffer</code> 可用容量变化的。但是验证过程中，一直得不到预期的结果，(注：没有设置消费者，只有生产者)，先看结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">publish event :0</span><br><span class="line">bufferSie:8</span><br><span class="line">remainingCapacity:8</span><br><span class="line">cursor:0</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :1</span><br><span class="line">bufferSie:8</span><br><span class="line">remainingCapacity:8</span><br><span class="line">cursor:1</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :2</span><br><span class="line">bufferSie:8</span><br><span class="line">remainingCapacity:8</span><br><span class="line">cursor:2</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :3</span><br><span class="line">bufferSie:8</span><br><span class="line">remainingCapacity:8</span><br><span class="line">cursor:3</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :4</span><br><span class="line">bufferSie:8</span><br><span class="line">remainingCapacity:8</span><br><span class="line">cursor:4</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :5</span><br><span class="line">bufferSie:8</span><br><span class="line">remainingCapacity:8</span><br><span class="line">cursor:5</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :6</span><br><span class="line">bufferSie:8</span><br><span class="line">remainingCapacity:8</span><br><span class="line">cursor:6</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :7</span><br><span class="line">bufferSie:8</span><br><span class="line">remainingCapacity:8</span><br><span class="line">cursor:7</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :8</span><br><span class="line">bufferSie:8</span><br><span class="line">remainingCapacity:8</span><br><span class="line">cursor:8</span><br><span class="line">--------------------------------&gt;</span><br><span class="line">publish event :9</span><br><span class="line">bufferSie:8</span><br><span class="line">remainingCapacity:8</span><br><span class="line">cursor:9</span><br><span class="line">--------------------------------&gt;</span><br></pre></td></tr></table></figure>
+<p>从结果来看，<code>remainingCapacity</code> 的值应该随着 发布的数量 递减的；但是实际上它并没有发生任何变化。</p>
+<p>来看下<code>ringBuffer.remainingCapacity()</code> 这个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Get the remaining capacity for this ringBuffer.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> The number of slots remaining.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">remainingCapacity</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sequencer.remainingCapacity();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里面又使用 <code>sequencer.remainingCapacity()</code>这个方法来计算的。上面的例子中使用的是<code>ProducerType.SINGLE</code>，那来看<code>SingleProducerSequencer</code> 这个里面<code>remainingCapacity</code>的实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">remainingCapacity</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//上次申请完毕的序列值</span></span><br><span class="line">    <span class="keyword">long</span> nextValue = <span class="keyword">this</span>.nextValue;</span><br><span class="line">    <span class="comment">//计算当前已经消费到的序列值</span></span><br><span class="line">    <span class="keyword">long</span> consumed = Util.getMinimumSequence(gatingSequences, nextValue);</span><br><span class="line">    <span class="comment">//当前生产到的序列值</span></span><br><span class="line">    <span class="keyword">long</span> produced = nextValue;</span><br><span class="line">    <span class="keyword">return</span> getBufferSize() - (produced - consumed);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>来解释下这段代码的含义：</p>
+<p>假设当前 <code>ringBuffer</code> 的 <code>bufferSize</code> 是 8 ；上次申请到的序列号是 5，其实也就是说已经生产过占用的序列号是5；假设当前已经消费到的序列号是 3，那么剩余的容量为： 8-（5-2） = 5；</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/8/4/1650414723061ce7?w=992&amp;h=744&amp;f=png&amp;s=310780" alt=""></p>
+<p>因为这里我们可以确定 <code>bufferSize</code> 和 <code>produced</code> 的值了，那么 <code>remainingCapacity</code> 的结果就取决于<code>getMinimumSequence</code>的计算结果了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">getMinimumSequence</span><span class="params">(<span class="keyword">final</span> Sequence[] sequences, <span class="keyword">long</span> minimum)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, n = sequences.length; i &lt; n; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">long</span> value = sequences[i].get();</span><br><span class="line">        minimum = Math.min(minimum, value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> minimum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法是从 <code>Sequence</code> 数组中获取最小序列 。如果<code>sequences</code> 为空，则返回 <code>minimum</code>。回到上一步，看下<code>sequences</code>这个数组是从哪里过来的，它的值在哪里设置的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> consumed = Util.getMinimumSequence(gatingSequences, nextValue);</span><br></pre></td></tr></table></figure>
+<p><code>gatingSequences</code>是 <code>SingleProducerSequencer</code>父类  <code>AbstractSequencer</code> 中的成员变量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">volatile</span> Sequence[] gatingSequences = <span class="keyword">new</span> Sequence[<span class="number">0</span>];</span><br></pre></td></tr></table></figure>
+<p><code>gatingSequences</code> 是在下面这个方法里面来管理的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> Sequencer#addGatingSequences(Sequence...)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">addGatingSequences</span><span class="params">(Sequence... gatingSequences)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    SequenceGroups.addSequences(<span class="keyword">this</span>, SEQUENCE_UPDATER, <span class="keyword">this</span>, gatingSequences);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法的调用栈向前追溯有这几个地方调用了：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/8/4/1650415d0682db8f?w=1934&amp;h=560&amp;f=png&amp;s=203628" alt=""></p>
+<p><code>WorkerPool</code>来管理多个消费者；<code>hangdlerEventsWith</code> 这个方法也是用来设置消费者的。但是在上面的测试案例中我们是想通过不设定消费者 只设定生成者 来观察 环形队列的占用情况，所以<code>gatingSequences</code> 会一直是空的，因此在计算时会把 <code>produced</code> 的值作为 <code>minimum</code> 返回。这样每次计算就相当于：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> getBufferSize() - (produced - produced) === getBufferSize();</span><br></pre></td></tr></table></figure>
+<p>也就验证了为何在不设定消费者的情况下，<code>remainingCapacity</code> 的值会一直保持不变。</p>
+<h2 id="SOFATracer-中-Disruptor-实践"><a href="#SOFATracer-中-Disruptor-实践" class="headerlink" title="SOFATracer 中 Disruptor 实践"></a>SOFATracer 中 Disruptor 实践</h2><p><code>SOFATracer</code>中，<code>AsyncCommonDigestAppenderManager</code> 对 <code>disruptor</code> 进行了封装，用于处理外部组件的<code>Tracer</code>摘要日志。该部分借助 <code>AsyncCommonDigestAppenderManager</code> 的源码来分析下<code>SOFATracer</code>如何使用<code>disruptor</code>的。</p>
+<p><code>SOFATracer</code>中使用了两种不同的事件模型，一种是<code>SOFATracer</code>内部使用的 <code>StringEvent</code> , 一种是 外部扩展使用的 <code>SofaTacerSpanEvent</code>。这里以 <code>SofaTacerSpanEvent</code> 这种事件模型来分析。<code>StringEvent</code> 消息事件模型对应的是 <code>AsyncCommonAppenderManager</code> 类封装的<code>disruptor</code>。</p>
+<h3 id="SofaTracerSpanEvent-gt-LongEvent"><a href="#SofaTracerSpanEvent-gt-LongEvent" class="headerlink" title="SofaTracerSpanEvent ( -&gt; LongEvent)"></a>SofaTracerSpanEvent ( -&gt; LongEvent)</h3><p>定义消息事件模型，<code>SofaTacerSpanEvent</code> 和 前面 <code>demo</code> 中的 <code>LongEvent</code> 基本结构是一样的，主要是内部持有的消息数据不同，<code>LongEvent</code> 中是一个<code>long</code>类型的数据，<code>SofaTacerSpanEvent</code>中持有的是 <code>SofaTracerSpan</code> 。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SofaTracerSpanEvent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> SofaTracerSpan sofaTracerSpan;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> SofaTracerSpan <span class="title">getSofaTracerSpan</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sofaTracerSpan;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSofaTracerSpan</span><span class="params">(SofaTracerSpan sofaTracerSpan)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.sofaTracerSpan = sofaTracerSpan;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Consumer-gt-LongEventHandler"><a href="#Consumer-gt-LongEventHandler" class="headerlink" title="Consumer ( -&gt; LongEventHandler)"></a>Consumer ( -&gt; LongEventHandler)</h3><p><code>Consumer</code> 是 <code>AsyncCommonDigestAppenderManager</code> 的内部类;实现了 <code>EventHandler</code> 接口，这个<code>consumer</code>就是作为消费者存在的。</p>
+<p>在<code>AsyncCommonAppenderManager</code>中也有一个，这个地方个人觉得可以抽出去，这样可以使得<code>AsyncCommonDigestAppenderManager/AsyncCommonAppenderManager</code>的代码看起来更干净；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> <span class="keyword">implements</span> <span class="title">EventHandler</span>&lt;<span class="title">SofaTracerSpanEvent</span>&gt; </span>&#123;</span><br><span class="line">       <span class="comment">//日志类型集合，非该集合内的日志类型将不会被处理</span></span><br><span class="line">        <span class="keyword">protected</span> Set&lt;String&gt; logTypes = Collections.synchronizedSet(<span class="keyword">new</span> HashSet&lt;String&gt;());</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(SofaTracerSpanEvent event, <span class="keyword">long</span> sequence, <span class="keyword">boolean</span> endOfBatch)</span></span></span><br><span class="line"><span class="function">                                <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="comment">// 拿到具体的消息数据 sofaTracerSpan</span></span><br><span class="line">            SofaTracerSpan sofaTracerSpan = event.getSofaTracerSpan();</span><br><span class="line">            <span class="comment">// 如果没有数据，则不做任何处理</span></span><br><span class="line">            <span class="keyword">if</span> (sofaTracerSpan != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    String logType = sofaTracerSpan.getLogType();</span><br><span class="line">                    <span class="comment">// 验证当前日志类型是否可以被当前consumer消费</span></span><br><span class="line">                    <span class="keyword">if</span> (logTypes.contains(logType)) &#123;</span><br><span class="line">                        <span class="comment">// 获取编码类型</span></span><br><span class="line">                        SpanEncoder encoder = contextEncoders.get(logType);</span><br><span class="line">                        <span class="comment">//获取 appender</span></span><br><span class="line">                        TraceAppender appender = appenders.get(logType);</span><br><span class="line">                        <span class="comment">// 对数据进行编码处理</span></span><br><span class="line">                        String encodedStr = encoder.encode(sofaTracerSpan);</span><br><span class="line">                        <span class="keyword">if</span> (appender <span class="keyword">instanceof</span> LoadTestAwareAppender) &#123;</span><br><span class="line">                            ((LoadTestAwareAppender) appender).append(encodedStr,</span><br><span class="line">                                TracerUtils.isLoadTest(sofaTracerSpan));</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            appender.append(encodedStr);</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">// 刷新缓冲区，日志输出</span></span><br><span class="line">                        appender.flush();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                   <span class="comment">// 异常省略</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addLogType</span><span class="params">(String logType)</span> </span>&#123;</span><br><span class="line">            logTypes.add(logType);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="SofaTracerSpanEventFactory-（-gt-LongEventFactory）"><a href="#SofaTracerSpanEventFactory-（-gt-LongEventFactory）" class="headerlink" title="SofaTracerSpanEventFactory （-&gt; LongEventFactory）"></a>SofaTracerSpanEventFactory （-&gt; LongEventFactory）</h3><p>用于产生消息事件的 <code>Factory</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SofaTracerSpanEventFactory</span> <span class="keyword">implements</span> <span class="title">EventFactory</span>&lt;<span class="title">SofaTracerSpanEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SofaTracerSpanEvent <span class="title">newInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SofaTracerSpanEvent();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ConsumerThreadFactory-gt-LongEventThreadFactory"><a href="#ConsumerThreadFactory-gt-LongEventThreadFactory" class="headerlink" title="ConsumerThreadFactory (-&gt; LongEventThreadFactory )"></a>ConsumerThreadFactory (-&gt; LongEventThreadFactory )</h3><p>用来产生消费线程的 <code>Factory</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerThreadFactory</span> <span class="keyword">implements</span> <span class="title">ThreadFactory</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String workName;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getWorkName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> workName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setWorkName</span><span class="params">(String workName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.workName = workName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Thread <span class="title">newThread</span><span class="params">(Runnable runnable)</span> </span>&#123;</span><br><span class="line">        Thread worker = <span class="keyword">new</span> Thread(runnable, <span class="string">"Tracer-AsyncConsumer-Thread-"</span> + workName);</span><br><span class="line">        worker.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">        <span class="keyword">return</span> worker;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="构建disruptor"><a href="#构建disruptor" class="headerlink" title="构建disruptor"></a>构建disruptor</h3><p><code>disruptor</code> 的构建是在 <code>AsyncCommonDigestAppenderManager</code> 的构造函数中完成的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AsyncCommonDigestAppenderManager</span><span class="params">(<span class="keyword">int</span> queueSize, <span class="keyword">int</span> consumerNumber)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 使用这个计算来保证realQueueSize是2的次幂（返回当前 大于等于queueSize的最小的2的次幂数 ）</span></span><br><span class="line">    <span class="keyword">int</span> realQueueSize = <span class="number">1</span> &lt;&lt; (<span class="number">32</span> - Integer.numberOfLeadingZeros(queueSize - <span class="number">1</span>));</span><br><span class="line">    <span class="comment">//构建disruptor，使用的是 ProducerType.MULTI</span></span><br><span class="line">    <span class="comment">//等待策略是 BlockingWaitStrategy</span></span><br><span class="line">    disruptor = <span class="keyword">new</span> Disruptor&lt;SofaTracerSpanEvent&gt;(<span class="keyword">new</span> SofaTracerSpanEventFactory(),</span><br><span class="line">        realQueueSize, threadFactory, ProducerType.MULTI, <span class="keyword">new</span> BlockingWaitStrategy());</span><br><span class="line">    <span class="comment">//消费者列表</span></span><br><span class="line">    <span class="keyword">this</span>.consumers = <span class="keyword">new</span> ArrayList&lt;Consumer&gt;(consumerNumber);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; consumerNumber; i++) &#123;</span><br><span class="line">        Consumer consumer = <span class="keyword">new</span> Consumer();</span><br><span class="line">        consumers.add(consumer);</span><br><span class="line">        <span class="comment">//设置异常处理程序</span></span><br><span class="line">        disruptor.setDefaultExceptionHandler(<span class="keyword">new</span> ConsumerExceptionHandler());</span><br><span class="line">        <span class="comment">//绑定消费者</span></span><br><span class="line">        disruptor.handleEventsWith(consumer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//是否允许丢弃，从配置文件获取</span></span><br><span class="line">    <span class="keyword">this</span>.allowDiscard = Boolean.parseBoolean(SofaTracerConfiguration.getProperty(</span><br><span class="line">        SofaTracerConfiguration.TRACER_ASYNC_APPENDER_ALLOW_DISCARD, DEFAULT_ALLOW_DISCARD));</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (allowDiscard) &#123;</span><br><span class="line">        <span class="comment">//是否记录丢失日志的数量</span></span><br><span class="line">        <span class="keyword">this</span>.isOutDiscardNumber = Boolean.parseBoolean(SofaTracerConfiguration.getProperty(</span><br><span class="line">            SofaTracerConfiguration.TRACER_ASYNC_APPENDER_IS_OUT_DISCARD_NUMBER,</span><br><span class="line">            DEFAULT_IS_OUT_DISCARD_NUMBER));</span><br><span class="line">        <span class="comment">//是否记录丢失日志的TraceId和RpcId</span></span><br><span class="line">        <span class="keyword">this</span>.isOutDiscardId = Boolean.parseBoolean(SofaTracerConfiguration.getProperty(</span><br><span class="line">            SofaTracerConfiguration.TRACER_ASYNC_APPENDER_IS_OUT_DISCARD_ID,</span><br><span class="line">            DEFAULT_IS_OUT_DISCARD_ID));</span><br><span class="line">        <span class="comment">//丢失日志的数量达到该阈值进行一次日志输出</span></span><br><span class="line">        <span class="keyword">this</span>.discardOutThreshold = Long.parseLong(SofaTracerConfiguration.getProperty(</span><br><span class="line">            SofaTracerConfiguration.TRACER_ASYNC_APPENDER_DISCARD_OUT_THRESHOLD,</span><br><span class="line">            DEFAULT_DISCARD_OUT_THRESHOLD));</span><br><span class="line">        <span class="keyword">if</span> (isOutDiscardNumber) &#123;</span><br><span class="line">            <span class="keyword">this</span>.discardCount = <span class="keyword">new</span> PaddedAtomicLong(<span class="number">0L</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="启动-disruptor"><a href="#启动-disruptor" class="headerlink" title="启动 disruptor"></a>启动 disruptor</h3><p><code>disruptor</code>的启动委托给了<code>AsyncCommonDigestAppenderManager</code> 的<code>start</code>方法来执行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(<span class="keyword">final</span> String workerName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.threadFactory.setWorkName(workerName);</span><br><span class="line">    <span class="keyword">this</span>.ringBuffer = <span class="keyword">this</span>.disruptor.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>来看下，<code>SOFATracer</code> 中 具体是在哪里调用这个<code>start</code> 的：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/8/4/165041aeac0dc066?w=576&amp;h=158&amp;f=png&amp;s=40516" alt=""></p>
+<ul>
+<li><code>CommonTracerManager</code> : 这个里面持有了<code>AsyncCommonDigestAppenderManager</code> 类的一个单例对象，并且是<code>static</code> 静态代码块中调用了<code>start</code>方法；这个用来输出普通日志。</li>
+<li><code>SofaTracerDigestReporterAsyncManager</code>：这里类里面也是持有了<code>AsyncCommonDigestAppenderManager</code> 类的一个单例对像，并且提供了<code>getSofaTracerDigestReporterAsyncManager</code>方法来获取该单例，在这个方法中调用了<code>start</code>方法；该对象用来输出摘要日志。</li>
+</ul>
+<h3 id="发布事件"><a href="#发布事件" class="headerlink" title="发布事件"></a>发布事件</h3><p>前面的<code>demo</code>中是通过一个<code>for</code>循环来发布事件的，在 <code>SOFATracer</code> 中 的事件发布无非就是当有<code>Tracer</code>日志需要输出时会触发发布，那么对应的就是日志的 <code>append</code> 操作，将日志 <code>append</code> 到环形缓冲区。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">append</span><span class="params">(SofaTracerSpan sofaTracerSpan)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> sequence = <span class="number">0L</span>;</span><br><span class="line">    <span class="comment">//是否允许丢弃</span></span><br><span class="line">    <span class="keyword">if</span> (allowDiscard) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//允许丢弃就使用tryNext尝试申请序列，申请不到抛出异常</span></span><br><span class="line">            sequence = ringBuffer.tryNext();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InsufficientCapacityException e) &#123;</span><br><span class="line">            <span class="comment">//是否输出丢失日志的TraceId和RpcId</span></span><br><span class="line">            <span class="keyword">if</span> (isOutDiscardId) &#123;</span><br><span class="line">                SofaTracerSpanContext sofaTracerSpanContext = sofaTracerSpan</span><br><span class="line">                    .getSofaTracerSpanContext();</span><br><span class="line">                <span class="keyword">if</span> (sofaTracerSpanContext != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    SynchronizingSelfLog.warn(<span class="string">"discarded tracer: traceId["</span></span><br><span class="line">                                              + sofaTracerSpanContext.getTraceId()</span><br><span class="line">                                              + <span class="string">"];spanId["</span> + sofaTracerSpanContext.getSpanId()</span><br><span class="line">                                              + <span class="string">"]"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">             <span class="comment">//是否输出丢失日志的数量</span></span><br><span class="line">            <span class="keyword">if</span> ((isOutDiscardNumber) &amp;&amp; discardCount.incrementAndGet() == discardOutThreshold) &#123;</span><br><span class="line">                discardCount.set(<span class="number">0</span>);</span><br><span class="line">                <span class="keyword">if</span> (isOutDiscardNumber) &#123;</span><br><span class="line">                    SynchronizingSelfLog.warn(<span class="string">"discarded "</span> + discardOutThreshold + <span class="string">" logs"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 不允许丢弃则使用next方法</span></span><br><span class="line">        sequence = ringBuffer.next();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        SofaTracerSpanEvent event = ringBuffer.get(sequence);</span><br><span class="line">        event.setSofaTracerSpan(sofaTracerSpan);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        SynchronizingSelfLog.error(<span class="string">"fail to add event"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//发布</span></span><br><span class="line">    ringBuffer.publish(sequence);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SOFATracer 事件发布的调用逻辑：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/8/4/165041c4514a3102?w=1060&amp;h=1012&amp;f=png&amp;s=80785" alt=""></p>
+<p>追溯调用的流程，可以知道当前 <code>span</code> 调用 <code>finish</code>时或者 <code>SOFATracer</code>中调用<code>reportSpan</code>时 就相当于发布了一个消息事件。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文对 <code>SOFATracer</code> 中使用 <code>Disruptor</code> 来进行日志输出的代码进行了简单的分析，更多内部细节原理可以自行看下<code>SOFATracer</code>的代码。<code>SOFATracer</code> 作为一种比较底层的中间件组件，在实际的业务开发中基本是无法感知的。但是作为技术来学习，还是有很多点可以挖一挖。</p>
+<p><a href="https://github.com/alipay/sofa-tracer" target="_blank" rel="noopener">SOFATracer GitHub 传送门</a>。</p>
+<blockquote>
+<p>如果有小伙伴对中间件感兴趣，欢迎加入我们团队，欢迎来撩；对 SOFA 技术体系有兴趣的可以关注我们 <a href="https://github.com/alipay" target="_blank" rel="noopener">ALIPAY SOFA 社区</a>；附团队镇楼图。</p>
+</blockquote>
+<p><img src="https://user-gold-cdn.xitu.io/2018/8/4/1650426cfb443c99?w=1088&amp;h=708&amp;f=png&amp;s=1217313" alt=""></p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------生活本该如此，本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SOFATracer/" rel="tag"><i class="fa fa-tag"></i> SOFATracer</a>
+          
+            <a href="/tags/OpenTracing/" rel="tag"><i class="fa fa-tag"></i> OpenTracing</a>
+          
+            <a href="/tags/Disruptor/" rel="tag"><i class="fa fa-tag"></i> Disruptor</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/10/resttemplate1/" rel="next" title="聊一聊 RestTemplate">
+                <i class="fa fa-chevron-left"></i> 聊一聊 RestTemplate
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/10/logone/" rel="prev" title="看完这个不会配置 logback ，请你吃瓜！">
+                看完这个不会配置 logback ，请你吃瓜！ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">GuoLei Song</p>
+              <p class="site-description motion-element" itemprop="description">从平凡的世界中全身而退</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/glmapper" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.weibo.com/u/2412872703" target="_blank" title="微博">
+                      
+                        <i class="fa fa-fw fa-Weibo"></i>微博</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://juejin.im/user/58fcc0768d6d810058965a06" target="_blank" title="掘金">
+                      
+                        <i class="fa fa-fw fa-spinner"></i>掘金</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenTraceing-规范"><span class="nav-number">1.</span> <span class="nav-text">OpenTraceing 规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SOFATracer-对-OpenTraceing-的实现"><span class="nav-number">2.</span> <span class="nav-text">SOFATracer 对 OpenTraceing 的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概念"><span class="nav-number">2.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tracer"><span class="nav-number">2.2.</span> <span class="nav-text">Tracer</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#启动一个新的span"><span class="nav-number">2.2.1.</span> <span class="nav-text">启动一个新的span</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#将SpanContext上下文Inject（注入）到carrier"><span class="nav-number">2.2.2.</span> <span class="nav-text">将SpanContext上下文Inject（注入）到carrier</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#将SpanContext上下文从carrier中Extract（提取）"><span class="nav-number">2.2.3.</span> <span class="nav-text">将SpanContext上下文从carrier中Extract（提取）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Format"><span class="nav-number">2.2.4.</span> <span class="nav-text">Format</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#X-B3"><span class="nav-number">2.2.5.</span> <span class="nav-text">X-B3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SOFATracer-中的-Format"><span class="nav-number">2.2.6.</span> <span class="nav-text">SOFATracer 中的 Format</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Span"><span class="nav-number">2.3.</span> <span class="nav-text">Span</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#通过Span获取SpanContext"><span class="nav-number">2.3.1.</span> <span class="nav-text">通过Span获取SpanContext</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复写操作名"><span class="nav-number">2.3.2.</span> <span class="nav-text">复写操作名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结束Span"><span class="nav-number">2.3.3.</span> <span class="nav-text">结束Span</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为Span设置tag"><span class="nav-number">2.3.4.</span> <span class="nav-text">为Span设置tag</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Log结构化数据"><span class="nav-number">2.3.5.</span> <span class="nav-text">Log结构化数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置一个baggage（随行数据）元素"><span class="nav-number">2.3.6.</span> <span class="nav-text">设置一个baggage（随行数据）元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SofaTracerSpan-中的属性"><span class="nav-number">2.3.7.</span> <span class="nav-text">SofaTracerSpan 中的属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SpanContext"><span class="nav-number">2.3.8.</span> <span class="nav-text">SpanContext</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Disruptor-简介"><span class="nav-number">3.</span> <span class="nav-text">Disruptor 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案例"><span class="nav-number">4.</span> <span class="nav-text">案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#消息事件-LongEvent-，能够被消费的数据载体"><span class="nav-number">4.1.</span> <span class="nav-text">消息事件 LongEvent ，能够被消费的数据载体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建消息事件的factory"><span class="nav-number">4.2.</span> <span class="nav-text">创建消息事件的factory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConsumerThreadFactory"><span class="nav-number">4.3.</span> <span class="nav-text">ConsumerThreadFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发布消息"><span class="nav-number">4.4.</span> <span class="nav-text">发布消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写消费者代码"><span class="nav-number">4.5.</span> <span class="nav-text">编写消费者代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果（这里）："><span class="nav-number">4.6.</span> <span class="nav-text">运行结果（这里）：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念和原理"><span class="nav-number">5.</span> <span class="nav-text">基本概念和原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Disruptor"><span class="nav-number">5.1.</span> <span class="nav-text">Disruptor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RingBuffer"><span class="nav-number">5.2.</span> <span class="nav-text">RingBuffer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sequencer"><span class="nav-number">5.3.</span> <span class="nav-text">Sequencer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EventHandler"><span class="nav-number">5.4.</span> <span class="nav-text">EventHandler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SequenceBarrier"><span class="nav-number">5.5.</span> <span class="nav-text">SequenceBarrier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WaitStrategy"><span class="nav-number">5.6.</span> <span class="nav-text">WaitStrategy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EventProcessor"><span class="nav-number">5.7.</span> <span class="nav-text">EventProcessor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原理图"><span class="nav-number">5.8.</span> <span class="nav-text">原理图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无消费者情况下，生产者保持生产，但是-remainingCapacity-保持不变"><span class="nav-number">6.</span> <span class="nav-text">无消费者情况下，生产者保持生产，但是 remainingCapacity 保持不变</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SOFATracer-中-Disruptor-实践"><span class="nav-number">7.</span> <span class="nav-text">SOFATracer 中 Disruptor 实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SofaTracerSpanEvent-gt-LongEvent"><span class="nav-number">7.1.</span> <span class="nav-text">SofaTracerSpanEvent ( -&gt; LongEvent)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consumer-gt-LongEventHandler"><span class="nav-number">7.2.</span> <span class="nav-text">Consumer ( -&gt; LongEventHandler)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SofaTracerSpanEventFactory-（-gt-LongEventFactory）"><span class="nav-number">7.3.</span> <span class="nav-text">SofaTracerSpanEventFactory （-&gt; LongEventFactory）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConsumerThreadFactory-gt-LongEventThreadFactory"><span class="nav-number">7.4.</span> <span class="nav-text">ConsumerThreadFactory (-&gt; LongEventThreadFactory )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建disruptor"><span class="nav-number">7.5.</span> <span class="nav-text">构建disruptor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动-disruptor"><span class="nav-number">7.6.</span> <span class="nav-text">启动 disruptor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发布事件"><span class="nav-number">7.7.</span> <span class="nav-text">发布事件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">8.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GuoLei Song</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>|
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+-->
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共132.4k字</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
