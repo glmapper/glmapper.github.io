@@ -8,7 +8,6 @@
         <category>架构之路</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>设计模式</tag>
       </tags>
   </entry>
@@ -20,7 +19,6 @@
         <category>架构之路</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>设计模式</tag>
       </tags>
   </entry>
@@ -32,7 +30,6 @@
         <category>架构之路</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>设计模式</tag>
       </tags>
   </entry>
@@ -280,7 +277,6 @@
         <category>架构之路</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>设计模式</tag>
       </tags>
   </entry>
@@ -303,7 +299,6 @@
         <category>架构之路</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>设计模式</tag>
       </tags>
   </entry>
@@ -315,7 +310,6 @@
         <category>架构之路</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>设计模式</tag>
       </tags>
   </entry>
@@ -395,26 +389,25 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[菜鸟成长系列-多态、接口和抽象类]]></title>
+    <title><![CDATA[多态、接口和抽象类]]></title>
     <url>%2F2018%2F11%2F10%2Fglmapper-bird-two%2F</url>
     <content type="text"><![CDATA[面向对象的三大特性：封装、继承、多态。从一定角度来看，封装和继承几乎都是为多态而准备的。这是我们最后一个概念，也是最重要的知识点。 多态的定义：指允许不同类的对象对同一消息做出响应。即同一消息可以根据发送对象的不同而采用多种不同的行为方式。（发送消息就是函数调用） 动态绑定 静态绑定和动态绑定这里所谓的绑定，即一个方法的调用与方法所在的类（方法主体）关联起来。 静态绑定（前期绑定）：即在程序执行前，即编译的时候已经实现了该方法与所在类的绑定，像C就是静态绑定。 java中只有static，final，private和构造方法是静态绑定，其他的都属于动态绑定，而private的方法其实也是final方法（隐式），而构造 方法其实是一个static方法（隐式），所以可以看出把方法声明为final，第一可以让他不被重写，第二也可以关闭它的动态绑定。 动态绑定（后期绑定）：运行时根据对象的类型进行绑定，java中的大多数方法都是属于动态绑定，也就是实现多态的基础。 java实现了后期绑定，则必须提供一些机制，可在运行期间判断对象的类型，并分别调用适当的方法。 也就是说，编译的时候该方法不与所在类绑定，编译器此时依然不知道对象的类型，但方法调用机制能自己去调查，找到正确的方法主体。java里实现动态绑定的是JVM. 动态绑定是实现多态的技术，是指在执行期间判断所引用对象的实际类型，根据其实际的类型调用其相应的方法。 多态的作用消除类型之间的耦合关系。即：把不同的子类对象都当作父类来看，可以屏蔽不同子类对象之间的差异，写出通用的代码，做出通用的编程，以适应需求的不断变化。 多态存在的三个必要条件一、要有继承；二、要有重写；三、父类引用指向子类对象。 多态的优点1.可替换性（substitutability）。多态对已存在代码具有可替换性。2.可扩充性（extensibility）。多态对代码具有可扩充性。增加新的子类不影响已存在类的多态性、继承性，以及其他特性的运行和操作。实际上新加子类更容易获得多态功能。3.接口性（interface-ability）。多态是超类通过方法签名，向子类提供了一个共同接口，由子类来完善或者覆盖它而实现的。4.灵活性（flexibility）。它在应用中体现了灵活多样的操作，提高了使用效率。5.简化性（simplicity）。多态简化对应用软件的代码编写和修改过程，尤其在处理大量对象的运算和操作时，这个特点尤为突出和重要。 多态的实现方式Java中多态的实现方式： 接口实现 继承父类进行方法重写 同一个类中进行方法重载。例子无论工作还是学习中，笔都是我们经常用到的工具。但是笔的种类又非常的繁多，铅笔、签字笔、水笔、毛笔、钢笔…。现在我们要对“笔”进行抽象，抽象成一个抽象父类“Pen” 123456789101112131415161718192021222324252627282930313233343536373839404142434445package com.glmapper.demo.base;/** * 抽象父类：笔 * @author glmapper */public abstract class Pen &#123; //笔的长度 private int length; //颜色 private String color; //类型 private String type; //价格 private double price; //写字 public abstract void write(String cnt); public int getLength() &#123; return length; &#125; public void setLength(int length) &#123; this.length = length; &#125; public String getColor() &#123; return color; &#125; public void setColor(String color) &#123; this.color = color; &#125; public String getType() &#123; return type; &#125; public void setType(String type) &#123; this.type = type; &#125; public double getPrice() &#123; return price; &#125; public void setPrice(double price) &#123; this.price = price; &#125; &#125; 现在有两个子类，分别是：铅笔和钢笔。 铅笔类，继承父类Pen，并重写write方法1234567891011121314151617package com.glmapper.demo.base;/** * 铅笔类 继承父类 笔（满足必要条件一：有继承【其实如果是接口的话，implement实现也是可以的】） * @author glmapper * */public class Pencil extends Pen&#123; /** * 父类的抽象方法委托子类具体实现：覆盖 */ //满足必要条件二：要有重写【当然，如果是对于write有重载也是可以的，不同的概念而已】 @Override public void write(String cnt) &#123; System.out.println(&quot;这是一只铅笔写的内容，内容是：&quot;+cnt); &#125;&#125; 钢笔类，继承父类Pen，并重写write方法 1234567891011121314package com.glmapper.demo.base;/** * 钢笔类 继承父类 笔 * @author 17070738 * */public class Fountainpen extends Pen&#123; @Override public void write(String cnt) &#123; System.out.println(&quot;这是一支钢笔写的内容，内容是：&quot;+cnt); &#125;&#125; 测试： 12345678910111213package com.glmapper.demo.base;public class MainTest &#123; public static void main(String[] args) &#123; /* Pen pen= new Pencil();*/ //必要条件三：父类引用指向子类对象。 Pen pen= new Fountainpen(); pen.write(&quot;我是一支笔&quot;); &#125;&#125; 输出结果：这是一支钢笔写的内容，内容是：我是一支笔 说明可替换性：多态对笔Pen类工作，对其他任何子类，如铅笔、钢笔，也同样工作。可扩充性：在实现了铅笔、钢笔的多态基础上，很容易增添“笔”类的多态性。 接口一个Java接口，就是一些方法特征的集合。【本文角度并非是java基础角度来说，主要是以设计模式中的应用为背景，因此对于相关定义及用法请自行学习。http://www.runoob.com/java/java-interfaces.html】我们在平时的工作中，提到接口，一般会含有两种不同的含义， 指的是java接口，这是一种java语言中存在的结构，有特定的语法和结构 指一个类所具有的方法特征的集合，是一种逻辑上的抽象。 前者叫做“java接口”，后者叫着“接口”。例如：java.lang.Runnable就是一个java接口。 为什么使用接口我们考虑一下，假如没有接口会怎么样呢？一个类总归是可以通过继承来进行扩展的，这难道不足以我们的实际应用吗？一个对象需要知道其他的一些对象，并且与其他的对象发生相互的作用，这是因为这些对象需要借住于其他对象的行为以便于完成一项工作。这些关于其他对象的知识，以及对其他对象行为的调用，都是使用硬代码写在类里面的，可插入性几乎为0。如：钢笔中需要钢笔水，钢笔水有不同的颜色：钢笔水类：1234567891011121314151617181920212223package com.glmapper.demo.base;/** * 钢笔墨水 * @author glmapper */public class PenInk &#123; //墨水颜色 private String inkColor; public String getInkColor() &#123; return inkColor; &#125; public void setInkColor(String inkColor) &#123; this.inkColor = inkColor; &#125; public PenInk(String inkColor) &#123; super(); this.inkColor = inkColor; &#125; &#125; 钢笔中持有一个墨水类的对象引用： 123456789101112131415package com.glmapper.demo.base;/** * 钢笔类 继承父类 笔 * @author 17070738 * */public class Fountainpen extends Pen&#123; //引用持有 PenInk ink =new PenInk(&quot;black&quot;); @Override public void write(String cnt) &#123; System.out.println(&quot;钢笔墨水颜色是：&quot;+ink.getInkColor()); System.out.println(&quot;这是一支钢笔写的内容，内容是：&quot;+cnt); &#125;&#125; 但是这种时候，我们需要换一种颜色怎么办呢？就必须要对Fountainpen中的代码进行修改，将创建PenInk对象时的inkColor属性进行更改；现在假如我们有一个具体的类，提供某种使用硬代码写在类中的行为；现在，要提供一些类似的行为，并且可以实现动态的可插入，也就是说，要能够动态的决定使用哪一种实现。一种方案就是为这个类提供一个抽象父类，且声明出子类要提供的行为，然后让这个具体类继承自这个抽象父类。同时，为这个抽象父类提供另外一个具体的子类，这个子类以不同的方法实现了父类所声明的行为。客户端可以动态的决定使用哪一个具体的子类，这是否可以提供可插入性呢？改进之后的代码：子类1：黑色墨水1234567891011package com.glmapper.demo.base;/** * 黑色墨水 * @author glmapper */public class BlackInk extends PenInk&#123; public BlackInk() &#123; super(&quot;black&quot;); &#125;&#125; 子类2：蓝色墨水 1234567891011package com.glmapper.demo.base;/** * 蓝色墨水 * @author glmapper */public class BlueInk extends PenInk&#123; public BlueInk() &#123; super(&quot;blue&quot;); &#125;&#125; 钢笔类引用： 123456789101112131415161718package com.glmapper.demo.base;/** * 钢笔类 继承父类 笔 * @author 17070738 * */public class Fountainpen extends Pen&#123; PenInk ink ; //通过构造函数初始化PenInk ，PenInk由具体子类来实现 public Fountainpen(PenInk ink) &#123; this.ink = ink; &#125; @Override public void write(String cnt) &#123; System.out.println(&quot;钢笔墨水颜色是：&quot;+ink.getInkColor()); System.out.println(&quot;这是一支钢笔写的内容，内容是：&quot;+cnt); &#125;&#125; 客户端调用： 12345678public static void main(String[] args) &#123; /** * 使用黑色墨水子类 */ Pen pen= new Fountainpen(new BlackInk()); pen.write(&quot;我是一支笔&quot;); &#125; 从上面代码可以看出，确实可以在简单的情况下提供了动态可插入性。 但是由于java语言是一个单继承的语言，换言之，一个类只能有一个超类，因此，在很多情况下，这个具体类可能已经有了一个超类，这个时候，要给他加上一个新的超类是不可能的。如果硬要做的话，就只好把这个新的超类加到已有的超类上面，形成超超类的情况，如果这个超超类的位置也已经被占用了，就只好继续向上移动，直到移动到类等级结构的最顶端。这样一来，对一个具体类的可插入性设计，就变成了对整个等级结构中所有类的修改。这种还是假设这些超类是我们可以控制的，如果某些超类是由一些软件商提供的，我们无法修改，怎么办呢？因此，假设没有接口，可插入性就没有了保证。 类型java接口（以及java抽象类）用来声明一个新的类型。java设计师应当主要使用java接口和抽象类而不是具体类进行变量的类型声明、参数的类型声明、方法的返还类型声明，以及数据类型的转换等。当然，一个更好的做法是仅仅使用java接口，而不要使用抽象java类来做到上面这些。在理想的情况下，一个具体java类应当只实现java接口和抽象类中声明过的方法，而不应该给出多余的方法。 类型等级结构java接口（以及抽象类）一般用来作为一个类型的等级结构的起点java的类型是以类型等级结构的方式组织起来的，在一个类型等级结构里面，一个类型可以有一系列的超类型，这时这个类型叫做其超类型的子类型。子类型的关系是传递性：类型甲是类型乙的子类型，类型乙是类型丙的子类型，那么类型甲就是类型丙的子类型。 混合类型如果一个类已经有一个主要的超类型，那么通过实现一个接口，这个类可以拥有另一个次要的超类型。这种次要的超类型就叫做混合类型。例如：在java中， TreeMap类有多个类型，它的主要类型是AbstractMap,这是一种java的聚集；而Cloneable接口则给出了一个次要类型，这个类型说明当前类的对象是可以被克隆；同时Serializable也是一个次要类型，它表明当前类的对象是可以被序列化的。而NavigableMap继承了SortedMap,因为之前说到过，子类型是可以传递的，因此对于TreeMap来说，SortedMap（或者说NavigableMap）表明这个聚集类是可以排序的。 接口的一些用法 单接口方法：接口中只有一个方法；java语言中有很多但方法接口的使用，Runnalble接口中的run（）方法。 1234567891011121314public interface Runnable &#123; /** * When an object implementing interface &lt;code&gt;Runnable&lt;/code&gt; is used * to create a thread, starting the thread causes the object&apos;s * &lt;code&gt;run&lt;/code&gt; method to be called in that separately executing * thread. * &lt;p&gt; * The general contract of the method &lt;code&gt;run&lt;/code&gt; is that it may * take any action whatsoever. * * @see java.lang.Thread#run() */ public abstract void run();&#125; 标识接口：没有任何方法和属性的接口；标识接口不对实现它的类有任何语义上的要求，仅仅是表明实现该接口的类属于一个特定的类型。上面说到的Serializable接口就是一种标识接口。 12public interface Serializable &#123;&#125; 常量接口：用java接口来声明一些常量 12345package com.glmapper.demo.base;public interface MyConstants &#123; public static final String USER_NAME=&quot;admin&quot;;&#125;; 这样一来，凡是实现这个接口的类都会自动继承这些常量，并且都可以像使用自己的常量一样，不需要再用MyConstants.USER_NAME来使用。 抽象类在java语言里面，类有两种，一种是具体类，一种是抽象类。在上面给出的代码中，使用absract修饰的类为抽象类。没有被abstract修饰的类是具体类。抽象类通常代表一个抽象概念，它提供一个继承的出发点。而具体类则不同，具体类可以被实例化，应当给出一个有逻辑实现的对象模板。由于抽象类不可以被实例化，因此一个程序员设计一个新的抽象类，一定是用来被继承的。（不建议使用具体类来进行相关的继承）。 关于代码重构假设有两个具体类，类A和类B，类B是类A的子类，那么一个比较简单的方案应该是建立一个抽象类（或者java接口），暂定为C，然后让类A和类B成为抽象类C的子类【没有使用UML的方式来绘制，请见谅哈】。 上面其实就是里氏替换原则，后面会具体介绍到的。这种重构之后，我们需要做的就是如何处理类A和类B的共同代码和共同数据。下面给出相关准则。 抽象类应当拥有尽可能多的共同代码 在一个继承等级结构中，共同的代码应当尽量向结构的顶层移动，将重复的代码从子类中抽离，放在抽象父类中，提高代码的复用率。这样做的另外一个好处是，在代码发生改变时，我们只需要修改一个地方【因为共同代码均在父类中】。 抽象类应当拥有尽可能少的数据数据的移动方向是从抽象类到具体类，也就是从继承等级的顶层到底层的移动。我们知道，一个对象的数据不论是否使用都会占用资源，因此数据应当尽量放到具体类或者继承等级结构的低端。 Has - A 与Is -A当一个类是另外一个类的角色时【我 有一个 玩具】，这种关系就不应当使用继承来描述了，这个将会在后面说到的“合成/聚合复用原则”来描述。Has - A: 我有一只笔（聚合）Is - A:钢笔是一种笔（继承） 关于子类扩展父类的责任子类应当扩展父类的职责，而不是置换掉或者覆盖掉超类的职责。如果一个子类需要将继承自父类的责任取消或者置换后才能使用的话，就很有可能说明这个子类根本不属于当前父类的子类，存在设计上的缺陷。 最后，说明下，我们在平时的工作中会经常使用的工具类，再次特地申明一下，我们也尽可能少的去从工具类进行继承扩展。 参考： 《Java与模式》电子工业出版社出版，作者：阎宏。 http://www.runoob.com/java/java-interfaces.html]]></content>
       <categories>
-        <category>架构之路</category>
+        <category>java 基础</category>
       </categories>
       <tags>
         <tag>java</tag>
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[菜鸟成长系列-面向对象的四大基础特性]]></title>
+    <title><![CDATA[面向对象的四大基础特性]]></title>
     <url>%2F2018%2F11%2F10%2Fglmapper-bird-one%2F</url>
     <content type="text"><![CDATA[按照之前的学习规划，开始进行第一部分的学习。那么今天就重新认识一下JAVA中的四大特性：抽象、封装、继承、多态 抽象学习面向对象，抽象还是很重要的。面向对象最接近我们人类的思维，你的抽象能力就是你对万物万事总结和归纳的能力。关于抽象，就是从具体事物抽出、概括出它们共同的方面、本质属性与关系等，而将个别的、非本质的方面、属性与关系舍弃，这种思维过程，称为抽象。在JAVA中表现就是使用abstract来修饰类，被abstract修饰的类成为抽象类，一般是为了为子类提供一些共有的属性和行为，不同的子类根据自身的特性再进行具体的行为实现。 封装封装是面向对象的重要原则，就是把对象的属性和行为（方法）结合为一个独立的整体，并尽可能隐藏对象的内部实现细节；在java中，对于对象的内部属性一般用private来实现隐藏，并通过set和get方法对外提供访问接口。封装实际上是一种信息隐藏技术的实现方式。 对象的数据封装特性彻底消除了传统结构方法中数据与操作分离所带来的种种问题，提高了程序的可复用性和可维护性，降低了程序员保持数据与操作内容的负担。 对象的数据封装特性还可以把对象的私有数据和公共数据分离开，保护了私有数据，减少了可能的模块间干扰，达到降低程序复杂性、提高可控性的目的。 例如：对于客观存在的人这个对象进行属性和行为抽象【此处仅仅是部分抽象】；使用private关键字来修饰人的属性，并通过对应的set和get方法对外界提供访问入口；在行为方面，通过public关键字来修饰，对外提供具体的行为描述。外界对象并不知道“人”这个对象在内部发生了什么，仅仅是通过提供的方法来获得具体的描述信息。123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960/** * 人 * @author glmapper * */public class Person &#123; //姓名 private String name; //年龄 private int age; //性别 private String sex; //身高 private float high; //体重 private float weight; public String getName() &#123; return name; &#125; public void setName(String name) &#123; this.name = name; &#125; public int getAge() &#123; return age; &#125; public void setAge(int age) &#123; this.age = age; &#125; public String getSex() &#123; return sex; &#125; public void setSex(String sex) &#123; this.sex = sex; &#125; public float getHigh() &#123; return high; &#125; public void setHigh(float high) &#123; this.high = high; &#125; public float getWeight() &#123; return weight; &#125; public void setWeight(float weight) &#123; this.weight = weight; &#125; public void eat()&#123; System.out.println(&quot;吃东西&quot;); &#125; public void walk()&#123; System.out.println(&quot;走路&quot;); &#125; public void study()&#123; System.out.println(&quot;学习&quot;); &#125;&#125; 继承继承是面向对象最显著的一个特性，是从已有的类中派生出新的类，我们把它称之为子类，子类继承父类的属性和行为，并能根据自己的需求扩展出新的属性和行为，提高了代码的可复用性。 提高了代码的复用性。 让类与类之间产生了关系，给第三个特征多态提供了前提。 Java的继承通过extends关键字来实现，实现继承的类被称为子类，被继承的类称为父类(有的也称其为基类、超类)，父类和子类的关系，是一种一般和特殊的关系；子类扩展父类，将可以获得父类的全部属性和方法。 男人是人的一种，男人的特征是有胡子，因此也有剪胡子的行为【有胡子和剪胡子并非依赖关系；一个是属性，一个是行为】；但是男人继承了人这个父类，因此，男人也具有例如姓名、性别、身高、体重等属性，同时也具有父类人具有的吃饭、走路和学习的行为。123456789101112131415161718192021/** * 男人 * @author glmapper * */public class Man extends Person&#123; //胡子 private String goatee; public String getGoatee() &#123; return goatee; &#125; public void setGoatee(String goatee) &#123; this.goatee = goatee; &#125; public void shaved()&#123; System.out.println(&quot;剪胡子&quot;); &#125;&#125; 重写父类的方法：大部分的时候，子类总是以父类为基础，额外添加新的属性和方法。但有一种情况例外：子类需要重写父类的方法。例如男人吃东西比较快，女人吃东西比较慢，因此对于eat方法来说，Man可以覆盖父类的eat方法，来描述Man本身的特点。 1234@Overridepublic void eat()&#123; System.out.println(&quot;快速的吃东西&quot;);&#125; 当子父类中出现相同方法时，会先运行子类中的方法。重写的特点：方法名一样，访问修饰符权限不小于父类，返回类型一致，参数列表一致。 多态定义：指允许不同类的对象对同一消息做出响应。即同一消息可以根据发送对象的不同而采用多种不同的行为方式。（发送消息就是函数调用）实现多态的技术称为：动态绑定（dynamic binding），是指在执行期间判断所引用对象的实际类型，根据其实际的类型调用其相应的方法。从语言特点上来说，Java引用变量有两个类型：一个是编译时类型，一个是运行时类型。编译时的类型由声明该变量时使用的类型决定，运行时的类型由实际赋给该变量的对象决定。如果编译时类型和运行时类型不一致，就会出现所谓的多态（Polymorphism）。封装和继承都是为Java语言的多态提供了支撑；多态存在的三个必要条件： 要有继承； 要有重写； 父类引用指向子类对象。 具体的实现方式就是：接口实现，继承父类进行方法重写，同一个类中进行方法重载。 下一篇在说类和接口的时候再用具体的例子来描述覆盖、重载。]]></content>
       <categories>
-        <category>架构之路</category>
+        <category>java 基础</category>
       </categories>
       <tags>
         <tag>java</tag>
-        <tag>规划</tag>
       </tags>
   </entry>
   <entry>
@@ -425,7 +418,6 @@
         <category>架构之路</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>规划</tag>
       </tags>
   </entry>
