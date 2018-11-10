@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[20181111-书法练习]]></title>
+    <url>%2F2018%2F11%2F10%2Fshufa-20181111%2F</url>
+    <content type="text"><![CDATA[黄鹤楼送孟浩然之广陵 -李白故人西辞黄鹤楼，烟花三月下扬州孤帆远影碧空尽，唯见长江天际流 将进酒 -李白君不见，黄河之水天上来，奔流到海不复回。君不见，高堂明镜悲白发，朝如青丝暮成雪。人生得意须尽欢，莫使金樽空对月。天生我材必有用，千金散尽还复来。烹羊宰牛且为乐，会须一饮三百杯。岑夫子，丹丘生，将进酒，杯莫停。与君歌一曲，请君为我倾耳听。(倾耳听 一作：侧耳听)钟鼓馔玉不足贵，但愿长醉不复醒。(不足贵 一作：何足贵；不复醒 一作：不愿醒/不用醒)古来圣贤皆寂寞，惟有饮者留其名。(古来 一作：自古；惟 通：唯)陈王昔时宴平乐，斗酒十千恣欢谑。主人何为言少钱，径须沽取对君酌。五花马，千金裘，呼儿将出换美酒，与尔同销万古愁。 青玉案·元夕 -辛弃疾东风夜放花千树。更吹落、星如雨。宝马雕车香满路。凤箫声动，玉壶光转，一夜鱼龙舞。蛾儿雪柳黄金缕。笑语盈盈暗香去。众里寻他千百度。蓦然回首，那人却在，灯火阑珊处。]]></content>
+      <categories>
+        <category>书法</category>
+      </categories>
+      <tags>
+        <tag>书法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[菜鸟成长系列-策略模式]]></title>
     <url>%2F2018%2F11%2F10%2Fjava-design-model-strategy%2F</url>
     <content type="text"><![CDATA[上次在模板方法模式中有提及到，模板方法模式通常不会单独来试用，在一些实际的应用中会搭配其他的模式来使用，比如说今天要学习的策略模式。 一直我都很喜欢策略这个词，有种莫名的高大上，对三国有了解的小伙伴肯定会知道，有的谋士是比较直接的，献计就是献计，有话当面说；但是也有的谋士就是比较喜欢搞一种神秘感，弄个小布袋子里面塞个小布条（简称：锦囊）；对于一件很棘手的事情，在交代下去的时候就会有这样的嘱咐：“此事关系重大，还望XXX（昵称）务必处理妥帖；这里有三个锦囊，如果XXXX，你就拆开第X个锦囊，然后XXXX”；有时候我就很不解，假如真在遇到事情的时候来看，那路上丢了怎么办？一摸口袋就懵逼了有木有？ 扯远了，不过意思就是这个意思，一个锦囊其实就是一种策略；然后它有一个总的背景（我们称之为上下文环境），这个大背景下，每个不同的场景都会有一中策略来对应处理； 我们先以上面的列子为背景来撸一个小的例子，然后再去看一个spring中比较典型的策略模式使用，最后再来探讨下策略模式的类图，并以此来说明策略模式中的一些基本角色及其职责。 锦囊妙计 兵马未动，粮草先行；但是这个运输粮草到底是走水路还是走陆地呢？那这得看往哪运… 12345678910111213141516171819202122232425package com.glmapper.designmode.policy;/** * @description: 大背景，运输粮草 * @email: &lt;a href="glmapper_2018@163.com"&gt;&lt;/a&gt; * @author: 磊叔 * @date: 18/5/5 */public class TransportFood &#123; //持有一个运输策略的对象 private TransportFoodStrategy strategy; /** * 构造函数，传入一个具体策略对象 * @param strategy 具体策略对象 */ public TransportFood(TransportFoodStrategy strategy)&#123; this.strategy = strategy; &#125; /** * 策略方法 */ public void trasportFood()&#123; strategy.trasport(); &#125;&#125; 这个是我们的总体背景，就是运输粮草；但是这个只是说要运输粮草，但是并没有说是怎么运？这就得TransportFoodStrategy这个运输策略有具体的运输方案。 运输方案1：如果粮草是从武汉到南京，OK，那就走水运吧。 123456789101112/** * @description: 运输粮草的策略之水运运输 * @email: &lt;a href="glmapper_2018@163.com"&gt;&lt;/a&gt; * @author: 磊叔 * @date: 18/5/5 */public class WaterTransportStrategy implements TransportFoodStrategy &#123; @Override public void trasport() &#123; System.out.println("用船，走水运"); &#125;&#125; 运输方案2：如果从内蒙到北京；那就走陆运吧。 123456789101112/** * @description: 运输粮草的策略之陆地运输 * @email: &lt;a href="glmapper_2018@163.com"&gt;&lt;/a&gt; * @author: 磊叔 * @date: 18/5/5 */public class LandTransportStrategy implements TransportFoodStrategy &#123; @Override public void trasport() &#123; System.out.println("用马车，走陆运"); &#125;&#125; 好了，来看下妙计使用： 1234567891011121314151617181920212223242526272829303132333435/** * @description: 决策制定-客户端 * @email: &lt;a href="glmapper_2018@163.com"&gt;&lt;/a&gt; * @author: 磊叔 * @date: 18/5/5 */public class Client &#123; public static void main(String[] args) &#123; TransportFoodStrategy strategy = getTransportFoodStrategy("内蒙到北京"); TransportFood transportFood = new TransportFood(strategy); transportFood.trasportFood(); &#125; /** * 获取运输方案 * @param lineType 运输路线 * @return */ private static TransportFoodStrategy getTransportFoodStrategy( String lineType)&#123; if (lineType.equals("内蒙到北京"))&#123; return new LandTransportStrategy(); &#125; if (lineType.equals("武汉到南京"))&#123; return new WaterTransportStrategy(); &#125; return null; &#125;&#125;-&gt; 用马车，走陆运 粮草运完了，真正的表演开始了… Spring中典型的策略模式使用我们知道spring加载资源文件是通过ResourceLoader来搞定的。在ResourceLoader中提供了一个： 1Resource getResource(String location); 这个方法的注解中说道 12//允许多个资源调用。allowing for multiple &#123;@link Resource#getInputStream()&#125; calls. 这里就很赤裸裸了，他告诉了你要获取资源，但是如果获取资源呢？这就得看有哪些具体的获取策略了。 上图就是Resource的具体子类实现，也就是一些具体的策略。我们比较常见的应该算是UrlResource（加载URL指定的资源）和ClasspathResource（加载类路径中的资源）这两个。再来看下这个getResource这个方法的实现： getResource方法是在DefaultResourceLoader中具体实现的；DefaultResourceLoader是ResourceLoader的默认实现。 12345678910111213141516171819202122232425262728293031323334@Overridepublic Resource getResource(String location) &#123; Assert.notNull(location, "Location must not be null"); //首先使用ProtocolResolver来通过location参数创建Resource对象 // spring4.3.x开始才有的 for (ProtocolResolver protocolResolver : this.protocolResolvers) &#123; Resource resource = protocolResolver.resolve(location,this); if (resource != null) &#123; return resource; &#125; &#125; //指定路径的 if (location.startsWith("/")) &#123; return getResourceByPath(location); &#125; //以classpath开头的 else if (location.startsWith(CLASSPATH_URL_PREFIX)) &#123; return new ClassPathResource(location.substring( CLASSPATH_URL_PREFIX.length()), getClassLoader()); &#125; //这里是先尝试解析是否是带有网络协议的资源， //如果解析异常，则是在异常处理中使用了一种默认的机制。 else &#123; try &#123; // Try to parse the location as a URL... URL url = new URL(location); return new UrlResource(url); &#125; catch (MalformedURLException ex) &#123; // No URL -&gt; resolve as resource path. return getResourceByPath(location); &#125; &#125;&#125; 关于ProtocolResolver 其实我们可以发现，这里的location其实和我们上面那个例子中的lineType的作用是一样的，根据这个来确定具体使用哪个策略方法。 策略1：使用ProtocolResolver来通过location参数创建Resource对象，在ProtocolResolver中关于ProtocolResolver的解释是：A resolution strategy for protocol-specific resource handles-协议专用资源句柄的解析策略。 策略2：返回给定路径上资源的资源句柄。 策略3：以classpath:为前缀的，这种location参数直接返回一个ClassPathResource对象，表示加载classes路径下的资源； 策略4：使用网络协议作为前缀的，比如http、ftp等，这种直接返回一个UrlResource对象； 策略5：无前缀的，在默认实现中和第三种一样是加载classes路径下的资源，不同的是此处当作是ClassPathContextResource来处理的。 Spring中Resource的策(tao)略(lu)说完了，再回过头来看下策略模式的一些具体理论知识。 策略模式 定义：策略模式属于对象的行为模式。其用意是针对一组算法，将每一个算法封装到具有共同接口的独立的类中，从而使得它们可以相互替换。策略模式使得算法可以在不影响到客户端的情况下发生变化。 结合前面的例子分析和这段定义，可以知道，其实策略模式真的意图不是如何实现策略算法，它更在意的是如何组织这些算法。 这也是策略模式的使用可以让程序结构更灵活，具有更好的维护性和扩展性的重要因素。 类图：这个类图画的确实是有点丑，但是为了亲手绘制一下，所以还请多多见谅！ 类图中的一些角色： context：策略背景，也就是需要使用策略的主体；它持有一个strategy类的引用 strategy：抽象策略，这个角色给出了所有具体策略类所需的接口。所以通常是一个抽象类或者接口。 strategyPolicy：具体策略，它的作用就是包装具体的算法或者行为 那么在实际的应用中，策略模式到底给我们带来的好处是什么，它能够帮助我们解决什么样的问题呢？这个需要从模式本身的优缺点来看： 优点 策略模式提供了管理相关的算法族的办法。策略类的等级结构定义了一个算法或行为族。恰当使用继承可以把公共的代码移到父类里面，从而避免代码重复。 策略模式可以避免使用多重条件(if-else)语句。通常对于一个背景主体，一般只会有一种策略算法可供使用，使用多重条件句的话不易维护；因为它把采取哪一种算法或采取哪一种行为的逻辑与算法或行为的逻辑混合在一起了。 缺点 客户端必须知道所有的策略类，并自行决定使用哪一个策略类。这就意味着客户端必须理解这些算法的区别，以便适时选择恰当的算法类。换言之，策略模式只适用于客户端知道算法或行为的情况。 由于策略模式把每个具体的策略实现都单独封装成为类，如果备选的策略很多的话，那么对象的数目就会很可观。–如果策略很多，通常会采用一些混合策略来避免策略类的不断膨胀。 在了解其优缺点的情况下，我们就可以合理的将其放在一些适当的场景中来；如以下场景： 如果在一个系统里面有许多类，它们之间的区别仅在于它们的行为，那么使用策略模式可以动态地让一个对象在许多行为中选择一种行为。 一个系统需要动态地在几种算法中选择一种。 如果一个对象有很多的行为，如果不用恰当的模式，这些行为就只好使用多重的条件选择语句来实现。 参考 《JAVA与模式》 《JAVA与模式》之策略模式 策略模式]]></content>
@@ -641,8 +652,8 @@
       </categories>
       <tags>
         <tag>SOFATracer</tag>
-        <tag>OpenTracing</tag>
         <tag>zipkin</tag>
+        <tag>OpenTracing</tag>
       </tags>
   </entry>
   <entry>
@@ -666,8 +677,8 @@
       </categories>
       <tags>
         <tag>SOFATracer</tag>
-        <tag>Disruptor</tag>
         <tag>OpenTracing</tag>
+        <tag>Disruptor</tag>
       </tags>
   </entry>
   <entry>
