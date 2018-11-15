@@ -2776,7 +2776,7 @@ hr {
   display: none;
 }
 .posts-expand .post {
-  margin-top: 120px;
+  margin-top: 30px;
 }
 .posts-expand .post:first-child {
   margin-top: 0;
