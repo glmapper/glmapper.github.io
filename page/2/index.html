@@ -431,9 +431,7 @@
           BeanWrapper 是Spring提供的一个用来操作javaBean属性的工具，使用它可以直接修改一个对象的属性。
 对于bean属性的操作，大家熟知的主要有下面这些工具类：
 
-1.Apache的BeanUtils和PropertyUtils
-2.cglib的BeanMap和BeanCopier
-
+1.Apache的B
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -620,9 +618,7 @@ Spring源码系列：依赖注入（一）getBean
 Spring源码系列：依赖注入（二）createBean
 Spring源码系列：依赖注入（三）-属性注入
 
-在上面三篇文章中对依赖注入做了一个大致的梳理；里面都是大量代码的分析，本文在此基础上进行一个总结归纳。
-依赖注入调用过程
-如前几篇文章所述
+在上面三篇文章中对依赖注入做了一个大致
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -804,7 +800,7 @@ Spring源码系列：依赖注入（三）-属性注入
       
         
           
-          前面文章中对依赖注入的触发和bean的创建做了学习记录，本文将来记录一下bean的属性注入过程。Bean的属性注入发生在BeanDefinitionValueResolver这个类中，BeanDefinitionValueResolver这类是用于bean工厂实现的Helper类，职责就是将bean
+          前面文章中对依赖注入的触发和bean的创建做了学习记录，本文将来记录一下bean的属性注入过程。Bean的属性注入发生在BeanDefinitionValueResolver这个类中，BeanDefi
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -986,7 +982,7 @@ Spring源码系列：依赖注入（三）-属性注入
       
         
           
-          在Spring源码系列：依赖注入（一）（AbstractBeanFactory-getBean）最后说道getBean是依赖注入的起点，bean的创建都是通过createBean来完成具体的创建的。createBean的具体实现是在AbstractAutowireCapableBeanFactory
+          在Spring源码系列：依赖注入（一）（AbstractBeanFactory-getBean）最后说道getBean是依赖注入的起点，bean的创建都是通过createBean来完成具体的创建的。c
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1168,7 +1164,7 @@ Spring源码系列：依赖注入（三）-属性注入
       
         
           
-          在Spring源码系列：BeanFactory的创建文章中我们谈到了BeanFactory这容器，这个里面提供了注入的实现接口。其具体的实现还需要从AbstractBeanFactory和DefaultListableBeanFactory中来看。今天就先撸一下AbstractBeanFactory
+          在Spring源码系列：BeanFactory的创建文章中我们谈到了BeanFactory这容器，这个里面提供了注入的实现接口。其具体的实现还需要从AbstractBeanFactory和Defaul
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1354,9 +1350,7 @@ Spring源码系列：依赖注入（三）-属性注入
 Spring源码系列：BeanDefinition源码解析
 Spring源码系列：BeanDefinition载入(上)
 Spring源码系列：BeanDefinition载入(中)
-Spring源码系列：BeanDefinition载入(下)
-
-在上面四篇文章中大概分析了一下Bean的载入，其实
+Spring源
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1538,7 +1532,7 @@ Spring源码系列：BeanDefinition载入(下)
       
         
           
-          Spring是一个开放源代码的设计层面框架，它解决的是业务逻辑层和其他各层的松耦合问题，因此它将面向接口的编程思想贯穿整个系统应用。Spring是于2003 年兴起的一个轻量级的Java 开发框架，由Rod Johnson创建。简单来说，Spring是一个分层的JavaSE/EEfull-stack
+          Spring是一个开放源代码的设计层面框架，它解决的是业务逻辑层和其他各层的松耦合问题，因此它将面向接口的编程思想贯穿整个系统应用。Spring是于2003 年兴起的一个轻量级的Java 开发框架，由
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1720,7 +1714,7 @@ Spring源码系列：BeanDefinition载入(下)
       
         
           
-          在Spring源码系列：BeanDefinition载入(上)中已经大概捋了一下解析过程，本篇将记录一下bean的注册过程。bean的注册就是DefaultListableBeanFactory中registerBeanDefinition方法来完成的。那我就来看registerBeanDefini
+          在Spring源码系列：BeanDefinition载入(上)中已经大概捋了一下解析过程，本篇将记录一下bean的注册过程。bean的注册就是DefaultListableBeanFactory中re
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1903,10 +1897,7 @@ Spring源码系列：BeanDefinition载入(下)
         
           
           上一篇是将Bean的解析注册流程进行了梳理，对于一些细节问题没有进行细究，比如说元素属性值的处理，构造函数的处理等等。本篇就学习记录一下相关点。
-首先来看下是在哪个地方具体生成BeanDefinitiond的。下面是方法请求的顺序。
-
-
-DefaultBeanDefinitionDocumentRe
+首先来看下是在哪个地方具体生成BeanDefiniti
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -2088,7 +2079,7 @@ DefaultBeanDefinitionDocumentRe
       
         
           
-          继上一篇BeanFactory的创建之后，其实就是BeanDefinition载入了。同样也是在AbstractRefreshableApplicationContext类的refreshBeanFactory方法中完成：//创建默认的DefaultListableBeanFactory工厂Defa
+          继上一篇BeanFactory的创建之后，其实就是BeanDefinition载入了。同样也是在AbstractRefreshableApplicationContext类的refreshBeanFa
           ...
           <!--noindex-->
           <div class="post-button text-center">
