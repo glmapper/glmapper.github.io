@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[springsessionthree]]></title>
+    <title><![CDATA[SpringSession：分布式 session 实现方案]]></title>
     <url>%2F2018%2F11%2F24%2Fspringsessionthree%2F</url>
-    <content type="text"></content>
+    <content type="text"><![CDATA[上一篇文章 SpringSession：集成SpringBoot 中介绍了如何在SpringBoot中来集成 SpringSession，整个过程非常简单，同时也简单分析了下SpringSession的作用原理。继上一篇实践之后，本文主要来分析 SpringSession 的原理。 1、从 session 的一致性方案说起关于 session 和cookie 的一些知识，大家可以参考下我之前写的一篇文章：聊一聊session和cookie。 Session作为服务器端使用的一种记录客户端状态的机制，其对客户端是透明的；但是Session 的正常运作仍然需要客户端浏览器的支持。我们都知道，HTTP协议是无状态的，Session不能依据HTTP连接来判断是否为同一客户，因此服务器需要向客户端浏览器发送一个识别标志（sessionId）,这个识别标志通过是通过Cookie机制来完成。 1.1、session 一致性问题的由来当用户首次访问我们的Servlet时，应用服务器端会给用户创建一个独立的Session，并且存储在内存中。这种情况在单应用服务器场景下是可以满足的（这里不讨论其一个弊端，就是内存占用给服务器带来的压力的问题）。在集群场景下，这种机制就会到来问题： 1.1.1、单机场景 因为是一台应用服务器，用户的每次请求都是由这台机器来处理，所以不会有session共享问题。 1.1.2、集群场景 假设现在集群中有三台机器，（从上到下：A-&gt;B-&gt;C）。当前用户首次发起访问时，请求被分配到 A 机器处理，Session数据被写入 A 机器的内存中；当再次发起访问 时，请求被分配的 B 处理，但此时 B 内存中并没有当前用户的任何数据，这样就出现了session不一致的情况了。 1.2、Session 一致性问题的方案对于当前服务化、单元化应用盛行的时代，简单的内存型的 Session 已经不能够满足我们的要求了。那么我们就需要寻求一种方案来替换目前单机内存存储实现的方案。 1.2.1 基于 IP-HASH 的实现机制在 1.1.2 中因为我们无法知道请求会被分配到哪台机器来处理，所以会导致session不一致的问题出现。如果我们可以解决让每个用户的请求能够固定的打到某一台机器上，那么上面提到的问题其实也就不存在了。IP-HASH 就是这样一种方案。通过对请求的客户端 IP 进行 HASH 计算，并将计算结果映射到具体一台机器，这样就可以将请求固定分配到某一台机器上，从而有效的避免session一致性问题的出现。 这种方案的好处在于: 不需要修改任何应用代码，0 侵入。 安全性高，不依赖其他三方缓存框架带来的风险 成本低 但是问题也很明显，这种方式实际上是规避了session一致性问题的出现，并非是针对session一致性问题给出的解决方案。主要问题： 基于应用内存，会给应用服务器带来一定的压力 服务重启会导致session数据丢失 不利于水平扩展，水平扩展也可能丢失session 存在单点负载高的情况，就是多数请求经过HASH计算之后打到同一台机器，而其他机器处于空闲状态。 1.2.2 session 复制这种方式的实现原理是应用服务器创建session之后通过组播的方式将session发送到组播地址内的其他应用服务器上。这种方式相较于IP-HASH 的方式要靠谱一点： 同样不需要更改任何业务代码 能够适应多种负载策略 机器重启或者宕机之后不怕丢失，因为有冗余备份 但是这种方式也有比较大的问题： 首先就是服务器之间同步session会占用一定的网络资源，同时session在不同的机器之间进行同步存在延迟。 还是基于内存存储，局限于机器内存容量影响，水平扩展能力差 服务器内存因为需要存储其他机器上的session数据，对内存的消耗会随着集群的规模变大而变大，可能会导致机器频繁触发GC。 1.2.3 借助三方缓存框架实现 session 集中管理上面两种方式都是有服务器自己来管理session的，主要问题还是在于对于性能和内存的影响。而这种方式的原理是将session托管给三方软件（如redis）来统一管理。这种方式可以有效的解决性能、内存占用以及水平扩展等问题。但是因为引入了三方软件，在实现复杂度、运维成本等方面会有所增加。 目前所接触到的分布式session的实现方案，大多都是基于这种方式来实现的；SpringSession 也不例外。 2、SpringSession 功能结构分析前面对分布式场景下的 Session一致性问题进行了说明，并对解决Session一致性的问题的几种策略进行的分析（有点糙，网上这些知识有很多）。在了解这些背景之后，我们来看下 SpringSession 的实现原理。 2.1 简介Spring Session 提供了用于管理用户会话信息的API和实现，在不依赖特定于应用程序容器的解决方案的情况下，使得支持群集会话变得更加简单。它还提供了透明的集成： 允许以应用程序容器（Tomcat等）中立的方式替换 HttpSesseion，支持在 headers中提供 session IDs来使用 RESTful API。 提供在接收 WebSocket 消息时保持HTTP 会话存活的能力 允许以应用程序容器中立的方式替换 Spring WebFlux 的 WebSession。 以上来自官网文档翻译 Spring Session 2.2 模块Spring Session 主要包括 4 个模块： spring-session-core ：提供了 Spring Session 核心功能和API spring-session-data-redis：以 redis 作为存储机制的 SessionRepository 实现 spring-session-hazelcast：以 Hazelcast 作为存储机制的 SessionRepository 实现 spring-session-jdbc：以关系型数据库作为存储机制的 SessionRepository 实现 总体来说就是 核心API+存储实现；工程模块截图如下： 2.3 功能结构SpringSession整体上可以分为三块： 对于Web层的处理，这里包括对于请求的重写，自定义的filter加入到filter chain，cookie处理，http header处理等 公共基础封装，比如存储类的顶层抽象接口定义，自定配置，事件处理等。 存储部分，这部分实际上是对公共基础封装接口的实现，提供了丰富的存储实现，包括redis，内存存储，jdbc等。 2.4 多 session 支持对于常用的分布式session，在实现上一般会依赖于 cookie。但是在 springsession 中提供了基于header来传递jessionID的策略实现。同时在 2.0.4 版本之前，对于同一个浏览器同一个网站，springsession 支持多个session问题，但是在此版本之后抛弃了对于对 session 的支持。关于更多关于多session支持可以查看 SpringSession 的官方文档。 小结本文对分布式 session 的几种实现策略进行了简单的介绍。对于分布式 session 而言，如何解决一致性问题是关键，目前我见过的绝大多数方案均是以 【借助三方缓存框架实现 session 集中管理】 这种来实现的，包括本系列文章中所要介绍的 SpringSession。 除分布式session一致性方式解决方案的介绍之外，作为SpringSession 的第二篇文章，在这里简单分析了下Springsession的功能模块，以便后续展开对源码的分析。]]></content>
+      <categories>
+        <category>spring</category>
+        <category>session</category>
+      </categories>
+      <tags>
+        <tag>spring</tag>
+        <tag>session</tag>
+      </tags>
   </entry>
   <entry>
     <title><![CDATA[SpringSession：请求与响应重写]]></title>
