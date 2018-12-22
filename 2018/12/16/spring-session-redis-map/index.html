@@ -91,7 +91,7 @@
 <meta name="description" content="@TOC在之前的文章中已经对SpringSession的功能结构，请求/响应重写等做了介绍。本文将继续来介绍下SpringSession中存储部分的设计。存储是分布式session中算是最核心的部分，通过引入三方的存储容器来实现session的存储，从而有效的解决session共享的问题。 1、SpringSession存储的顶级抽象接口SpringSession存储的顶级抽象接口是org.spr">
 <meta name="keywords" content="spring,session">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SpringSession:存储机制设计">
+<meta property="og:title" content="SpringSession系列-存储机制之Redis&amp;Map">
 <meta property="og:url" content="http://www.glmapper.com/2018/12/16/spring-session-redis-map/index.html">
 <meta property="og:site_name" content="glmapper">
 <meta property="og:description" content="@TOC在之前的文章中已经对SpringSession的功能结构，请求/响应重写等做了介绍。本文将继续来介绍下SpringSession中存储部分的设计。存储是分布式session中算是最核心的部分，通过引入三方的存储容器来实现session的存储，从而有效的解决session共享的问题。 1、SpringSession存储的顶级抽象接口SpringSession存储的顶级抽象接口是org.spr">
@@ -100,9 +100,9 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/16/167b2ef0284d86a5?w=1624&h=258&f=png&s=66960">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/16/167b2ef029530952?w=1128&h=596&f=png&s=67475">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/12/16/167b2ef032721690?w=1008&h=258&f=png&s=89571">
-<meta property="og:updated_time" content="2018-12-15T17:40:02.000Z">
+<meta property="og:updated_time" content="2018-12-22T16:10:10.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SpringSession:存储机制设计">
+<meta name="twitter:title" content="SpringSession系列-存储机制之Redis&amp;Map">
 <meta name="twitter:description" content="@TOC在之前的文章中已经对SpringSession的功能结构，请求/响应重写等做了介绍。本文将继续来介绍下SpringSession中存储部分的设计。存储是分布式session中算是最核心的部分，通过引入三方的存储容器来实现session的存储，从而有效的解决session共享的问题。 1、SpringSession存储的顶级抽象接口SpringSession存储的顶级抽象接口是org.spr">
 <meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/12/16/167b2ef7ce8c6b58?w=1662&h=600&f=png&s=66844">
 
@@ -140,7 +140,7 @@
 
 
 
-  <title>SpringSession:存储机制设计 | glmapper</title>
+  <title>SpringSession系列-存储机制之Redis&Map | glmapper</title>
   
 
 
@@ -327,7 +327,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">SpringSession:存储机制设计</h1>
+          <h1 class="post-title" itemprop="name headline">SpringSession系列-存储机制之Redis&Map</h1>
         
 
         <div class="post-meta">
@@ -664,7 +664,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-count">68</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -966,7 +966,7 @@
         var disqus_config = function () {
           this.page.url = 'http://www.glmapper.com/2018/12/16/spring-session-redis-map/';
           this.page.identifier = '2018/12/16/spring-session-redis-map/';
-          this.page.title = 'SpringSession:存储机制设计';
+          this.page.title = 'SpringSession系列-存储机制之Redis&Map';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://www-glmapper-com.disqus.com/embed.js';
