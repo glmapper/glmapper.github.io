@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="spring cloud,Eureka,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="glmapper" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前面一些 demo 中已经介绍了如何使用SOFABoot 来集成 Spring Cloud Netflix Eureka 组件。本篇将来先解析下 Eureka Client 的工作原理。 Netflix 和 SpringCloudspring-cloud-commons 模块是 spring 在分布式领域上(服务发现，服务注册，断路器，负载均衡)的规范定义。spring-cloud-netflix">
+<meta name="keywords" content="spring cloud,Eureka">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Cloud-Eureka Client 原理解析">
+<meta property="og:url" content="http://www.glmapper.com/2018/12/31/springcoud-eureka-client-analysis/index.html">
+<meta property="og:site_name" content="glmapper">
+<meta property="og:description" content="前面一些 demo 中已经介绍了如何使用SOFABoot 来集成 Spring Cloud Netflix Eureka 组件。本篇将来先解析下 Eureka Client 的工作原理。 Netflix 和 SpringCloudspring-cloud-commons 模块是 spring 在分布式领域上(服务发现，服务注册，断路器，负载均衡)的规范定义。spring-cloud-netflix">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545979991419-08ae3e7c-3125-4a3e-8a9d-f43ab6c3322b.png#wh=626x332">
+<meta property="og:image" content="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545981516158-eabcaa30-83e2-439c-9198-77c1f14b6c79.png#wh=577x416">
+<meta property="og:image" content="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545982472444-7e4995bb-af73-4ca2-9942-5c5ee1ea9901.png#wh=655x204">
+<meta property="og:image" content="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545978817975-4b633117-66eb-4806-90a1-c6a1d419f494.png#wh=712x323">
+<meta property="og:image" content="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545987763227-a43b1417-492e-4a33-a19a-1d5aefec0ea1.png#wh=298x167">
+<meta property="og:image" content="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545996920110-1317ecc6-231e-4184-b534-c2dd9d69b6ba.png#wh=512x383">
+<meta property="og:updated_time" content="2018-12-30T16:13:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Cloud-Eureka Client 原理解析">
+<meta name="twitter:description" content="前面一些 demo 中已经介绍了如何使用SOFABoot 来集成 Spring Cloud Netflix Eureka 组件。本篇将来先解析下 Eureka Client 的工作原理。 Netflix 和 SpringCloudspring-cloud-commons 模块是 spring 在分布式领域上(服务发现，服务注册，断路器，负载均衡)的规范定义。spring-cloud-netflix">
+<meta name="twitter:image" content="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545979991419-08ae3e7c-3125-4a3e-8a9d-f43ab6c3322b.png#wh=626x332">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.glmapper.com/2018/12/31/springcoud-eureka-client-analysis/">
+
+
+
+
+
+  <title>Spring Cloud-Eureka Client 原理解析 | glmapper</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/glmapper" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">glmapper</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">大家都喊我磊叔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.glmapper.com/2018/12/31/springcoud-eureka-client-analysis/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="GuoLei Song">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="glmapper">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring Cloud-Eureka Client 原理解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-31T00:12:46+08:00">
+                2018-12-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/spring-cloud/" itemprop="url" rel="index">
+                    <span itemprop="name">spring cloud</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/12/31/springcoud-eureka-client-analysis/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/12/31/springcoud-eureka-client-analysis/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv">本文总阅读量
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前面一些 demo 中已经介绍了如何使用SOFABoot 来集成 Spring Cloud Netflix Eureka 组件。本篇将来先解析下 Eureka Client 的工作原理。</p>
+<h2 id="Netflix-和-SpringCloud"><a href="#Netflix-和-SpringCloud" class="headerlink" title="Netflix 和 SpringCloud"></a>Netflix 和 SpringCloud</h2><p>spring-cloud-commons 模块是 spring 在分布式领域上(服务发现，服务注册，断路器，负载均衡)的规范定义。spring-cloud-netflix 是基于此规范的具体实现，Netflix OSS 里的各种组件也都实现了这个 commons 规范。关系如下：<br><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545979991419-08ae3e7c-3125-4a3e-8a9d-f43ab6c3322b.png#wh=626x332" alt="image.png"></p>
+<h2 id="Spring-Cloud-Netflix-Eureka-服务发现实现原理"><a href="#Spring-Cloud-Netflix-Eureka-服务发现实现原理" class="headerlink" title="Spring Cloud Netflix Eureka 服务发现实现原理"></a>Spring Cloud Netflix Eureka 服务发现实现原理</h2><p>基于上图，这里以 Eureka 中的服务发现为例，来具体讲下是如何实现的。Spring Cloud common 中提供了用于服务发现的两个关键类：DiscoveryClient 接口 和 EnableDiscoveryClient 注解。<br><br></p>
+<h3 id="DiscoveryClient-接口"><a href="#DiscoveryClient-接口" class="headerlink" title="DiscoveryClient 接口"></a>DiscoveryClient 接口</h3><p>下面这张图描述的是在服务发现这个功能上，SpringCloud 是如何与 Netflix 整合的。<br>在 spring-cloud-netflix-eureka-client 中对 Spring Cloud Common 中的 DiscoveryClient 接口进行了实现，实现类是 EurekaDiscoveryClient 。<br><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545981516158-eabcaa30-83e2-439c-9198-77c1f14b6c79.png#wh=577x416" alt="image.png"><br>DiscoveryClient 的接口定义与方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * DiscoveryClient表示服务发现常用的读取操作，例如Netflix Eureka或consul.io</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Spencer Gibb</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DiscoveryClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 实现描述</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span> the description</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function">String <span class="title">description</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 获取与特定serviceId关联的所有ServiceInstances</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> serviceId the serviceId to query</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span> a List of ServiceInstance</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function">List&lt;ServiceInstance&gt; <span class="title">getInstances</span><span class="params">(String serviceId)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 返回所有已知的服务ID</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function">List&lt;String&gt; <span class="title">getServices</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EurekaDiscoveryClient 中实现了这几个方法，但是 EurekaDiscoveryClient 自身没有实现如何与服务端交互的逻辑，而是通过 com.netflix.DiscoveryClient 类来完成。所以 spring-cloud-netflix-eureka-client 干的事情就是实现了 Spring Cloud Common 规范，然后在实现上包装了 netflix 。</p>
+<h3 id="EnableDiscoveryClient-注解"><a href="#EnableDiscoveryClient-注解" class="headerlink" title="@EnableDiscoveryClient 注解"></a>@EnableDiscoveryClient 注解</h3><p><br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Import</span>(EnableDiscoveryClientImportSelector.class)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> EnableDiscoveryClient &#123;</span><br><span class="line">  <span class="comment">//是否自动注册，默认是true。</span></span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">autoRegister</span><span class="params">()</span> <span class="keyword">default</span> <span class="keyword">true</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>EnableDiscoveryClientImportSelector 将会从 META-INF/spring.factories 里找出 key 为org.springframework.cloud.client.discovery.EnableDiscoveryClient 的类。</p>
+<p>对于 autoRegister ：</p>
+<ul>
+<li>如果自动注册属性为true，会在找出的这些类里再加上一个类：AutoServiceRegistrationConfiguration， AutoServiceRegistrationConfiguration 内部会使用@EnableConfigurationProperties(AutoServiceRegistrationProperties.class) 触发构造AutoServiceRegistrationProperties 这个 bean。像eureka，nacos，它们的自动化配置类里都使用了@ConditionalOnBean(AutoServiceRegistrationProperties.class) 来确保存在AutoServiceRegistrationProperties 这个 bean 存在的时候才会构造 AutoServiceRegistration 进行注册。</li>
+<li>如果自动注册属性为 false，在Environment 里加一个 PropertySource，内部的配置项是spring.cloud.service-registry.auto-registration.enabled，值是false(代表不构造AutoServiceRegistrationProperties.class)。这样 eureka 就不会注册。</li>
+</ul>
+<p><br><br>对应上面这段逻辑的代码如下：</p>
+<p><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545982472444-7e4995bb-af73-4ca2-9942-5c5ee1ea9901.png#wh=655x204" alt="image.png"></p>
+<p>spring-cloud-netflix-eureka-client 自己也提供了一个注解 EnableEurekaClient，其作用于这个注解一样</p>
+<h2 id="Eureka-架构图"><a href="#Eureka-架构图" class="headerlink" title="Eureka 架构图"></a>Eureka 架构图</h2><p><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545978817975-4b633117-66eb-4806-90a1-c6a1d419f494.png#wh=712x323" alt="image.png"></p>
+<ul>
+<li>consumer  : 服务消费方，eureka client 角色，可以从 eureka server 上拉取到其他已注册服务的信息，从而根据这些信息找到自己所需的服务，然后发起远程调用。</li>
+<li>provider : 服务提供方，eureka client 角色，可以向 eureka server 上注册和更新自己的信息，当然作为 eureka client ，它也可以从server 上获取到其他服务的信息。<br></li>
+<li>Eureka server : 服务注册中心，提供服务注册和服务发现功能；</li>
+<li>同步复制 ： eureka server 之间进行注册服务信息的同步，这样可以保证集群中每个server 都能提供完整的服务信息。</li>
+</ul>
+<blockquote>
+<p>关于 AWS 上 Regin 和 Availability Zone 的概念，请自行查阅相关资料</p>
+</blockquote>
+<h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><h3 id="配置信息读取"><a href="#配置信息读取" class="headerlink" title="配置信息读取"></a>配置信息读取</h3><p>Eureka Client的自动配置类是 org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration ，这里面主要就负责了一些配置信息的服务诸如 DiscoveryClient 、EurekaServiceRegistry等主要bean的初始化工作。</p>
+<p>另外还有一个 EurekaDiscoveryClientConfiguration 类，负责配置自动注册和应用的健康检查器初始化。</p>
+<h4 id="读取-eureka-client"><a href="#读取-eureka-client" class="headerlink" title="读取 eureka.client.*"></a>读取 eureka.client.*</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingBean</span>(value = EurekaClientConfig.class, search = SearchStrategy.CURRENT)</span><br><span class="line"><span class="function"><span class="keyword">public</span> EurekaClientConfigBean <span class="title">eurekaClientConfigBean</span><span class="params">(ConfigurableEnvironment env)</span> </span>&#123;</span><br><span class="line">	EurekaClientConfigBean client = <span class="keyword">new</span> EurekaClientConfigBean();</span><br><span class="line">  <span class="keyword">if</span> (<span class="string">"bootstrap"</span>.equals(<span class="keyword">this</span>.env.getProperty(<span class="string">"spring.config.name"</span>))) &#123;</span><br><span class="line">    <span class="comment">// 默认情况下，我们不会在引导过程中注册，但是以后会有另一个机会。</span></span><br><span class="line">    client.setRegisterWithEureka(<span class="keyword">false</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> client;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EurekaClientConfigBean 封装的是 eureka client 和 eureka server 交互所需要的配置信息，比如前面demo工程中的 eureka.client.service-url.defaultZone 的配置。</p>
+<h4 id="读取-eureka-instance"><a href="#读取-eureka-instance" class="headerlink" title="读取 eureka.instance.*"></a>读取 eureka.instance.*</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingBean</span>(value = EurekaInstanceConfig.class, search = SearchStrategy.CURRENT)</span><br><span class="line"><span class="function"><span class="keyword">public</span> EurekaInstanceConfigBean <span class="title">eurekaInstanceConfigBean</span><span class="params">(InetUtils inetUtils,</span></span></span><br><span class="line"><span class="function"><span class="params">	ManagementMetadataProvider managementMetadataProvider)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 代码较长，此处省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EurekaInstanceConfigBean 封装的是 eureka client 自身实例的配置信息，提供服务注册的基本元数据信息。</p>
+<h3 id="核心组件-bean-初始化"><a href="#核心组件-bean-初始化" class="headerlink" title="核心组件 bean 初始化"></a>核心组件 bean 初始化</h3><p>这里也实例化了一些核心的组件bean。</p>
+<h4 id="ApplicationInfoManager"><a href="#ApplicationInfoManager" class="headerlink" title="ApplicationInfoManager"></a>ApplicationInfoManager</h4><ul>
+<li>EurekaClientConfiguration#eurekaApplicationInfoManager</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingBean</span>(value = ApplicationInfoManager.class, search = SearchStrategy.CURRENT)</span><br><span class="line"><span class="function"><span class="keyword">public</span> ApplicationInfoManager <span class="title">eurekaApplicationInfoManager</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">EurekaInstanceConfig config)</span> </span>&#123;</span><br><span class="line">  InstanceInfo instanceInfo = <span class="keyword">new</span> InstanceInfoFactory().create(config);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> ApplicationInfoManager(config, instanceInfo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>RefreshableEurekaClientConfiguration#eurekaApplicationInfoManager<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingBean</span>(value = ApplicationInfoManager.class, search = SearchStrategy.CURRENT)</span><br><span class="line"><span class="meta">@org</span>.springframework.cloud.context.config.annotation.RefreshScope</span><br><span class="line"><span class="meta">@Lazy</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ApplicationInfoManager <span class="title">eurekaApplicationInfoManager</span><span class="params">(EurekaInstanceConfig config)</span> </span>&#123;</span><br><span class="line">  InstanceInfo instanceInfo = <span class="keyword">new</span> InstanceInfoFactory().create(config);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> ApplicationInfoManager(config, instanceInfo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>RefreshScope ，被此注解标注的情况下，将会被动态刷新。包括属性信息等，注意，对于动态刷新，被RefreshScope标记的类不能是final的。</p>
+</blockquote>
+<p><br><br>ApplicationInfoManager 是应用信息管理器，用于管理服务实例的信息类 InstanceInfo 和服务实例的配置信息类 EurekaInstanceConfig 。</p>
+<h4 id="DiscoveryClient"><a href="#DiscoveryClient" class="headerlink" title="DiscoveryClient"></a>DiscoveryClient</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DiscoveryClient <span class="title">discoveryClient</span><span class="params">(EurekaInstanceConfig config, EurekaClient client)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> EurekaDiscoveryClient(config, client);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>DiscoveryClient ，前面说到，这个类是Spring Cloud 中用于服务发现使用的客户端接口。注意这里是SpringCloud提供的接口，不是netflix中的类。</p>
+<h4 id="EurekaServiceRegistry"><a href="#EurekaServiceRegistry" class="headerlink" title="EurekaServiceRegistry"></a>EurekaServiceRegistry</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> EurekaServiceRegistry <span class="title">eurekaServiceRegistry</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> EurekaServiceRegistry();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EurekaServiceRegistry 是 ServiceRegistry 的实现类。ServiceRegistry 是 SpringCloud 提供了注册和注销等方法，这些方法允许用户提供自定义注册服务。</p>
+<h4 id="EurekaRegistration"><a href="#EurekaRegistration" class="headerlink" title="EurekaRegistration"></a>EurekaRegistration</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line">	<span class="meta">@ConditionalOnBean</span>(AutoServiceRegistrationProperties.class)</span><br><span class="line">	<span class="meta">@ConditionalOnProperty</span>(value = <span class="string">"spring.cloud.service-registry.auto-registration.enabled"</span>, matchIfMissing = <span class="keyword">true</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> EurekaRegistration <span class="title">eurekaRegistration</span><span class="params">(EurekaClient eurekaClient, CloudEurekaInstanceConfig instanceConfig, ApplicationInfoManager applicationInfoManager, ObjectProvider&lt;HealthCheckHandler&gt; healthCheckHandler)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> EurekaRegistration.builder(instanceConfig)</span><br><span class="line">				.with(applicationInfoManager)</span><br><span class="line">				.with(eurekaClient)</span><br><span class="line">				.with(healthCheckHandler)</span><br><span class="line">				.build();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>每个 ServiceRegistry 实现都有自己的 Registry 实现。</p>
+<ul>
+<li>ZookeeperRegistration -&gt; ZookeeperServiceRegistry</li>
+<li>ZookeeperRegistration -&gt; EurekaServiceRegistry</li>
+<li>ConsulRegistration       -&gt; ConsulServiceRegistry</li>
+</ul>
+<p>如果你需要自定义实现 ServiceRegistry ，则也不要提供一个 Registration  的实现。<br><br></p>
+<h2 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h2><p>服务发现的基本情况在上面已经提到了，但是由于 SpingCloud 中并没有提供具体的交互操作而是由 com.netflix.discovery.DiscoveryClient 来完成具体工作。所以关于服务服务发现这里就直接围绕这个类来展开。</p>
+<p><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545987763227-a43b1417-492e-4a33-a19a-1d5aefec0ea1.png#wh=298x167" alt="image.png"></p>
+<h3 id="LookopService"><a href="#LookopService" class="headerlink" title="LookopService"></a>LookopService</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">LookupService</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">// 根据服务实例注册的appName 来获取 Application</span></span><br><span class="line">    <span class="function">Application <span class="title">getApplication</span><span class="params">(String appName)</span></span>;</span><br><span class="line">    <span class="comment">// 返回当前注册表中所有的服务实例信息</span></span><br><span class="line">    <span class="function">Applications <span class="title">getApplications</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 根据服务实例Id获取服务实例信息</span></span><br><span class="line">    <span class="function">List&lt;InstanceInfo&gt; <span class="title">getInstancesById</span><span class="params">(String id)</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取下一个可能的服务器，以处理来自从eureka接收到的注册表信息的请求。</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@virtualHostname</span> 与服务器关联的虚拟主机名。</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@secure</span> 指示是HTTP还是HTTPS请求</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">InstanceInfo <span class="title">getNextServerFromEureka</span><span class="params">(String virtualHostname, <span class="keyword">boolean</span> secure)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>LookupService 接口的作用就是用于查找活动服务实例；总共提供了四个方法，很好理解。每个方法的作用见注释。</p>
+<h3 id="EurekaClient"><a href="#EurekaClient" class="headerlink" title="EurekaClient"></a>EurekaClient</h3><p>EurekaClient 也是一个接口，集成并且扩展了 LookupService。<br><br></p>
+<blockquote>
+<p>This interface does NOT try to clean up the current client interface for eureka 1.x. Rather it tries<br>to provide an easier transition path from eureka 1.x to eureka 2.x.<br>从这来看，EurekaClient 的存在是为了给 Eureka1.x 向 Eureka 2.x 升级提供容错能力。</p>
+</blockquote>
+<p>EurekaClient 在 LookupService 基础上扩展了很多方法，如下：<br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">EurekaClient</span> <span class="keyword">extends</span> <span class="title">LookupService</span> </span>&#123;</span><br><span class="line">  	<span class="comment">// 省去@Deprecated方法和获取服务实例信息的接口方法</span></span><br><span class="line">		<span class="comment">// 注册健康检查处理器</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerHealthCheck</span><span class="params">(HealthCheckHandler healthCheckHandler)</span></span>;</span><br><span class="line">		<span class="comment">// 监听client服务信息的更新</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerEventListener</span><span class="params">(EurekaEventListener eventListener)</span></span>;</span><br><span class="line">   	<span class="comment">// 取消监听</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">unregisterEventListener</span><span class="params">(EurekaEventListener eventListener)</span></span>;</span><br><span class="line"> 		<span class="comment">// 获取当前健康检查处理器</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> HealthCheckHandler <span class="title">getHealthCheckHandler</span><span class="params">()</span></span>;</span><br><span class="line">		<span class="comment">// 关闭 eureka 客户端。还向eureka服务器发送撤销注册请求。</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span></span>;</span><br><span class="line">  	<span class="comment">// EurekaClientConfig</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> EurekaClientConfig <span class="title">getEurekaClientConfig</span><span class="params">()</span></span>;</span><br><span class="line"> 		<span class="comment">// ApplicationInfoManager</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ApplicationInfoManager <span class="title">getApplicationInfoManager</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>HealthCheckHandler 这个是用于检查当前客户端状态的，这个在后面心跳机制里面会说道。</p>
+<h3 id="DiscoveryClient-1"><a href="#DiscoveryClient-1" class="headerlink" title="DiscoveryClient"></a>DiscoveryClient</h3><p>com.netflix.discovery.DiscoveryClient，这个类会在构造函数中完成一系列重要的操作，如：拉取注册表信息，服务注册，初始化心跳机制，缓存刷新，按需注册定时任务等等。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DiscoveryClient(ApplicationInfoManager applicationInfoManager, </span><br><span class="line">								 EurekaClientConfig config, </span><br><span class="line">                AbstractDiscoveryClientOptionalArgs args,</span><br><span class="line">                Provider&lt;BackupRegistry&gt; backupRegistryProvider) &#123;</span><br><span class="line"><span class="comment">// ... </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>几个参数的释义如下：</p>
+<ul>
+<li>applicationInfoManager ：应用信息管理器</li>
+<li>config ：client 与 server 交互的配置信息</li>
+<li>args ：客户端提供的过滤器类型(支持jersey1和jersey2)，后面用来构建 EurekaTransport</li>
+<li>backupRegistryProvider ： 备份注册中心</li>
+</ul>
+<h3 id="服务发现-1"><a href="#服务发现-1" class="headerlink" title="服务发现"></a>服务发现</h3><p>下面代码片段也是在 DiscoveryClient 的构造函数里面的，这里就是拉取注册服务信息的逻辑：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (clientConfig.shouldFetchRegistry() &amp;&amp; !fetchRegistry(<span class="keyword">false</span>)) &#123;</span><br><span class="line">	fetchRegistryFromBackup();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>clientConfig.shouldFetchRegistry() 这个方法拿到的就是配置文件中 eureka.client.fetch-registry 的值，默认为true，表示从 eureka server 拉取注册表信息。<br><br><br>fetchRegistry(boolean)是从 eureka server 拉取注册信息的方法，参数用于表示是否是强制拉取全量的注册信息；此方法除非在协调eureka服务器和客户端注册表信息方面存在问题，否则此方法只尝试在第一次进行全量获取，后面均是增量获取。</p>
+<p>fetchRegistryFromBackup() 如果 eureka server 服务不可用，则采用的备用方案。<br><br></p>
+<h4 id="底层通信实现-EurekaTransport"><a href="#底层通信实现-EurekaTransport" class="headerlink" title="底层通信实现 EurekaTransport"></a>底层通信实现 EurekaTransport</h4><p><br><br>EurekaTransport 是 DiscoveryClient 的内部类，EurekaTransport 封装了具体的基于 jersey 的底层通信实现。<br><br></p>
+<h4 id="FetchRegistry"><a href="#FetchRegistry" class="headerlink" title="FetchRegistry"></a>FetchRegistry</h4><p><br><br><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545996920110-1317ecc6-231e-4184-b534-c2dd9d69b6ba.png#wh=512x383" alt="image.png"><br>上图为拉取注册信息的整个过程。对于黄色贴条上的条件，如果满足其中一个，则都会进行全量拉取；否则进行增量拉取。计算 hash 值是为了后面可以与server端应用信息的进行对比，用于感知是否需要重新进行拉取操作。<br><br></p>
+<h4 id="全量拉取"><a href="#全量拉取" class="headerlink" title="全量拉取"></a>全量拉取</h4><h4 id="增量拉取"><a href="#增量拉取" class="headerlink" title="增量拉取"></a>增量拉取</h4><h2 id="服务注册"><a href="#服务注册" class="headerlink" title="服务注册"></a>服务注册</h2><p>服务注册逻辑也是在 DiscoveryClient 的构造函数中完成，代码片段如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (clientConfig.shouldRegisterWithEureka() &amp;&amp; clientConfig.shouldEnforceRegistrationAtInit()) &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!register() ) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Registration error at startup. Invalid server response."</span>);</span><br><span class="line">  	&#125;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (Throwable th) &#123;</span><br><span class="line">    logger.error(<span class="string">"Registration error at startup: &#123;&#125;"</span>, th.getMessage());</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(th);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>向server端注册需要满足的两个条件是：1、允许向server端注册  2、是否在客户端初始化期间强制注册<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">register</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">  logger.info(PREFIX + <span class="string">"&#123;&#125;: registering service..."</span>, appPathIdentifier);</span><br><span class="line">  EurekaHttpResponse&lt;Void&gt; httpResponse;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">  	httpResponse = eurekaTransport.registrationClient.register(instanceInfo);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    logger.warn(PREFIX + <span class="string">"&#123;&#125; - registration failed &#123;&#125;"</span>, appPathIdentifier, e.getMessage(), e);</span><br><span class="line">    <span class="keyword">throw</span> e;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (logger.isInfoEnabled()) &#123;</span><br><span class="line">  	logger.info(PREFIX + <span class="string">"&#123;&#125; - registration status: &#123;&#125;"</span>, appPathIdentifier, httpResponse.getStatusCode());</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> httpResponse.getStatusCode() == <span class="number">204</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过 eurekaTransport 对象，基于 REST 调用向 eureka server 进行服务注册。</p>
+<h2 id="心跳机制"><a href="#心跳机制" class="headerlink" title="心跳机制"></a>心跳机制</h2><p>心跳机制的初始化工作也是在 DiscoveryClient 构造函数中完成。在DiscoveryClient构造函数的最后，有一个初始化调度任务的方法，在这个方法里就包括心跳的初始化。</p>
+<p>heartbeatExecutor 心跳线程池：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">heartbeatExecutor = new ThreadPoolExecutor(</span><br><span class="line">                    1, clientConfig.getHeartbeatExecutorThreadPoolSize(), 0, TimeUnit.SECONDS,</span><br><span class="line">                    new SynchronousQueue&lt;Runnable&gt;(),</span><br><span class="line">                    new ThreadFactoryBuilder()</span><br><span class="line">                            .setNameFormat(&quot;DiscoveryClient-HeartbeatExecutor-%d&quot;)</span><br><span class="line">                            .setDaemon(true)</span><br><span class="line">                            .build()</span><br></pre></td></tr></table></figure>
+<p>scheduler 提交周期执行：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Heartbeat timer</span></span><br><span class="line">scheduler.schedule(</span><br><span class="line">                  <span class="keyword">new</span> TimedSupervisorTask(</span><br><span class="line">                  <span class="string">"heartbeat"</span>,</span><br><span class="line">                  scheduler,</span><br><span class="line">                  heartbeatExecutor,</span><br><span class="line">                  renewalIntervalInSecs,</span><br><span class="line">                  TimeUnit.SECONDS,</span><br><span class="line">                  expBackOffBound,</span><br><span class="line">                  <span class="keyword">new</span> HeartbeatThread()</span><br><span class="line">                  ),</span><br><span class="line">									renewalIntervalInSecs, TimeUnit.SECONDS);</span><br></pre></td></tr></table></figure></p>
+<p>TimedSupervisorTask 是 eureka 中自动调节间隔的周期性任务类。HeartbeatThread 是具体执行任何的线程，run方法中执行的就是 renew() 续期。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">renew</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  EurekaHttpResponse&lt;InstanceInfo&gt; httpResponse;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 通过 eurekaTransport 来与 server 通信续期</span></span><br><span class="line">    httpResponse = eurekaTransport.registrationClient.sendHeartBeat(instanceInfo.getAppName(), instanceInfo.getId(), instanceInfo, <span class="keyword">null</span>);</span><br><span class="line">    logger.debug(PREFIX + <span class="string">"&#123;&#125; - Heartbeat status: &#123;&#125;"</span>, appPathIdentifier, httpResponse.getStatusCode());</span><br><span class="line">    <span class="comment">// 404 标识当前服务实例不存在</span></span><br><span class="line">    <span class="keyword">if</span> (httpResponse.getStatusCode() == <span class="number">404</span>) &#123;</span><br><span class="line">      <span class="comment">// 记录心跳次数</span></span><br><span class="line">      REREGISTER_COUNTER.increment();</span><br><span class="line">      logger.info(PREFIX + <span class="string">"&#123;&#125; - Re-registering apps/&#123;&#125;"</span>, appPathIdentifier, instanceInfo.getAppName());</span><br><span class="line">      <span class="keyword">long</span> timestamp = instanceInfo.setIsDirtyWithTime();</span><br><span class="line">      <span class="comment">// 重新注册</span></span><br><span class="line">      <span class="keyword">boolean</span> success = register();</span><br><span class="line">      <span class="keyword">if</span> (success) &#123;</span><br><span class="line">      	instanceInfo.unsetIsDirty(timestamp);</span><br><span class="line">      &#125;</span><br><span class="line">    	<span class="keyword">return</span> success;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 200 状态正常</span></span><br><span class="line">    <span class="keyword">return</span> httpResponse.getStatusCode() == <span class="number">200</span>;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">    logger.error(PREFIX + <span class="string">"&#123;&#125; - was unable to send heartbeat!"</span>, appPathIdentifier, e);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="服务下线"><a href="#服务下线" class="headerlink" title="服务下线"></a>服务下线</h2><p>关闭 eureka client，还向 eureka server 发送撤销注册请求。该方法在DiscoveryClient#shutdown 方法中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PreDestroy</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  			<span class="comment">// 保证原子操作</span></span><br><span class="line">        <span class="keyword">if</span> (isShutdown.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</span><br><span class="line">            logger.info(<span class="string">"Shutting down DiscoveryClient ..."</span>);</span><br><span class="line">            <span class="keyword">if</span> (statusChangeListener != <span class="keyword">null</span> &amp;&amp; applicationInfoManager != <span class="keyword">null</span>) &#123;</span><br><span class="line">              	<span class="comment">// 应用管理器取消状态监听</span></span><br><span class="line">                applicationInfoManager.unregisterStatusChangeListener(statusChangeListener.getId());</span><br><span class="line">            &#125;</span><br><span class="line">						<span class="comment">// 清理任务调度执行</span></span><br><span class="line">            cancelScheduledTasks();</span><br><span class="line">            <span class="comment">// If APPINFO was registered</span></span><br><span class="line">            <span class="keyword">if</span> (applicationInfoManager != <span class="keyword">null</span></span><br><span class="line">                    &amp;&amp; clientConfig.shouldRegisterWithEureka()</span><br><span class="line">                    &amp;&amp; clientConfig.shouldUnregisterOnShutdown()) &#123;</span><br><span class="line">              	<span class="comment">//设置服务实例状态为 DOWN</span></span><br><span class="line">                applicationInfoManager.setInstanceStatus(InstanceStatus.DOWN);</span><br><span class="line">              	<span class="comment">//注销注册</span></span><br><span class="line">                unregister();</span><br><span class="line">            &#125;</span><br><span class="line">						<span class="comment">// 关闭 jersey 客户端</span></span><br><span class="line">            <span class="keyword">if</span> (eurekaTransport != <span class="keyword">null</span>) &#123;</span><br><span class="line">                eurekaTransport.shutdown();</span><br><span class="line">            &#125;</span><br><span class="line">            heartbeatStalenessMonitor.shutdown();</span><br><span class="line">            registryStalenessMonitor.shutdown();</span><br><span class="line">            logger.info(<span class="string">"Completed shut down of DiscoveryClient"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------生活本该如此，本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring-cloud/" rel="tag"><i class="fa fa-tag"></i> spring cloud</a>
+          
+            <a href="/tags/Eureka/" rel="tag"><i class="fa fa-tag"></i> Eureka</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/31/springcoud-eureka-discovery/" rel="next" title="SpringCloud-Eureka 服务发现">
+                <i class="fa fa-chevron-left"></i> SpringCloud-Eureka 服务发现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/31/springcoud-feign-project/" rel="prev" title="SpringCloud-声明式服务调用 Feign">
+                SpringCloud-声明式服务调用 Feign <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">GuoLei Song</p>
+              <p class="site-description motion-element" itemprop="description">从平凡的世界中全身而退</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">76</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/glmapper" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.weibo.com/u/2412872703" target="_blank" title="微博">
+                      
+                        <i class="fa fa-fw fa-Weibo"></i>微博</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://juejin.im/user/58fcc0768d6d810058965a06" target="_blank" title="掘金">
+                      
+                        <i class="fa fa-fw fa-spinner"></i>掘金</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                推荐阅读
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.sofastack.tech/" title="SOFA 开源社区" target="_blank">SOFA 开源社区</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.milk4j.com/" title="Jerry Simple" target="_blank">Jerry Simple</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Netflix-和-SpringCloud"><span class="nav-number">1.</span> <span class="nav-text">Netflix 和 SpringCloud</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Cloud-Netflix-Eureka-服务发现实现原理"><span class="nav-number">2.</span> <span class="nav-text">Spring Cloud Netflix Eureka 服务发现实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DiscoveryClient-接口"><span class="nav-number">2.1.</span> <span class="nav-text">DiscoveryClient 接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EnableDiscoveryClient-注解"><span class="nav-number">2.2.</span> <span class="nav-text">@EnableDiscoveryClient 注解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Eureka-架构图"><span class="nav-number">3.</span> <span class="nav-text">Eureka 架构图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码解析"><span class="nav-number">4.</span> <span class="nav-text">源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置信息读取"><span class="nav-number">4.1.</span> <span class="nav-text">配置信息读取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#读取-eureka-client"><span class="nav-number">4.1.1.</span> <span class="nav-text">读取 eureka.client.*</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取-eureka-instance"><span class="nav-number">4.1.2.</span> <span class="nav-text">读取 eureka.instance.*</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心组件-bean-初始化"><span class="nav-number">4.2.</span> <span class="nav-text">核心组件 bean 初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationInfoManager"><span class="nav-number">4.2.1.</span> <span class="nav-text">ApplicationInfoManager</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DiscoveryClient"><span class="nav-number">4.2.2.</span> <span class="nav-text">DiscoveryClient</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#EurekaServiceRegistry"><span class="nav-number">4.2.3.</span> <span class="nav-text">EurekaServiceRegistry</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#EurekaRegistration"><span class="nav-number">4.2.4.</span> <span class="nav-text">EurekaRegistration</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务发现"><span class="nav-number">5.</span> <span class="nav-text">服务发现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LookopService"><span class="nav-number">5.1.</span> <span class="nav-text">LookopService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EurekaClient"><span class="nav-number">5.2.</span> <span class="nav-text">EurekaClient</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DiscoveryClient-1"><span class="nav-number">5.3.</span> <span class="nav-text">DiscoveryClient</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务发现-1"><span class="nav-number">5.4.</span> <span class="nav-text">服务发现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#底层通信实现-EurekaTransport"><span class="nav-number">5.4.1.</span> <span class="nav-text">底层通信实现 EurekaTransport</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FetchRegistry"><span class="nav-number">5.4.2.</span> <span class="nav-text">FetchRegistry</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全量拉取"><span class="nav-number">5.4.3.</span> <span class="nav-text">全量拉取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#增量拉取"><span class="nav-number">5.4.4.</span> <span class="nav-text">增量拉取</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务注册"><span class="nav-number">6.</span> <span class="nav-text">服务注册</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#心跳机制"><span class="nav-number">7.</span> <span class="nav-text">心跳机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务下线"><span class="nav-number">8.</span> <span class="nav-text">服务下线</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GuoLei Song</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">博客全站字数&#58;</span>
+    
+    <span title="博客全站字数">161.3k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+-->
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      本站访客数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      本站总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://www-glmapper-com.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://www.glmapper.com/2018/12/31/springcoud-eureka-client-analysis/';
+          this.page.identifier = '2018/12/31/springcoud-eureka-client-analysis/';
+          this.page.title = 'Spring Cloud-Eureka Client 原理解析';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://www-glmapper-com.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
