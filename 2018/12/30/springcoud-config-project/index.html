@@ -22,7 +22,7 @@
     <meta name="description" content="从平凡的世界中全身而退">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>SpringCloud-Spring Cloud Context · glmapper</title>
+    <title>SpringCloud-配置中心 Config · glmapper</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/">glmapper</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">SpringCloud-Spring Cloud Context</a>
+                <a href="#" class="post-name">SpringCloud-配置中心 Config</a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            SpringCloud-Spring Cloud Context
+            SpringCloud-配置中心 Config
             <!-- 404 -->
             
         </h1>
@@ -266,20 +266,20 @@ height:50vh;
                 
                     <div class="post-intro-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="Config">Config</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="commons">commons</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">1.9k</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.6k</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2018/12/31</span>
+                    <span class="post-intro-time">2018/12/30</span>
                     
                     <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                         <span class="iconfont-archer">&#xe602;</span>
@@ -403,79 +403,99 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h2 id="引导程序应用上下文"><a href="#引导程序应用上下文" class="headerlink" title="引导程序应用上下文"></a>引导程序应用上下文</h2><blockquote>
-<p>A Spring Cloud application operates by creating a “bootstrap” context, which is a parent context for the main application. It is responsible for loading configuration properties from the external sources and for decrypting properties in the local external configuration files. The two contexts share an Environment, which is the source of external properties for any Spring application.</p>
-<p>By default, bootstrap properties (not bootstrap.properties but properties that are loaded during the bootstrap phase) are added with high precedence, so they cannot be overridden by local configuration.</p>
-<p>The bootstrap context uses a different convention for locating external configuration than the main application context. Instead of application.yml (or .properties), you can use bootstrap.yml, keeping the external configuration for bootstrap and main context nicely separate.</p>
-</blockquote>
+        <h2 id="Spring-Cloug-Config-简介"><a href="#Spring-Cloug-Config-简介" class="headerlink" title="Spring Cloug Config 简介"></a>Spring Cloug Config 简介</h2><p>Spring Cloud 提供的配置管理工具包，让你可以把配置放到远程服务器，集中化管理集群配置，目前支持本地存储、Git以及Subversion</p>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JDK<br></td>
+<td>1.8.0_162<br></td>
+</tr>
+<tr>
+<td>SOFABoot/SpringBoot<br></td>
+<td><a href="https://github.com/alipay/sofa-boot/releases/tag/v3.0.0" target="_blank" rel="noopener">3.0.0</a>/2.0.x.RELEASE<br></td>
+</tr>
+<tr>
+<td>SpringCloud<br></td>
+<td>Finchley.RC1<br></td>
+</tr>
+<tr>
+<td>IDE<br></td>
+<td>IDEA<br></td>
+</tr>
+</tbody>
+</table>
+<h2 id="工程背景"><a href="#工程背景" class="headerlink" title="工程背景"></a>工程背景</h2><p>本节将通过 SOFABoot 来集成 Spring Cloud Config ，以 git 作为存储，来实现分布式环境下的配置管理。本工程的父工程仍然是《SpringCloud-Eureka 服务注册》中构建的父工程。 </p>
+<p>由于我们是以 git 来存储配置文件的，因此我们需要在 github 上新建一个存储配置文件的空间，为了更方面的模拟，这里创建了两个配置文件：</p>
+<ul>
+<li>glmapper-dev.properties</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name=leishu@glmapper_dev</span><br><span class="line">blog=http://www.glmapper.com</span><br><span class="line">version=dev</span><br></pre></td></tr></table></figure>
+<ul>
+<li>glmapper-pre.properties</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name=leishu@glmapper_pre</span><br><span class="line">blog=http://www.glmapper.com</span><br><span class="line">version=pre</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>释文：Spring Cloud 应用程序通过创建“引导程序”上下文来运行，<strong>该上下文是主应用程序的父上下文</strong>共享一个 Environment**，它是任何Spring应用程序的外部属性的来源。</p>
-<p>默认情况下，引导属性（不是bootstrap.properties，而是在引导阶段加载的属性）以<strong>高优先级添加</strong>，因此本地配置无法覆盖它们。</p>
-<p>引导上下文使用与主应用程序上下文不同的外部配置约定。 因此使用 bootstrap.yml application.yml（或.properties）代替引导和主上下文的外部配置，保持引导程序和主上下文的外部配置很好地分开。</p>
+<p>github 地址：<a href="https://github.com/glmapper/glmapper-config-repository" target="_blank" rel="noopener">https://github.com/glmapper/glmapper-config-repository</a></p>
 </blockquote>
-<p><br><br>上面是 SpringCloud 关于引导上下文的一个解释，详见 <a href="https://cloud.spring.io/spring-cloud-static/Finchley.SR2/single/spring-cloud.html#_the_bootstrap_application_context" target="_blank" rel="noopener">这里</a>。</p>
-<p>spring cloud 有自己的一套配置初始化机制，所以它实际上是自己启动了一个Spring 上下文，也就是我们说的引导上文。在上面的描述中有提到，引导上下文会以应用上下文的父类存在；在Spring中，如果上下文存在父子关系，也就意味着子上下文会集成父上下文的属性源和配置文件。在SpringBoot的启动过程中，prepareContext 这个操作会进行父子上下文的关系设置，调用栈如下:</p>
-<p><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1546070770372-d7a4ec62-f29b-477f-adc0-844709415a32.png#wh=561x165" alt="image.png"></p>
-<p>setParent 方法代码片段如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setParent</span><span class="params">(@Nullable ApplicationContext parent)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">this</span>.parent = parent;</span><br><span class="line">       <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</span><br><span class="line">           Environment parentEnvironment = parent.getEnvironment();</span><br><span class="line">           <span class="keyword">if</span> (parentEnvironment <span class="keyword">instanceof</span> ConfigurableEnvironment) &#123;</span><br><span class="line">               <span class="keyword">this</span>.getEnvironment().merge((ConfigurableEnvironment)parentEnvironment);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
-<p>这个可以看到，子上下文会合并掉父上下文的 Environment 。关于父子上下文是怎么关联起来的，下面来看。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initialize</span><span class="params">(ConfigurableApplicationContext context)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(context.getParent() != <span class="keyword">null</span> &amp;&amp; context.getParent() != context) &#123;</span><br><span class="line">  context = (ConfigurableApplicationContext)context.getParent();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.reorderSources(context.getEnvironment());</span><br><span class="line">  (<span class="keyword">new</span> ParentContextApplicationContextInitializer(<span class="keyword">this</span>.parent)).initialize(context);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="BootstrapApplicationListener"><a href="#BootstrapApplicationListener" class="headerlink" title="BootstrapApplicationListener"></a>BootstrapApplicationListener</h3><p>上面的代码片段定位在 org.springframework.cloud.bootstrap.BootstrapApplicationListener 这个类；这个监听器监听的事件是  ApplicationEnvironmentPreparedEvent ，对应在SpringBoot启动过程，就是在执行 prepareEnvironment 时触发事件调用。</p>
-<p>BootstrapApplicationListener 的 onApplicationEvent 回调方法中实际上就是用够构建和启动 Spring Cloud  context 的。<br>spring cloud context 算是一个特殊的 spring boot context， 在分析代码的过程中（bootstrapServiceContext方法中）发现，它只扫描 BootstrapConfiguration 这个注解标注的组件。</p>
-<p>这里就着重分析下 SpringCloud Context 的启动过程。</p>
-<h3 id="SpringCloud-Context-启动过程"><a href="#SpringCloud-Context-启动过程" class="headerlink" title="SpringCloud Context 启动过程"></a>SpringCloud Context 启动过程</h3><p><br></p>
-<h4 id="通过-spring-cloud-bootstrap-enabled-配置来禁用引导上下文"><a href="#通过-spring-cloud-bootstrap-enabled-配置来禁用引导上下文" class="headerlink" title="通过 spring.cloud.bootstrap.enabled 配置来禁用引导上下文"></a>通过 spring.cloud.bootstrap.enabled 配置来禁用引导上下文</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!environment.getProperty(<span class="string">"spring.cloud.bootstrap.enabled"</span>, Boolean.class,<span class="keyword">true</span>)) &#123;</span><br><span class="line"> 	 <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>回调函数的开始就会对 spring.cloud.bootstrap.enabled 这个配置值进行校验，来决定是否需要禁止引导。这个在官方文档里面也有明确提到。</p>
-<h4 id="获取-configName"><a href="#获取-configName" class="headerlink" title="获取 configName"></a>获取 configName</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String configName = environment</span><br><span class="line">				.resolvePlaceholders(<span class="string">"$&#123;spring.cloud.bootstrap.name:bootstrap&#125;"</span>);</span><br></pre></td></tr></table></figure>
-<p><br><br>可以使用 spring.cloud.bootstrap.name（默认“bootstrap”）或spring.cloud.bootstrap.location（默认为空）指定bootstrap.yml（或.properties）位置，例如在系统属性中。<br><br></p>
-<h4 id="bootstrapServiceContext-创建-amp-启动"><a href="#bootstrapServiceContext-创建-amp-启动" class="headerlink" title="bootstrapServiceContext 创建&amp;启动"></a>bootstrapServiceContext 创建&amp;启动</h4><p>bootstrapServiceContext 是完成此过程的核心方法。</p>
+<h2 id="新建-sofa-config-server"><a href="#新建-sofa-config-server" class="headerlink" title="新建 sofa-config-server"></a>新建 sofa-config-server</h2><p>右击 sofa-eureka-parent 父工程 -&gt; New -&gt; Module，这里选择 Maven 工程；</p>
 <ul>
-<li>加载 BootstrapConfiguration 自动配置类</li>
+<li>artifactId：sofa-config-server</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Bootstrap components</span><br><span class="line">org.springframework.cloud.bootstrap.BootstrapConfiguration=\</span><br><span class="line">org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration,\</span><br><span class="line">org.springframework.cloud.bootstrap.encrypt.EncryptionBootstrapConfiguration,\</span><br><span class="line">org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration,\</span><br><span class="line">org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration</span><br></pre></td></tr></table></figure>
-<p>PropertySourceBootstrapConfiguration 将会把 PropertySourceLocator 自定义属性值添加到引导上下文的环境当中，包括如何从远端仓库拉取配置等过程。</p>
+<h3 id="修改-pom-文件"><a href="#修改-pom-文件" class="headerlink" title="修改 pom 文件"></a>修改 pom 文件</h3><p>这里直接引入 config 的依赖即可</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>sofa-eureka-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alipay.sofa<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>sofa-config-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-config-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#服务端口</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8091</span></span><br><span class="line">  <span class="comment">#服务名称</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  application:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">sofa-config-server</span></span><br><span class="line">  <span class="comment">#服务的git仓库地址</span></span><br><span class="line"><span class="attr">  cloud:</span></span><br><span class="line"><span class="attr">    config:</span></span><br><span class="line"><span class="attr">      server:</span></span><br><span class="line"><span class="attr">        git:</span></span><br><span class="line"><span class="attr">          uri:</span> <span class="attr">https://github.com/glmapper/glmapper-config-repository</span></span><br><span class="line"><span class="attr">          search-paths:</span> <span class="string">/**</span></span><br><span class="line"><span class="attr">          username:</span> <span class="string">glmapper_2018@163.com</span></span><br><span class="line"><span class="attr">          password:</span> <span class="string">******</span></span><br><span class="line">      <span class="comment">#指定分支</span></span><br><span class="line"><span class="attr">      label:</span> <span class="string">master</span></span><br><span class="line"><span class="comment">#服务注册中心</span></span><br><span class="line"><span class="attr">eureka:</span></span><br><span class="line"><span class="attr">  client:</span></span><br><span class="line"><span class="attr">    service-url:</span></span><br><span class="line"><span class="attr">      defaultZone:</span> <span class="attr">http://localhost:8761/eureka/</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果你的 github 仓库是公开的话，就不需要输入账户和密码就可以访问。</p>
+</blockquote>
+<h3 id="启动类"><a href="#启动类" class="headerlink" title="启动类"></a>启动类</h3><p>在启动类上加 @EnableConfigServer 注解，激活对配置中心的支持</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableConfigServer</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SofaConfigServerApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(SofaConfigServerApplication.class,args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="启动-amp-验证"><a href="#启动-amp-验证" class="headerlink" title="启动 &amp; 验证"></a>启动 &amp; 验证</h3><p>因为配置中心作为一个独立的服务，所以不需要依赖其他服务的先启动，直接运行当前程序即可。这里我们首先需要验证下 server 端是否已经成功拉取到了 github 上面的配置信息：</p>
+<p>访问：<a href="http://localhost:8091/glmapper/pre/master" target="_blank" rel="noopener">http://localhost:8091/glmapper/pre/master</a></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"glmapper"</span>,</span><br><span class="line">    <span class="attr">"profiles"</span>: [</span><br><span class="line">        <span class="string">"pre"</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"label"</span>: <span class="string">"master"</span>,</span><br><span class="line">    <span class="attr">"version"</span>: <span class="string">"f9e8c1f2825d23031cb13d40e396a23c0f975d2d"</span>,</span><br><span class="line">    <span class="attr">"state"</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">"propertySources"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"name"</span>: <span class="string">"https://github.com/glmapper/glmapper-config-repository/glmapper-pre.properties"</span>,</span><br><span class="line">            <span class="attr">"source"</span>: &#123;</span><br><span class="line">                <span class="attr">"name"</span>: <span class="string">"leishu@glmapper-pre"</span>,</span><br><span class="line">                <span class="attr">"blog"</span>: <span class="string">"http://www.glmapper.com"</span>,</span><br><span class="line">                <span class="attr">"version"</span>: <span class="string">"pre"</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>OK ，说明服务端已经成功拉取到了github上的配置文件了。</p>
+<blockquote>
+<p>关于地址的说明：<a href="http://localhost:8091/glmapper/pre/master" target="_blank" rel="noopener">http://localhost:8091/glmapper/pre/master</a> 。前半部分是ip和端口，没什么好说的。<br>glmapper/pre/master，因为我在github上新建的配置文件名是 glmapper-dev.properties 和 glmapper-pre .properties ;所以这里地址的规则就是 /glmapper/pre ，后面的 master 可带可不带，区别在于返回的 JSON 数据 label 是 null 还是 master，label 指向分支。</p>
+</blockquote>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>本节构建一个简单的客户端工程 sofa-config-client ，用于从 sofa-config-server 上获取配置文件并展示。sofa-config-client 同样基于《SpringCloud-Eureka 服务注册》中构建的父工程。 </p>
+<h3 id="修改-pom-文件-1"><a href="#修改-pom-文件-1" class="headerlink" title="修改 pom 文件"></a>修改 pom 文件</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>sofa-eureka-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alipay.sofa<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>sofa-config-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-config<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>引入 spring-cloud-starter-config 和  spring-boot-starter-web 依赖。</p>
+<h3 id="配置文件-1"><a href="#配置文件-1" class="headerlink" title="配置文件"></a>配置文件</h3><p>配置文件包括两个，一个是 application.yml ，另一个是 bootstrap.yml</p>
 <ul>
-<li><p>构建 SpringApplicationBuilder 类</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SpringApplicationBuilder builder = <span class="keyword">new</span> SpringApplicationBuilder()</span><br><span class="line">				.profiles(environment.getActiveProfiles()).bannerMode(Mode.OFF)</span><br><span class="line">				.environment(bootstrapEnvironment)</span><br><span class="line">				<span class="comment">// Don't use the default properties in this builder</span></span><br><span class="line">				.registerShutdownHook(<span class="keyword">false</span>).logStartupInfo(<span class="keyword">false</span>)</span><br><span class="line">				.web(WebApplicationType.NONE);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>构建 引导上下文并 run</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> ConfigurableApplicationContext context = builder.run();</span><br></pre></td></tr></table></figure>
-</li>
+<li>application.yml</li>
 </ul>
-<p>这个 build.run 实际执行的就是 SpringApplication.run 方法。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: sofa-config-client</span><br><span class="line">server:</span><br><span class="line">  port: 8099</span><br></pre></td></tr></table></figure>
 <ul>
-<li>为关联父子上下文准备<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">addAncestorInitializer(application, context);</span><br></pre></td></tr></table></figure>
-</li>
+<li>bootstrap.yml</li>
 </ul>
-<p>这里会把 ParentContextApplicationContextInitializer 加到应用的 spring context 里，来把自己设置为应用的context 的 parent，具体是在SpringBoot启动过程的 prepareContext 中完成 。</p>
-<h2 id="重载远程属性"><a href="#重载远程属性" class="headerlink" title="重载远程属性"></a>重载远程属性</h2><p>通过Bootstrap 上下文添加到应用程序的属性源通常是远程的，比如说来自配置中心的，一般情况下本地的配置文件不能覆盖这些远程属性源。</p>
-<p>那么如果想覆盖远程属性源怎么办呢？可以通过启动命令行参数方式设定（启动命令行参数的优先级高于远程配置的优先级）。</p>
-<p>如果想使用应用程序的系统属性或者配置文件覆盖远程属性，那么远程属性源必须设置为 spring.cloud.config.allowOverride = true，这个配置在本地设置时不会生效的。在远程属性源中设定上述配置后，就可以通过更为细粒度的设置来控制远程属性是否能被重载，具体配置如下：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">	<span class="attr">cloud:</span></span><br><span class="line">  	<span class="attr">config:</span></span><br><span class="line">    	<span class="attr">overrideNone:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">      overrideSystemProperties:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>overrideNone true，本地属性覆盖所有的远程属性</li>
-<li>overrideSystemProperties ，仅覆盖远程属性源中的系统属性和环境变量</li>
-</ul>
-<h2 id="自定义-Bootstrap-属性源"><a href="#自定义-Bootstrap-属性源" class="headerlink" title="自定义 Bootstrap 属性源"></a>自定义 Bootstrap 属性源</h2><p>默认情况下，Bootstrap 的外部配置属性源是 spring cloud config server ，也就是使用配置中心加载外部属性，但是Spring中也允许用户通过将 ProoertySourceLocator 类型的Bean实例添加到 Bootstrap 上下文，也就是在 spring.factories 中添加相应的配置类，来添加额外的属性源来源。这里可以通过SpringCloud里面提供的测试用例来看下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">PropertySourceConfiguration</span> <span class="keyword">implements</span> <span class="title">PropertySourceLocator</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 省略其他代码	</span></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> PropertySource&lt;?&gt; locate(Environment environment) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.name != <span class="keyword">null</span>) &#123;</span><br><span class="line">      assertEquals(<span class="keyword">this</span>.name,</span><br><span class="line">                   environment.getProperty(<span class="string">"spring.application.name"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.fail) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Planned"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> MapPropertySource(<span class="string">"testBootstrap"</span>, MAP);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 省略其他代码	</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面代码段中传入的Envirement 参数用于创建应用上下文，它具有 SpringBoot 提供的属性源，可以使用它们来加载指定的属性源。</p>
-<p>最后将这个自定义的 PropertySourceLocator 配置到 spring.factories 中，这样应用程序就可以使用这个 PropertySourceConfiguration 作为其属性源了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.cloud.bootstrap.BootstrapConfiguration=\</span><br><span class="line">xx.xx.x.x.PropertySourceConfiguration</span><br></pre></td></tr></table></figure>
-<h2 id="关于Enviroment-的变化"><a href="#关于Enviroment-的变化" class="headerlink" title="关于Enviroment 的变化"></a>关于Enviroment 的变化</h2><p>配置中心客户端（Spring Cloud Config Client） 应用会监听  EnviromentChangeEvent 事件，当监听到这个事件时，它将持有一个被改变的键值对列表，然后客户端应用会使用这些值来做一些事情：</p>
-<ul>
-<li>重新绑定所有的@ConfigurationProperties的Bean<a href="#">@ConfigurationProperties</a> 实例，更新本地的配置属性。</li>
-<li>设置日志等级（logging.level.* 相关配置）</li>
-</ul>
-<p>Spring Cloud 中，配置中心服务端使用 Spring Cloud Bus 将EnviromentChangeEvent 事件广播到所有的客户端中，通过这种方式来通过它们 Enviroment 发生变化。<br><br></p>
-<h2 id="RefreshScope"><a href="#RefreshScope" class="headerlink" title="RefreshScope"></a>RefreshScope</h2><h3 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h3><p>RefreshScope 注解的作用是，当被这个注解标记的Bean实例在配置发生变化时可以重新进行初始化，可参考 <a href="https://yuque.antfin-inc.com/guolei.sgl/springcloud/krv1v3#43d58bbd" target="_blank" rel="noopener">动态刷新配置</a> 这个demo。这个注解很好的解决了状态Bean实例只能在初始化的时候才能进行属性注入的问题。</p>
-<h3 id="类"><a href="#类" class="headerlink" title="类"></a>类</h3><p>org.springframework.cloud.context.scope.refresh.RefreshScope 是上下文中的一个Bean实例，在它的 refreshAll 这个方法中，可以通过清除目标缓存来刷新作用域中的所有Bean实例。RefreshScope中也提供了一个 refresh方法，可以按照名字来刷新单个Bean。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    config:</span><br><span class="line">      name: glmapper								</span><br><span class="line">      profile: pre</span><br><span class="line">      uri: http://localhost:8091/   #指向配置中心的地址</span><br><span class="line">      label: master</span><br></pre></td></tr></table></figure>
+<h3 id="启动类-1"><a href="#启动类-1" class="headerlink" title="启动类"></a>启动类</h3><p>启动类不需要做什么修改，也不需要额外加什么注解<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SofaConfigClientApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(SofaConfigClientApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="资源类"><a href="#资源类" class="headerlink" title="资源类"></a>资源类</h3><p>新建一个资源类，用于输出展示拉取到的配置信息<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConfigClientController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;name&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span>  String name;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;blog&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span>  String blog;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;version&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span>  String version;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/config"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">config</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"name:"</span>+name+<span class="string">" ,blog:"</span>+blog+<span class="string">" ,version:"</span>+version;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="启动和运行"><a href="#启动和运行" class="headerlink" title="启动和运行"></a>启动和运行</h3><p>先后启动配置中心服务端和客户端程序。在浏览器中输入：<a href="http://localhost:8099/config" target="_blank" rel="noopener">http://localhost:8099/config</a> ，返回如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name:leishu@glmapper-pre ,blog:http://www.glmapper.com ,version:pre</span><br></pre></td></tr></table></figure></p>
+<p>我们尝试下将 github 中 glmapper-pre.properties 这个配置文件进行修改，看下是否在这能获取到最新的依赖，修改之后，如下：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name=leishu@glmapper_pre_update</span><br><span class="line">blog=http://www.glmapper.com</span><br><span class="line">version=pre</span><br></pre></td></tr></table></figure></p>
+<p>重新刷新浏览器地址，返回如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name:leishu@glmapper-pre ,blog:http://www.glmapper.com ,version:pre</span><br></pre></td></tr></table></figure></p>
+<p>这里并没有发生任何变换，因为 SpringBoot 项目只会在项目启动时才会获取一次配置文件信息，当我们修改了 github 上的配置文件之后，当前的配置中心客户端并没有主动去获取配置值，所以不会有新的值，我们获取到的还是旧的值。那么下面通过修改和增加一些组件和配置来实现不停服动态更新配置。</p>
+<h3 id="配置动态更新"><a href="#配置动态更新" class="headerlink" title="配置动态更新"></a>配置动态更新</h3><p>要实现配置的动态更新，需要借助于 springboot 的 actuator 监控模块。所有需要在客户端pom文件中引入 actuator 的依赖信息。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>配置文件 application.yml 中增加配置，将/actuator/refresh 断点暴露出来，注意不要配置在 boostrap.yml 中。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: sofa-config-client</span><br><span class="line">server:</span><br><span class="line">  port: 8099</span><br><span class="line">management:</span><br><span class="line">  endpoints:</span><br><span class="line">    web:</span><br><span class="line">      exposure:</span><br><span class="line">        include: refresh</span><br></pre></td></tr></table></figure></p>
+<p>资源类中开启更新机制，在 ConfigClientController 类中增加 @RefreshScope 注解，然后重启客户端。</p>
+<p>首先执行：<a href="http://localhost:8099/config" target="_blank" rel="noopener">http://localhost:8099/config</a> ，得到结果如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name:leishu@glmapper-pre ,blog:http://www.glmapper.com ,version:pre&lt;br /&gt;</span><br></pre></td></tr></table></figure></p>
+<p>更新 github 上配置文件的值，将 name 改为 name:leishu@glmapper-pre，通过 curl 或者 postman 执行下 刷新：</p>
+<p><img src="https://oscimg.oschina.net/oscnet/64907646317fdc6038cb4ab46f713fbc231.jpg" alt="image.png"></p>
+<p>再次刷新执行 <a href="http://localhost:8099/config" target="_blank" rel="noopener">http://localhost:8099/config</a> ，结果如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name:leishu@glmapper-pre-update ,blog:http://www.glmapper.com ,version:pre</span><br></pre></td></tr></table></figure></p>
 
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
-            </p><p>原文链接：<a href="http://www.glmapper.com/2018/12/31/springcoud-context-analysis/">http://www.glmapper.com/2018/12/31/springcoud-context-analysis/</a>
-            </p><p>发表日期：<a href="http://www.glmapper.com/2018/12/31/springcoud-context-analysis/">December 31st 2018, 12:17:28 am</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2018/12/31/springcoud-context-analysis/">December 31st 2018, 12:18:10 am</a>
+            </p><p>原文链接：<a href="http://www.glmapper.com/2018/12/30/springcoud-config-project/">http://www.glmapper.com/2018/12/30/springcoud-config-project/</a>
+            </p><p>发表日期：<a href="http://www.glmapper.com/2018/12/30/springcoud-config-project/">December 30th 2018, 4:16:07 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2018/12/30/springcoud-config-project/">January 5th 2019, 12:53:59 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -484,16 +504,16 @@ height:50vh;
         <li class="next">
             
                 <div class="nextSlogan">Next Post</div>
-                <a href="/2019/01/05/mysql-on-linux/" title="Linux 下安装 Mysql 数据库">
-                    <div class="nextTitle">Linux 下安装 Mysql 数据库</div>
+                <a href="/2018/12/30/springcoud-context-analysis/" title="SpringCloud-Spring Cloud Context">
+                    <div class="nextTitle">SpringCloud-Spring Cloud Context</div>
                 </a>
             
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href="/2018/12/31/springcoud-config-project/" title="SpringCloud-配置中心 Config">
-                    <div class="prevTitle">SpringCloud-配置中心 Config</div>
+                <a href="/2018/12/30/springcoud-ribbon-project/" title="SpringCloud-负载均衡器 Ribbon">
+                    <div class="prevTitle">SpringCloud-负载均衡器 Ribbon</div>
                 </a>
             
         </li>
@@ -624,7 +644,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引导程序应用上下文"><span class="toc-number">1.</span> <span class="toc-text">引导程序应用上下文</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BootstrapApplicationListener"><span class="toc-number">1.1.</span> <span class="toc-text">BootstrapApplicationListener</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SpringCloud-Context-启动过程"><span class="toc-number">1.2.</span> <span class="toc-text">SpringCloud Context 启动过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#通过-spring-cloud-bootstrap-enabled-配置来禁用引导上下文"><span class="toc-number">1.2.1.</span> <span class="toc-text">通过 spring.cloud.bootstrap.enabled 配置来禁用引导上下文</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#获取-configName"><span class="toc-number">1.2.2.</span> <span class="toc-text">获取 configName</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bootstrapServiceContext-创建-amp-启动"><span class="toc-number">1.2.3.</span> <span class="toc-text">bootstrapServiceContext 创建&amp;启动</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重载远程属性"><span class="toc-number">2.</span> <span class="toc-text">重载远程属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义-Bootstrap-属性源"><span class="toc-number">3.</span> <span class="toc-text">自定义 Bootstrap 属性源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于Enviroment-的变化"><span class="toc-number">4.</span> <span class="toc-text">关于Enviroment 的变化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RefreshScope"><span class="toc-number">5.</span> <span class="toc-text">RefreshScope</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#注解"><span class="toc-number">5.1.</span> <span class="toc-text">注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类"><span class="toc-number">5.2.</span> <span class="toc-text">类</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Cloug-Config-简介"><span class="toc-number">1.</span> <span class="toc-text">Spring Cloug Config 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境准备"><span class="toc-number">2.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工程背景"><span class="toc-number">3.</span> <span class="toc-text">工程背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建-sofa-config-server"><span class="toc-number">4.</span> <span class="toc-text">新建 sofa-config-server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-pom-文件"><span class="toc-number">4.1.</span> <span class="toc-text">修改 pom 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">4.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动类"><span class="toc-number">4.3.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动-amp-验证"><span class="toc-number">4.4.</span> <span class="toc-text">启动 &amp; 验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">5.</span> <span class="toc-text">客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-pom-文件-1"><span class="toc-number">5.1.</span> <span class="toc-text">修改 pom 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件-1"><span class="toc-number">5.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动类-1"><span class="toc-number">5.3.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#资源类"><span class="toc-number">5.4.</span> <span class="toc-text">资源类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动和运行"><span class="toc-number">5.5.</span> <span class="toc-text">启动和运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置动态更新"><span class="toc-number">5.6.</span> <span class="toc-text">配置动态更新</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -637,30 +657,6 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -2326,47 +2322,47 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-config-project/">SpringCloud-配置中心 Config</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcloud-overview/">SpringCloud 总览</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-config-project/">SpringCloud-配置中心 Config</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/23</span><a class="archive-post-title" href="/2018/12/23/springsession-id-resolver/">SpringSession系列-sessionId解析和Cookie读写策略</a>
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcloud-overview/">SpringCloud 总览</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/22</span><a class="archive-post-title" href="/2018/12/22/springsession-id-resolver/">SpringSession系列-sessionId解析和Cookie读写策略</a>
         </li>
     
     
@@ -2376,7 +2372,7 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/spring-session-redis-map/">SpringSession系列-存储机制之Redis&Map</a>
+            <span class="archive-post-date">12/15</span><a class="archive-post-title" href="/2018/12/15/spring-session-redis-map/">SpringSession系列-存储机制之Redis&Map</a>
         </li>
     
     

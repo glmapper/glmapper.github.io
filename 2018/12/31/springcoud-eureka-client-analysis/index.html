@@ -404,9 +404,10 @@ height:50vh;
             <main class="main post-page">
     <article class="article-entry">
         <p>前面一些 demo 中已经介绍了如何使用SOFABoot 来集成 Spring Cloud Netflix Eureka 组件。本篇将来先解析下 Eureka Client 的工作原理。</p>
-<h2 id="Netflix-和-SpringCloud"><a href="#Netflix-和-SpringCloud" class="headerlink" title="Netflix 和 SpringCloud"></a>Netflix 和 SpringCloud</h2><p>spring-cloud-commons 模块是 spring 在分布式领域上(服务发现，服务注册，断路器，负载均衡)的规范定义。spring-cloud-netflix 是基于此规范的具体实现，Netflix OSS 里的各种组件也都实现了这个 commons 规范。关系如下：<br><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545979991419-08ae3e7c-3125-4a3e-8a9d-f43ab6c3322b.png#wh=626x332" alt="image.png"></p>
+<h2 id="Netflix-和-SpringCloud"><a href="#Netflix-和-SpringCloud" class="headerlink" title="Netflix 和 SpringCloud"></a>Netflix 和 SpringCloud</h2><p>spring-cloud-commons 模块是 spring 在分布式领域上(服务发现，服务注册，断路器，负载均衡)的规范定义。spring-cloud-netflix 是基于此规范的具体实现，Netflix OSS 里的各种组件也都实现了这个 commons 规范。关系如下：<br><img src="https://oscimg.oschina.net/oscnet/955bbfee782856642563be3bbbdb8e32d4e.jpg" alt="image.png"></p>
 <h2 id="Spring-Cloud-Netflix-Eureka-服务发现实现原理"><a href="#Spring-Cloud-Netflix-Eureka-服务发现实现原理" class="headerlink" title="Spring Cloud Netflix Eureka 服务发现实现原理"></a>Spring Cloud Netflix Eureka 服务发现实现原理</h2><p>基于上图，这里以 Eureka 中的服务发现为例，来具体讲下是如何实现的。Spring Cloud common 中提供了用于服务发现的两个关键类：DiscoveryClient 接口 和 EnableDiscoveryClient 注解。<br><br></p>
-<h3 id="DiscoveryClient-接口"><a href="#DiscoveryClient-接口" class="headerlink" title="DiscoveryClient 接口"></a>DiscoveryClient 接口</h3><p>下面这张图描述的是在服务发现这个功能上，SpringCloud 是如何与 Netflix 整合的。<br>在 spring-cloud-netflix-eureka-client 中对 Spring Cloud Common 中的 DiscoveryClient 接口进行了实现，实现类是 EurekaDiscoveryClient 。<br><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545981516158-eabcaa30-83e2-439c-9198-77c1f14b6c79.png#wh=577x416" alt="image.png"><br>DiscoveryClient 的接口定义与方法：</p>
+<h3 id="DiscoveryClient-接口"><a href="#DiscoveryClient-接口" class="headerlink" title="DiscoveryClient 接口"></a>DiscoveryClient 接口</h3><p>下面这张图描述的是在服务发现这个功能上，SpringCloud 是如何与 Netflix 整合的。<br>在 spring-cloud-netflix-eureka-client 中对 Spring Cloud Common 中的 DiscoveryClient 接口进行了实现，实现类是 EurekaDiscoveryClient 。<br><img src="https://oscimg.oschina.net/oscnet/a123885eae0d4c0ab198c02d5ad551475bd.jpg" alt="image.png"></p>
+<p>DiscoveryClient 的接口定义与方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * DiscoveryClient表示服务发现常用的读取操作，例如Netflix Eureka或consul.io</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Spencer Gibb</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DiscoveryClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 实现描述</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span> the description</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function">String <span class="title">description</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 获取与特定serviceId关联的所有ServiceInstances</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> serviceId the serviceId to query</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span> a List of ServiceInstance</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function">List&lt;ServiceInstance&gt; <span class="title">getInstances</span><span class="params">(String serviceId)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 返回所有已知的服务ID</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function">List&lt;String&gt; <span class="title">getServices</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>EurekaDiscoveryClient 中实现了这几个方法，但是 EurekaDiscoveryClient 自身没有实现如何与服务端交互的逻辑，而是通过 com.netflix.DiscoveryClient 类来完成。所以 spring-cloud-netflix-eureka-client 干的事情就是实现了 Spring Cloud Common 规范，然后在实现上包装了 netflix 。</p>
 <h3 id="EnableDiscoveryClient-注解"><a href="#EnableDiscoveryClient-注解" class="headerlink" title="@EnableDiscoveryClient 注解"></a>@EnableDiscoveryClient 注解</h3><p><br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Import</span>(EnableDiscoveryClientImportSelector.class)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> EnableDiscoveryClient &#123;</span><br><span class="line">  <span class="comment">//是否自动注册，默认是true。</span></span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">autoRegister</span><span class="params">()</span> <span class="keyword">default</span> <span class="keyword">true</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -416,13 +417,13 @@ height:50vh;
 <li>如果自动注册属性为true，会在找出的这些类里再加上一个类：AutoServiceRegistrationConfiguration， AutoServiceRegistrationConfiguration 内部会使用@EnableConfigurationProperties(AutoServiceRegistrationProperties.class) 触发构造AutoServiceRegistrationProperties 这个 bean。像eureka，nacos，它们的自动化配置类里都使用了@ConditionalOnBean(AutoServiceRegistrationProperties.class) 来确保存在AutoServiceRegistrationProperties 这个 bean 存在的时候才会构造 AutoServiceRegistration 进行注册。</li>
 <li>如果自动注册属性为 false，在Environment 里加一个 PropertySource，内部的配置项是spring.cloud.service-registry.auto-registration.enabled，值是false(代表不构造AutoServiceRegistrationProperties.class)。这样 eureka 就不会注册。</li>
 </ul>
-<p><br><br>对应上面这段逻辑的代码如下：</p>
-<p><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545982472444-7e4995bb-af73-4ca2-9942-5c5ee1ea9901.png#wh=655x204" alt="image.png"></p>
+<p>对应上面这段逻辑的代码如下：</p>
+<p><img src="https://oscimg.oschina.net/oscnet/219321a0468aaa9abbd81af27292bc927d6.jpg" alt="image.png"></p>
 <p>spring-cloud-netflix-eureka-client 自己也提供了一个注解 EnableEurekaClient，其作用于这个注解一样</p>
-<h2 id="Eureka-架构图"><a href="#Eureka-架构图" class="headerlink" title="Eureka 架构图"></a>Eureka 架构图</h2><p><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545978817975-4b633117-66eb-4806-90a1-c6a1d419f494.png#wh=712x323" alt="image.png"></p>
+<h2 id="Eureka-架构图"><a href="#Eureka-架构图" class="headerlink" title="Eureka 架构图"></a>Eureka 架构图</h2><p><img src="https://oscimg.oschina.net/oscnet/a43e024e39d5d351b0e4961bd61e4bd71de.jpg" alt="image.png"></p>
 <ul>
 <li>consumer  : 服务消费方，eureka client 角色，可以从 eureka server 上拉取到其他已注册服务的信息，从而根据这些信息找到自己所需的服务，然后发起远程调用。</li>
-<li>provider : 服务提供方，eureka client 角色，可以向 eureka server 上注册和更新自己的信息，当然作为 eureka client ，它也可以从server 上获取到其他服务的信息。<br></li>
+<li>provider : 服务提供方，eureka client 角色，可以向 eureka server 上注册和更新自己的信息，当然作为 eureka client ，它也可以从server 上获取到其他服务的信息。</li>
 <li>Eureka server : 服务注册中心，提供服务注册和服务发现功能；</li>
 <li>同步复制 ： eureka server 之间进行注册服务信息的同步，这样可以保证集群中每个server 都能提供完整的服务信息。</li>
 </ul>
@@ -447,7 +448,7 @@ height:50vh;
 <blockquote>
 <p>RefreshScope ，被此注解标注的情况下，将会被动态刷新。包括属性信息等，注意，对于动态刷新，被RefreshScope标记的类不能是final的。</p>
 </blockquote>
-<p><br><br>ApplicationInfoManager 是应用信息管理器，用于管理服务实例的信息类 InstanceInfo 和服务实例的配置信息类 EurekaInstanceConfig 。</p>
+<p>ApplicationInfoManager 是应用信息管理器，用于管理服务实例的信息类 InstanceInfo 和服务实例的配置信息类 EurekaInstanceConfig 。</p>
 <h4 id="DiscoveryClient"><a href="#DiscoveryClient" class="headerlink" title="DiscoveryClient"></a>DiscoveryClient</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DiscoveryClient <span class="title">discoveryClient</span><span class="params">(EurekaInstanceConfig config, EurekaClient client)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> EurekaDiscoveryClient(config, client);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>DiscoveryClient ，前面说到，这个类是Spring Cloud 中用于服务发现使用的客户端接口。注意这里是SpringCloud提供的接口，不是netflix中的类。</p>
 <h4 id="EurekaServiceRegistry"><a href="#EurekaServiceRegistry" class="headerlink" title="EurekaServiceRegistry"></a>EurekaServiceRegistry</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> EurekaServiceRegistry <span class="title">eurekaServiceRegistry</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> EurekaServiceRegistry();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -459,9 +460,9 @@ height:50vh;
 <li>ZookeeperRegistration -&gt; EurekaServiceRegistry</li>
 <li>ConsulRegistration       -&gt; ConsulServiceRegistry</li>
 </ul>
-<p>如果你需要自定义实现 ServiceRegistry ，则也不要提供一个 Registration  的实现。<br><br></p>
+<p>如果你需要自定义实现 ServiceRegistry ，则也不要提供一个 Registration  的实现。</p>
 <h2 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h2><p>服务发现的基本情况在上面已经提到了，但是由于 SpingCloud 中并没有提供具体的交互操作而是由 com.netflix.discovery.DiscoveryClient 来完成具体工作。所以关于服务服务发现这里就直接围绕这个类来展开。</p>
-<p><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545987763227-a43b1417-492e-4a33-a19a-1d5aefec0ea1.png#wh=298x167" alt="image.png"></p>
+<p><img src="https://oscimg.oschina.net/oscnet/a03127ebf5610a9684598a7b12faafd8582.jpg" alt="image.png"></p>
 <h3 id="LookopService"><a href="#LookopService" class="headerlink" title="LookopService"></a>LookopService</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">LookupService</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">// 根据服务实例注册的appName 来获取 Application</span></span><br><span class="line">    <span class="function">Application <span class="title">getApplication</span><span class="params">(String appName)</span></span>;</span><br><span class="line">    <span class="comment">// 返回当前注册表中所有的服务实例信息</span></span><br><span class="line">    <span class="function">Applications <span class="title">getApplications</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 根据服务实例Id获取服务实例信息</span></span><br><span class="line">    <span class="function">List&lt;InstanceInfo&gt; <span class="title">getInstancesById</span><span class="params">(String id)</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取下一个可能的服务器，以处理来自从eureka接收到的注册表信息的请求。</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@virtualHostname</span> 与服务器关联的虚拟主机名。</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@secure</span> 指示是HTTP还是HTTPS请求</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">InstanceInfo <span class="title">getNextServerFromEureka</span><span class="params">(String virtualHostname, <span class="keyword">boolean</span> secure)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>LookupService 接口的作用就是用于查找活动服务实例；总共提供了四个方法，很好理解。每个方法的作用见注释。</p>
 <h3 id="EurekaClient"><a href="#EurekaClient" class="headerlink" title="EurekaClient"></a>EurekaClient</h3><p>EurekaClient 也是一个接口，集成并且扩展了 LookupService。<br><br></p>
@@ -480,11 +481,12 @@ height:50vh;
 </ul>
 <h3 id="服务发现-1"><a href="#服务发现-1" class="headerlink" title="服务发现"></a>服务发现</h3><p>下面代码片段也是在 DiscoveryClient 的构造函数里面的，这里就是拉取注册服务信息的逻辑：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (clientConfig.shouldFetchRegistry() &amp;&amp; !fetchRegistry(<span class="keyword">false</span>)) &#123;</span><br><span class="line">	fetchRegistryFromBackup();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>clientConfig.shouldFetchRegistry() 这个方法拿到的就是配置文件中 eureka.client.fetch-registry 的值，默认为true，表示从 eureka server 拉取注册表信息。<br><br><br>fetchRegistry(boolean)是从 eureka server 拉取注册信息的方法，参数用于表示是否是强制拉取全量的注册信息；此方法除非在协调eureka服务器和客户端注册表信息方面存在问题，否则此方法只尝试在第一次进行全量获取，后面均是增量获取。</p>
-<p>fetchRegistryFromBackup() 如果 eureka server 服务不可用，则采用的备用方案。<br><br></p>
-<h4 id="底层通信实现-EurekaTransport"><a href="#底层通信实现-EurekaTransport" class="headerlink" title="底层通信实现 EurekaTransport"></a>底层通信实现 EurekaTransport</h4><p><br><br>EurekaTransport 是 DiscoveryClient 的内部类，EurekaTransport 封装了具体的基于 jersey 的底层通信实现。<br><br></p>
-<h4 id="FetchRegistry"><a href="#FetchRegistry" class="headerlink" title="FetchRegistry"></a>FetchRegistry</h4><p><br><br><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545996920110-1317ecc6-231e-4184-b534-c2dd9d69b6ba.png#wh=512x383" alt="image.png"><br>上图为拉取注册信息的整个过程。对于黄色贴条上的条件，如果满足其中一个，则都会进行全量拉取；否则进行增量拉取。计算 hash 值是为了后面可以与server端应用信息的进行对比，用于感知是否需要重新进行拉取操作。<br><br></p>
-<h4 id="全量拉取"><a href="#全量拉取" class="headerlink" title="全量拉取"></a>全量拉取</h4><h4 id="增量拉取"><a href="#增量拉取" class="headerlink" title="增量拉取"></a>增量拉取</h4><h2 id="服务注册"><a href="#服务注册" class="headerlink" title="服务注册"></a>服务注册</h2><p>服务注册逻辑也是在 DiscoveryClient 的构造函数中完成，代码片段如下：</p>
+<p>clientConfig.shouldFetchRegistry() 这个方法拿到的就是配置文件中 eureka.client.fetch-registry 的值，默认为true，表示从 eureka server 拉取注册表信息。</p>
+<p>fetchRegistry(boolean)是从 eureka server 拉取注册信息的方法，参数用于表示是否是强制拉取全量的注册信息；此方法除非在协调eureka服务器和客户端注册表信息方面存在问题，否则此方法只尝试在第一次进行全量获取，后面均是增量获取。</p>
+<p>fetchRegistryFromBackup() 如果 eureka server 服务不可用，则采用的备用方案。</p>
+<h4 id="底层通信实现-EurekaTransport"><a href="#底层通信实现-EurekaTransport" class="headerlink" title="底层通信实现 EurekaTransport"></a>底层通信实现 EurekaTransport</h4><p>EurekaTransport 是 DiscoveryClient 的内部类，EurekaTransport 封装了具体的基于 jersey 的底层通信实现。</p>
+<h4 id="FetchRegistry"><a href="#FetchRegistry" class="headerlink" title="FetchRegistry"></a>FetchRegistry</h4><p><img src="https://oscimg.oschina.net/oscnet/9ade5582f8c167659c4d35702063518bec0.jpg" alt="image.png"><br>上图为拉取注册信息的整个过程。对于黄色贴条上的条件，如果满足其中一个，则都会进行全量拉取；否则进行增量拉取。计算 hash 值是为了后面可以与server端应用信息的进行对比，用于感知是否需要重新进行拉取操作。</p>
+<h2 id="服务注册"><a href="#服务注册" class="headerlink" title="服务注册"></a>服务注册</h2><p>服务注册逻辑也是在 DiscoveryClient 的构造函数中完成，代码片段如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (clientConfig.shouldRegisterWithEureka() &amp;&amp; clientConfig.shouldEnforceRegistrationAtInit()) &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!register() ) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Registration error at startup. Invalid server response."</span>);</span><br><span class="line">  	&#125;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (Throwable th) &#123;</span><br><span class="line">    logger.error(<span class="string">"Registration error at startup: &#123;&#125;"</span>, th.getMessage());</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(th);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>向server端注册需要满足的两个条件是：1、允许向server端注册  2、是否在客户端初始化期间强制注册<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">register</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">  logger.info(PREFIX + <span class="string">"&#123;&#125;: registering service..."</span>, appPathIdentifier);</span><br><span class="line">  EurekaHttpResponse&lt;Void&gt; httpResponse;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">  	httpResponse = eurekaTransport.registrationClient.register(instanceInfo);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    logger.warn(PREFIX + <span class="string">"&#123;&#125; - registration failed &#123;&#125;"</span>, appPathIdentifier, e.getMessage(), e);</span><br><span class="line">    <span class="keyword">throw</span> e;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (logger.isInfoEnabled()) &#123;</span><br><span class="line">  	logger.info(PREFIX + <span class="string">"&#123;&#125; - registration status: &#123;&#125;"</span>, appPathIdentifier, httpResponse.getStatusCode());</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> httpResponse.getStatusCode() == <span class="number">204</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>通过 eurekaTransport 对象，基于 REST 调用向 eureka server 进行服务注册。</p>
@@ -504,7 +506,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2018/12/31/springcoud-eureka-client-analysis/">http://www.glmapper.com/2018/12/31/springcoud-eureka-client-analysis/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2018/12/31/springcoud-eureka-client-analysis/">December 31st 2018, 12:12:46 am</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2018/12/31/springcoud-eureka-client-analysis/">December 31st 2018, 12:13:18 am</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2018/12/31/springcoud-eureka-client-analysis/">January 8th 2019, 2:22:44 am</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -513,16 +515,16 @@ height:50vh;
         <li class="next">
             
                 <div class="nextSlogan">Next Post</div>
-                <a href="/2018/12/31/springcoud-feign-project/" title="SpringCloud-声明式服务调用 Feign">
-                    <div class="nextTitle">SpringCloud-声明式服务调用 Feign</div>
+                <a href="/2019/01/05/mysql-on-linux/" title="Linux 下安装 Mysql 数据库">
+                    <div class="nextTitle">Linux 下安装 Mysql 数据库</div>
                 </a>
             
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href="/2018/12/31/springcoud-eureka-discovery/" title="SpringCloud-Eureka 服务发现">
-                    <div class="prevTitle">SpringCloud-Eureka 服务发现</div>
+                <a href="/2018/12/30/springcoud-context-analysis/" title="SpringCloud-Spring Cloud Context">
+                    <div class="prevTitle">SpringCloud-Spring Cloud Context</div>
                 </a>
             
         </li>
@@ -653,7 +655,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Netflix-和-SpringCloud"><span class="toc-number">1.</span> <span class="toc-text">Netflix 和 SpringCloud</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Cloud-Netflix-Eureka-服务发现实现原理"><span class="toc-number">2.</span> <span class="toc-text">Spring Cloud Netflix Eureka 服务发现实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DiscoveryClient-接口"><span class="toc-number">2.1.</span> <span class="toc-text">DiscoveryClient 接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EnableDiscoveryClient-注解"><span class="toc-number">2.2.</span> <span class="toc-text">@EnableDiscoveryClient 注解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Eureka-架构图"><span class="toc-number">3.</span> <span class="toc-text">Eureka 架构图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码解析"><span class="toc-number">4.</span> <span class="toc-text">源码解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置信息读取"><span class="toc-number">4.1.</span> <span class="toc-text">配置信息读取</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#读取-eureka-client"><span class="toc-number">4.1.1.</span> <span class="toc-text">读取 eureka.client.*</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#读取-eureka-instance"><span class="toc-number">4.1.2.</span> <span class="toc-text">读取 eureka.instance.*</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#核心组件-bean-初始化"><span class="toc-number">4.2.</span> <span class="toc-text">核心组件 bean 初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ApplicationInfoManager"><span class="toc-number">4.2.1.</span> <span class="toc-text">ApplicationInfoManager</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DiscoveryClient"><span class="toc-number">4.2.2.</span> <span class="toc-text">DiscoveryClient</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EurekaServiceRegistry"><span class="toc-number">4.2.3.</span> <span class="toc-text">EurekaServiceRegistry</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EurekaRegistration"><span class="toc-number">4.2.4.</span> <span class="toc-text">EurekaRegistration</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务发现"><span class="toc-number">5.</span> <span class="toc-text">服务发现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LookopService"><span class="toc-number">5.1.</span> <span class="toc-text">LookopService</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EurekaClient"><span class="toc-number">5.2.</span> <span class="toc-text">EurekaClient</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DiscoveryClient-1"><span class="toc-number">5.3.</span> <span class="toc-text">DiscoveryClient</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#服务发现-1"><span class="toc-number">5.4.</span> <span class="toc-text">服务发现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#底层通信实现-EurekaTransport"><span class="toc-number">5.4.1.</span> <span class="toc-text">底层通信实现 EurekaTransport</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#FetchRegistry"><span class="toc-number">5.4.2.</span> <span class="toc-text">FetchRegistry</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#全量拉取"><span class="toc-number">5.4.3.</span> <span class="toc-text">全量拉取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#增量拉取"><span class="toc-number">5.4.4.</span> <span class="toc-text">增量拉取</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务注册"><span class="toc-number">6.</span> <span class="toc-text">服务注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#心跳机制"><span class="toc-number">7.</span> <span class="toc-text">心跳机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务下线"><span class="toc-number">8.</span> <span class="toc-text">服务下线</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Netflix-和-SpringCloud"><span class="toc-number">1.</span> <span class="toc-text">Netflix 和 SpringCloud</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Cloud-Netflix-Eureka-服务发现实现原理"><span class="toc-number">2.</span> <span class="toc-text">Spring Cloud Netflix Eureka 服务发现实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DiscoveryClient-接口"><span class="toc-number">2.1.</span> <span class="toc-text">DiscoveryClient 接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EnableDiscoveryClient-注解"><span class="toc-number">2.2.</span> <span class="toc-text">@EnableDiscoveryClient 注解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Eureka-架构图"><span class="toc-number">3.</span> <span class="toc-text">Eureka 架构图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码解析"><span class="toc-number">4.</span> <span class="toc-text">源码解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置信息读取"><span class="toc-number">4.1.</span> <span class="toc-text">配置信息读取</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#读取-eureka-client"><span class="toc-number">4.1.1.</span> <span class="toc-text">读取 eureka.client.*</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#读取-eureka-instance"><span class="toc-number">4.1.2.</span> <span class="toc-text">读取 eureka.instance.*</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#核心组件-bean-初始化"><span class="toc-number">4.2.</span> <span class="toc-text">核心组件 bean 初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ApplicationInfoManager"><span class="toc-number">4.2.1.</span> <span class="toc-text">ApplicationInfoManager</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DiscoveryClient"><span class="toc-number">4.2.2.</span> <span class="toc-text">DiscoveryClient</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EurekaServiceRegistry"><span class="toc-number">4.2.3.</span> <span class="toc-text">EurekaServiceRegistry</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EurekaRegistration"><span class="toc-number">4.2.4.</span> <span class="toc-text">EurekaRegistration</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务发现"><span class="toc-number">5.</span> <span class="toc-text">服务发现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LookopService"><span class="toc-number">5.1.</span> <span class="toc-text">LookopService</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EurekaClient"><span class="toc-number">5.2.</span> <span class="toc-text">EurekaClient</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DiscoveryClient-1"><span class="toc-number">5.3.</span> <span class="toc-text">DiscoveryClient</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#服务发现-1"><span class="toc-number">5.4.</span> <span class="toc-text">服务发现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#底层通信实现-EurekaTransport"><span class="toc-number">5.4.1.</span> <span class="toc-text">底层通信实现 EurekaTransport</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#FetchRegistry"><span class="toc-number">5.4.2.</span> <span class="toc-text">FetchRegistry</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务注册"><span class="toc-number">6.</span> <span class="toc-text">服务注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#心跳机制"><span class="toc-number">7.</span> <span class="toc-text">心跳机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务下线"><span class="toc-number">8.</span> <span class="toc-text">服务下线</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -666,30 +668,6 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -2355,47 +2333,47 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-config-project/">SpringCloud-配置中心 Config</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcloud-overview/">SpringCloud 总览</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-config-project/">SpringCloud-配置中心 Config</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/23</span><a class="archive-post-title" href="/2018/12/23/springsession-id-resolver/">SpringSession系列-sessionId解析和Cookie读写策略</a>
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcloud-overview/">SpringCloud 总览</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/22</span><a class="archive-post-title" href="/2018/12/22/springsession-id-resolver/">SpringSession系列-sessionId解析和Cookie读写策略</a>
         </li>
     
     
@@ -2405,7 +2383,7 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/spring-session-redis-map/">SpringSession系列-存储机制之Redis&Map</a>
+            <span class="archive-post-date">12/15</span><a class="archive-post-title" href="/2018/12/15/spring-session-redis-map/">SpringSession系列-存储机制之Redis&Map</a>
         </li>
     
     

@@ -22,7 +22,7 @@
     <meta name="description" content="从平凡的世界中全身而退">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>SpringCloud-声明式服务调用 Feign · glmapper</title>
+    <title>SpringCloud-负载均衡器 Ribbon · glmapper</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/">glmapper</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">SpringCloud-声明式服务调用 Feign</a>
+                <a href="#" class="post-name">SpringCloud-负载均衡器 Ribbon</a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            SpringCloud-声明式服务调用 Feign
+            SpringCloud-负载均衡器 Ribbon
             <!-- 404 -->
             
         </h1>
@@ -268,18 +268,18 @@ height:50vh;
     
         <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="Feign">Feign</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="Ribbon">Ribbon</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">567</span>阅读时长: <span class="post-count reading-time">2 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">2k</span>阅读时长: <span class="post-count reading-time">8 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2018/12/31</span>
+                    <span class="post-intro-time">2018/12/30</span>
                     
                     <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                         <span class="iconfont-archer">&#xe602;</span>
@@ -403,7 +403,54 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><table>
+        <h2 id="Ribbon-简介"><a href="#Ribbon-简介" class="headerlink" title="Ribbon 简介"></a>Ribbon 简介</h2><p>Ribbon 是管理HTTP和TCP服务客户端的负载均衡器。Ribbon 具有一些列带有名称的客户端，也就是带有名称的Ribbon 客户端。每个客户端由可配置的组件构成，负责一类服务的调用请求。Spring Cloud 通过RibbonClientConfiguration 为每个Ribbon 客户端创建一个ApplicationContext 上下文来进行组件装配。Ribbon 作为 Spring Cloud的负载均衡机制的实现，可以与OpenFeign 和 RestTemplate 进行无缝集成，让二者也具有负载均衡的能力。<br><br></p>
+<h3 id="负载均衡策略"><a href="#负载均衡策略" class="headerlink" title="负载均衡策略"></a>负载均衡策略</h3><table>
+<thead>
+<tr>
+<th><strong>策略类</strong><br></th>
+<th><strong>命名</strong><br></th>
+<th>备注<br></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RoundRobinRule<br></td>
+<td>轮训策略<br></td>
+<td>按顺序循环选择 Server<br></td>
+</tr>
+<tr>
+<td>RandomRule<br></td>
+<td>随机策略<br></td>
+<td>随机选择 Server<br></td>
+</tr>
+<tr>
+<td>RetryRule<br></td>
+<td>重试策略<br></td>
+<td>在一个配置时问段内当选择 Server 不成功，则一直尝试选择一个可用的 Server<br></td>
+</tr>
+<tr>
+<td>BestAvailableRule<br></td>
+<td>最低并发策略<br></td>
+<td>逐个考察 Server，如果 Server 断路器打开，则忽略，再选择其中并发连接最低的 Server    <br></td>
+</tr>
+<tr>
+<td>AvailabilityFilteringRule<br></td>
+<td>可用过滤策略<br></td>
+<td>过滤掉一直连接失败并被标记为 <code>circuit tripped</code> 的 Server，过滤掉那些高并发连接的 Server（active connections 超过配置的网值）<br></td>
+</tr>
+<tr>
+<td>ResponseTimeWeightedRule<br></td>
+<td>响应时间加权策略<br></td>
+<td>根据 Server 的响应时间分配权重。响应时间越长，权重越低，被选择到的概率就越低；响应时间越短，权重越高，被选择到的概率就越高。这个策略很贴切，综合了各种因素，如：网络、磁盘、IO等，这些因素直接影响着响应时间<br></td>
+</tr>
+<tr>
+<td>ZoneAvoidanceRule<br></td>
+<td>区域权衡策略<br></td>
+<td>综合判断 Server 所在区域的性能和 Server 的可用性轮询选择 Server，并且判定一个 AWS Zone 的运行性能是否可用，剔除不可用的 Zone 中的所有 Server<br></td>
+</tr>
+</tbody>
+</table>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><table>
 <thead>
 <tr>
 <th>类别</th>
@@ -429,37 +476,50 @@ height:50vh;
 </tr>
 </tbody>
 </table>
-<h2 id="工程背景"><a href="#工程背景" class="headerlink" title="工程背景"></a>工程背景</h2><p>本节将会创建一个 sofa-eureka-consumer-feign 工程，使用 Feign 提供的 web 客户端来访问 sofa-eureka-provider 发布的服务。同时也基于此工程验证基于 Feign 实现的负载均衡。<br><br></p>
-<h2 id="新建-sofa-eureka-consumer-feign"><a href="#新建-sofa-eureka-consumer-feign" class="headerlink" title="新建 sofa-eureka-consumer-feign"></a>新建 sofa-eureka-consumer-feign</h2><p><br><br>本工程继续使用《SpringCloud-Eureka 服务注册》中的父工程来构建。<br><br><br>右击 sofa-eureka-parent 父工程 -&gt; New -&gt; Module，这里选择 Maven 工程；</p>
+<h2 id="工程背景"><a href="#工程背景" class="headerlink" title="工程背景"></a>工程背景</h2><p>本节将会创建一个 sofa-eureka-consumer-Ribbon 工程，通过Spring Cloud 提供的负载均衡器 Ribbon 实现服务的负载均衡，并对 Ribbon 中的负载均衡策略进行验证。<br><br></p>
+<h2 id="新建-sofa-eureka-consumer-ribbon"><a href="#新建-sofa-eureka-consumer-ribbon" class="headerlink" title="新建 sofa-eureka-consumer-ribbon"></a>新建 sofa-eureka-consumer-ribbon</h2><p>本工程继续使用《SpringCloud-Eureka 服务注册》中的父工程来构建。</p>
+<p>右击 sofa-eureka-parent 父工程 -&gt; New -&gt; Module，这里选择 Maven 工程；</p>
 <ul>
-<li>artifactId：sofa-eurek-consumer-feign</li>
+<li>artifactId：sofa-eurek-consumer-ribbon</li>
 </ul>
-<h3 id="修改pom文件"><a href="#修改pom文件" class="headerlink" title="修改pom文件"></a>修改pom文件</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>sofa-eureka-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alipay.sofa<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>sofa-eureka-server-center<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencys</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencys</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">server.port=8888</span><br><span class="line">eureka.client.service-url.defaultZone=http://localhost:8761/eureka/</span><br><span class="line">spring.application.name=eureka-consumer-feign</span><br></pre></td></tr></table></figure>
-<h3 id="启动类"><a href="#启动类" class="headerlink" title="启动类"></a>启动类</h3><p>这里需要添加 @EnableEurekaClient 和 @EnableFeignClients 两个注解。<br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line"><span class="meta">@EnableFeignClients</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SofaEurekaConsumerFeignApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(SofaEurekaConsumerFeignApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="资源类"><a href="#资源类" class="headerlink" title="资源类"></a>资源类</h3><ul>
-<li>com.alipay.sofa.cloud.service 包下新建  HelloSOFAService</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FeignClient</span>(<span class="string">"helloSOFAService"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloSOFAService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/hello"</span>, method = RequestMethod.GET)</span><br><span class="line">    <span class="function">String <span class="title">hello</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>com.alipay.sofa.cloud.controller 包下新建  FeignController</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FeignController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> HelloSOFAService helloSOFAService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> helloSOFAService.hello();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="启动-amp-验证"><a href="#启动-amp-验证" class="headerlink" title="启动 &amp; 验证"></a>启动 &amp; 验证</h3><p>启动当前工程，在此之前请以此启动 注册中心 sofa-eureka-server-center 和 sofa-eureka-provider 两个工程。</p>
-<blockquote>
-<p>注：这里我启动了两个 provider 工程</p>
-</blockquote>
-<p>浏览器输入：http:localhost:8888/hello，观察到浏览器中依次展示：</p>
-<p>Hello SOFA! Now Port is 8081 And hostname is HelloSOFAService<br>Hello SOFA! Now Port is 8082 And hostname is HelloSOFAService<br>Hello SOFA! Now Port is 8081 And hostname is HelloSOFAService<br>Hello SOFA! Now Port is 8082 And hostname is HelloSOFAService<br><br><br>这里可以看待 通过 feign 提供的客户端能力已经访问到了远程服务，由于 feign 集成了 ribbon 因此也就默认实现了负载均衡的能力。从结果来看，默认的负载均衡策略是轮询。</p>
+<p>前面我们已经对feign进行的实际操作，因此本节使用 Ribbon + RestTemplate 组合实现具体的负载均衡实验。</p>
+<h3 id="修改-pom-文件"><a href="#修改-pom-文件" class="headerlink" title="修改 pom 文件"></a>修改 pom 文件</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>sofa-eureka-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alipay.sofa<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>sofa-eureka-consumer-ribbon<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-ribbon<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8889</span></span><br><span class="line"><span class="attr">eureka:</span></span><br><span class="line"><span class="attr">  client:</span></span><br><span class="line"><span class="attr">    service-url:</span></span><br><span class="line"><span class="attr">      defaultZone:</span> <span class="attr">http://localhost:8761/eureka/</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  application:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">eureka-consumer-ribbon</span></span><br></pre></td></tr></table></figure>
+<h3 id="启动类"><a href="#启动类" class="headerlink" title="启动类"></a>启动类</h3><p>这里需要引入 @EnableEurekaClient 注解，表示当前是一个客户端。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SofaEurekaConsumerRibbonApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@LoadBalanced</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RestTemplate <span class="title">restTemplate</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RestTemplate();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(SofaEurekaConsumerRibbonApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>@LoadBalanced ： Spring Cloud 为客户端负载均衡创建了特定的注解，被该注解修饰的 RestTemplate Bean实例，Spring Cloud 就会让 RestTemplate 使用相关的负载均衡策略，默认情况下使用的就是 Ribbon。</p>
+<h3 id="资源类"><a href="#资源类" class="headerlink" title="资源类"></a>资源类</h3><p>这里我们通过 restTemplate 去访问 Provider 提供的服务，需要注意，这里为了演示作用，直接将资源Url固定写成：<a href="http://HELLOSOFASERVICE/hello" target="_blank" rel="noopener">http://HELLOSOFASERVICE/hello</a> ，<a href="http://hellosofaservice/hello" target="_blank" rel="noopener">HELLOSOFASERVICE</a> 为 Provider 提供的服务的实例名称，也就是Eureka服务端界面上对应的 <strong>Application。</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RibbonController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> RestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> restTemplate.getForObject(<span class="string">"http://HELLOSOFASERVICE/hello"</span>,String.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h3><p>这里正常先后启动 服务注册中心 sofa-eureka-server-center ；服务提供方 sofa-eureka-provider ，服务提供方为了方便演示，这里启动4个实例，对应的端口分别为：8081，8082，8083，8084，如下：</p>
+<p><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545884540300-7d0f7177-832c-4bf7-a652-52db00c91a82.png#wh=1572x152" alt="image.png"></p>
+<p>然后启动当前 sofa-eurek-consumer-ribbon 工程。默认情况下，不指定任何负载均衡策略，使用的是轮询策略。</p>
+<p>浏览器输入 <a href="http://localhost:8889/hello" target="_blank" rel="noopener">http://localhost:8889/hello</a> ，调用10次：<br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Hello SOFA! Now Port is <span class="number">8081</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8082</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8083</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8084</span> And hostname is HelloSOFAService</span><br><span class="line">  </span><br><span class="line">Hello SOFA! Now Port is <span class="number">8081</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8082</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8083</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8084</span> And hostname is HelloSOFAService</span><br><span class="line">  </span><br><span class="line">Hello SOFA! Now Port is <span class="number">8081</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8082</span> And hostname is HelloSOFAService</span><br></pre></td></tr></table></figure></p>
+<p>从结果来看，默认策略应该是轮询（不用情况下，调用顺序不一定是1-2-3-4，但是以每4组为一组来看，存在周期性）。</p>
+<h2 id="负载均衡策略设置"><a href="#负载均衡策略设置" class="headerlink" title="负载均衡策略设置"></a>负载均衡策略设置</h2><h3 id="全局设置"><a href="#全局设置" class="headerlink" title="全局设置"></a>全局设置</h3><p>全局设置就是自己定义一个配置类，然后在配置类中指定具体的负载均衡策略。在com.alipay.sofa.cloud.configuration 包下面新建一个配置类，这里使用的策略是随机策略：<br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RibbonGlobalLoadBalancingConfiguration</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IRule <span class="title">ribbonRule</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RandomRule();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>浏览器输入 <a href="http://localhost:8889/hello" target="_blank" rel="noopener">http://localhost:8889/hello</a> ，调用10次：<br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Hello SOFA! Now Port is <span class="number">8083</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8084</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8084</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8083</span> And hostname is HelloSOFAService</span><br><span class="line">  </span><br><span class="line">Hello SOFA! Now Port is <span class="number">8082</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8083</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8082</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8084</span> And hostname is HelloSOFAService</span><br><span class="line">  </span><br><span class="line">Hello SOFA! Now Port is <span class="number">8081</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8081</span> And hostname is HelloSOFAService</span><br></pre></td></tr></table></figure></p>
+<p>从结果来看，具有随机属性。<br><br></p>
+<h3 id="针对单个服务的-Ribbon-负载均衡策略"><a href="#针对单个服务的-Ribbon-负载均衡策略" class="headerlink" title="针对单个服务的 Ribbon 负载均衡策略"></a>针对单个服务的 Ribbon 负载均衡策略</h3><p>新建一个 RibbonRandomLBConfiguration 配置类，这里有个前提是需要删除 全局配置类  。<br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RibbonRandomLBConfiguration</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IRule <span class="title">ribbonRule</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RandomRule();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p><br>修改启动类，增加 @RibbonClient 注解，并且通过 configuration 指定负载均衡策略。<br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line"><span class="meta">@RibbonClient</span>(name=<span class="string">"HELLOSOFASERVICE"</span>,configuration = RibbonRandomLBConfiguration.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SofaEurekaConsumerRibbonApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@LoadBalanced</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RestTemplate <span class="title">restTemplate</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RestTemplate();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(SofaEurekaConsumerRibbonApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><br>浏览器输入 <a href="http://localhost:8889/hello" target="_blank" rel="noopener">http://localhost:8889/hello</a> ，调用10次：<br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Hello SOFA! Now Port is <span class="number">8083</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8081</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8083</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8083</span> And hostname is HelloSOFAService</span><br><span class="line">  </span><br><span class="line">Hello SOFA! Now Port is <span class="number">8084</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8082</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8082</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8081</span> And hostname is HelloSOFAService</span><br><span class="line">  </span><br><span class="line">Hello SOFA! Now Port is <span class="number">8081</span> And hostname is HelloSOFAService</span><br><span class="line">Hello SOFA! Now Port is <span class="number">8083</span> And hostname is HelloSOFAService</span><br></pre></td></tr></table></figure></p>
+<p><br>从结果来看，具有随机属性。</p>
+<p>@RibbonClient 注解属性中，name并非是一个数组，也就是说只能指定一个服务实例。那么基于上述情况，如果还存在另外一个服务，比如 SOFABOOTHELLOSERVICE ，那么对于此服务的调用会是什么情况呢？<br><br><br>先向注册中心注册两个服务：<strong>HELLOSOFABOOTSERVICE 和 </strong>HELLOSOFASERVICE<em>**</em></p>
+<p><img src="https://intranetproxy.alipay.com/skylark/lark/0/2018/png/97619/1545893497944-09c15478-13ed-4480-a9ae-cfb6ffebef05.png#wh=1464x179" alt="image.png"></p>
+<p>修改 RibbonController ，增加一个 /helloBoot 资源地址：<br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RibbonController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> RestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> restTemplate.getForObject(<span class="string">"http://HELLOSOFASERVICE/hello"</span>,String.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/helloBoot"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">helloBoot</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> restTemplate.getForObject(<span class="string">"http://HELLOSOFABOOTSERVICE/hello"</span>,String.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>重启启动当前服务。</p>
+<p>浏览器中输入：<a href="http://localhost:8889/hello" target="_blank" rel="noopener">http://localhost:8889/hello</a> ，验证结果满足随机调用。<br>浏览器中输入：<a href="http://localhost:8889/helloBoot" target="_blank" rel="noopener">http://localhost:8889/helloBoot</a> ，验证结果满足轮询调用。<br><br></p>
+<h3 id="基于配置文件的负载均衡策略设置"><a href="#基于配置文件的负载均衡策略设置" class="headerlink" title="基于配置文件的负载均衡策略设置"></a>基于配置文件的负载均衡策略设置</h3><p>个人感觉基于配置文件配置方式更加直观，而且对于多个服务对应不同的负载策略设置也更加清晰，下面对HELLOSOFASERVICE 和  HELLOSOFABOOTSERVICE 均使用随机策略。<br><br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">HELLOSOFASERVICE:</span></span><br><span class="line"><span class="attr">  ribbon:</span></span><br><span class="line"><span class="attr">    NFLoadBalancerRuleClassName:</span> <span class="string">com.netflix.loadbalancer.RandomRule</span></span><br><span class="line"></span><br><span class="line"><span class="attr">HELLOSOFABOOTSERVICE:</span></span><br><span class="line"><span class="attr">  ribbon:</span></span><br><span class="line"><span class="attr">    NFLoadBalancerRuleClassName:</span> <span class="string">com.netflix.loadbalancer.RandomRule</span></span><br></pre></td></tr></table></figure></p>
+<p><br>启动类中删除以下注解配置：<br>@RibbonClient(name = “HELLOSOFASERVICE”, configuration = RibbonRandomLBConfiguration.class)</p>
+<p>重启启动当前服务。</p>
+<p>浏览器中输入：<a href="http://localhost:8889/hello" target="_blank" rel="noopener">http://localhost:8889/hello</a> ，验证结果满足随机调用。<br>浏览器中输入：<a href="http://localhost:8889/helloBoot" target="_blank" rel="noopener">http://localhost:8889/helloBoot</a> ，验证结果满足随机调用。</p>
 
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
-            </p><p>原文链接：<a href="http://www.glmapper.com/2018/12/31/springcoud-feign-project/">http://www.glmapper.com/2018/12/31/springcoud-feign-project/</a>
-            </p><p>发表日期：<a href="http://www.glmapper.com/2018/12/31/springcoud-feign-project/">December 31st 2018, 12:14:06 am</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2018/12/31/springcoud-feign-project/">December 31st 2018, 12:14:50 am</a>
+            </p><p>原文链接：<a href="http://www.glmapper.com/2018/12/30/springcoud-ribbon-project/">http://www.glmapper.com/2018/12/30/springcoud-ribbon-project/</a>
+            </p><p>发表日期：<a href="http://www.glmapper.com/2018/12/30/springcoud-ribbon-project/">December 30th 2018, 4:15:01 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2018/12/30/springcoud-ribbon-project/">December 30th 2018, 4:15:46 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -468,16 +528,16 @@ height:50vh;
         <li class="next">
             
                 <div class="nextSlogan">Next Post</div>
-                <a href="/2018/12/31/springcoud-ribbon-project/" title="SpringCloud-负载均衡器 Ribbon">
-                    <div class="nextTitle">SpringCloud-负载均衡器 Ribbon</div>
+                <a href="/2018/12/30/springcoud-config-project/" title="SpringCloud-配置中心 Config">
+                    <div class="nextTitle">SpringCloud-配置中心 Config</div>
                 </a>
             
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href="/2018/12/31/springcoud-eureka-client-analysis/" title="Spring Cloud-Eureka Client 原理解析">
-                    <div class="prevTitle">Spring Cloud-Eureka Client 原理解析</div>
+                <a href="/2018/12/30/springcoud-feign-project/" title="SpringCloud-声明式服务调用 Feign">
+                    <div class="prevTitle">SpringCloud-声明式服务调用 Feign</div>
                 </a>
             
         </li>
@@ -608,7 +668,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#环境准备"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工程背景"><span class="toc-number">2.</span> <span class="toc-text">工程背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建-sofa-eureka-consumer-feign"><span class="toc-number">3.</span> <span class="toc-text">新建 sofa-eureka-consumer-feign</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改pom文件"><span class="toc-number">3.1.</span> <span class="toc-text">修改pom文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改配置文件"><span class="toc-number">3.2.</span> <span class="toc-text">修改配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动类"><span class="toc-number">3.3.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#资源类"><span class="toc-number">3.4.</span> <span class="toc-text">资源类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动-amp-验证"><span class="toc-number">3.5.</span> <span class="toc-text">启动 &amp; 验证</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Ribbon-简介"><span class="toc-number">1.</span> <span class="toc-text">Ribbon 简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#负载均衡策略"><span class="toc-number">1.1.</span> <span class="toc-text">负载均衡策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境准备"><span class="toc-number">2.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工程背景"><span class="toc-number">3.</span> <span class="toc-text">工程背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建-sofa-eureka-consumer-ribbon"><span class="toc-number">4.</span> <span class="toc-text">新建 sofa-eureka-consumer-ribbon</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-pom-文件"><span class="toc-number">4.1.</span> <span class="toc-text">修改 pom 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">4.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动类"><span class="toc-number">4.3.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#资源类"><span class="toc-number">4.4.</span> <span class="toc-text">资源类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动服务"><span class="toc-number">4.5.</span> <span class="toc-text">启动服务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#负载均衡策略设置"><span class="toc-number">5.</span> <span class="toc-text">负载均衡策略设置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#全局设置"><span class="toc-number">5.1.</span> <span class="toc-text">全局设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#针对单个服务的-Ribbon-负载均衡策略"><span class="toc-number">5.2.</span> <span class="toc-text">针对单个服务的 Ribbon 负载均衡策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基于配置文件的负载均衡策略设置"><span class="toc-number">5.3.</span> <span class="toc-text">基于配置文件的负载均衡策略设置</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -621,30 +681,6 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -2310,47 +2346,47 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-config-project/">SpringCloud-配置中心 Config</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcloud-overview/">SpringCloud 总览</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-config-project/">SpringCloud-配置中心 Config</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/23</span><a class="archive-post-title" href="/2018/12/23/springsession-id-resolver/">SpringSession系列-sessionId解析和Cookie读写策略</a>
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcloud-overview/">SpringCloud 总览</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/30</span><a class="archive-post-title" href="/2018/12/30/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/22</span><a class="archive-post-title" href="/2018/12/22/springsession-id-resolver/">SpringSession系列-sessionId解析和Cookie读写策略</a>
         </li>
     
     
@@ -2360,7 +2396,7 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/spring-session-redis-map/">SpringSession系列-存储机制之Redis&Map</a>
+            <span class="archive-post-date">12/15</span><a class="archive-post-title" href="/2018/12/15/spring-session-redis-map/">SpringSession系列-存储机制之Redis&Map</a>
         </li>
     
     
