@@ -346,14 +346,13 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2018/12/31/springcoud-eureka-register/">
+        <a class="abstract-title" href="/2018/12/31/springcoud-eureka-discovery/">
             
-                <span>SpringCloud-Eureka 服务注册</span>
+                <span>SpringCloud-Eureka 服务发现</span>
         </a>
         <div class="abstract-content">
-            
-JDK 8 + SpringBoot 2.0.7 + SpringCloud Finchley.RC1
-
+            本篇将继续接着上一篇 SpringCloud-服务注册 ，通过使用 DiscoveryClient 来实现服务发现，并且消费。
+DiscoveryClient 源自于 spring-cloud-client-discovery ，是 spring cloud 中被定义用来服务发现的公共接口，在 spring cloud 的各类服务发现组件中，都有对应的实现，如 eureka、consul、zookeeper 。它提供从服务注册中心获取服务实例信息的能力。如果我们想自己实现一个服务发现组件，集成到spring cloud 中，就完全可以通过实现此接口来完成。
 环境准备
 
 
@@ -362,29 +361,7 @@ JDK 8 + SpringBoot 2.0.7 + SpringCloud Finchley.RC1
 
 
 
-
-JDK
-1.8.0_162
-
-
-SOFABoot/SpringBoot
-3.0.0/2.0.x.RELEASE
-
-
-SpringCloud
-Finchley.RC1
-
-
-IDE
-IDEA
-
-
-
-工程背景本案例使用 SOFABoot 3.0.x 版本集成 SringCloud F版。工程如下：
-
-sofa-eureka-server         服务注册中心
-sofa-eureka-provider      服务提供方
-sofa-eureka-c...
+...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -410,16 +387,16 @@ sofa-eureka-c...
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2018/12/31/springcloud-overview/">
+        <a class="abstract-title" href="/2018/12/31/springcoud-eureka-register/">
             
-                <span>SpringCloud 总览</span>
+                <span>SpringCloud-Eureka 服务注册</span>
         </a>
         <div class="abstract-content">
-            
-本系列基于Spring Cloud Finchley SR2 &amp; SpringBoot 2.0.7.RELEASE
+            简介Spring Cloud Netflix Eureka 是 Spring Cloud 提供的用于服务注册和发现的基础组件，在 Spring Cloud 微服务体系中承担着相当重要的角色。Eureka 作为一个开箱即用的基础组件，其屏蔽了底层 Client 和 Server 交互的细节，使得开发者能够快速入手，将更多的精力投入到业务逻辑上去。
+Eureka 是基于 Rest 实现的，及底层客户端和服务端之间的交互是通过 Rest 服务进行交互的。Eureka 包括两个部分，即服务端可客户端。
 
-Spring Cloud 为开发人员提供了快速构建分布式系统中一些常见模式的工具（例如配置管理、服务发现、断路器、智能路由、微代理、控制总线、一次性令牌、全局锁、leader选举、分布式session、集群状态）。分布式系统的协调导致了样板模式, 使用 Spring Cloud 开发人员可以快速地支持实现这些模式的服务和应用程序。它们可以在任何分布式环境中很好地工作，包括开发人员自己的笔记本电脑，裸机数据中心，以及Cloud Foundry等托管平台。
-Feat...
+服务端：Eureka Server ,提供服务注册和发现的功能
+客户端：Eureka Cli...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -431,6 +408,8 @@ Feat...
             <div class="abstract-tags">
     
         <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="Eureka">Eureka</a>
     
 </div>
             
@@ -2191,18 +2170,6 @@ Feat...
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 81
@@ -2231,17 +2198,17 @@ Feat...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
         </li>
     
     
@@ -2260,6 +2227,16 @@ Feat...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
         </li>
     
@@ -2270,22 +2247,12 @@ Feat...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
@@ -2310,27 +2277,27 @@ Feat...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2018/12/07/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
+            <span class="archive-post-date">12/08</span><a class="archive-post-title" href="/2018/12/08/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessiontwo/">SpringSession系列-请求与响应重写</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessiontwo/">SpringSession系列-请求与响应重写</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/16</span><a class="archive-post-title" href="/2018/11/16/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href="/2018/11/17/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/shufa-20181111/">20181111-书法练习</a>
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href="/2018/11/11/shufa-20181111/">20181111-书法练习</a>
         </li>
     
     

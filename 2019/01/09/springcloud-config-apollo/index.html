@@ -276,7 +276,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">1.8k</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.9k</span>阅读时长: <span class="post-count reading-time">8 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -405,7 +405,8 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>本篇将搭建一套 Apollo 配置中心环境，并通过一个 demo 案例来演示如何在 SpringCloud 体系中使用 Apollo。</p>
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Apollo（阿波罗）是携程框架部门研发的开源配置管理中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性。</p>
+<p>本篇将搭建一套 Apollo 配置中心环境，并通过一个 demo 案例来演示如何在 SpringCloud 体系中使用 Apollo。</p>
 <h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><table>
 <thead>
 <tr>
@@ -594,7 +595,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2019/01/09/springcloud-config-apollo/">http://www.glmapper.com/2019/01/09/springcloud-config-apollo/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2019/01/09/springcloud-config-apollo/">January 9th 2019, 7:18:42 pm</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2019/01/09/springcloud-config-apollo/">January 9th 2019, 11:26:17 am</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/01/09/springcloud-config-apollo/">January 9th 2019, 11:40:47 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -611,7 +612,7 @@ height:50vh;
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href="/2019/01/05/springcloud-config-analysis/" title="SpringCloud-Config 配置中心原理">
+                <a href="/2019/01/06/springcloud-config-analysis/" title="SpringCloud-Config 配置中心原理">
                     <div class="prevTitle">SpringCloud-Config 配置中心原理</div>
                 </a>
             
@@ -743,7 +744,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#环境准备"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署-Apollo"><span class="toc-number">2.</span> <span class="toc-text">部署 Apollo</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建数据库"><span class="toc-number">2.1.</span> <span class="toc-text">创建数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#portalDB-验证"><span class="toc-number">2.1.1.</span> <span class="toc-text">portalDB 验证</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#configDB-验证"><span class="toc-number">2.1.2.</span> <span class="toc-text">configDB 验证</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#工程配置修改"><span class="toc-number">2.2.</span> <span class="toc-text">工程配置修改</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#apollo-configservice-部署"><span class="toc-number">2.2.1.</span> <span class="toc-text">apollo-configservice 部署</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#apollo-adminservice-配置文件修改"><span class="toc-number">2.2.2.</span> <span class="toc-text">apollo-adminservice 配置文件修改</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#apollo-portal-配置文件修改"><span class="toc-number">2.2.3.</span> <span class="toc-text">apollo-portal 配置文件修改</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#工程部署"><span class="toc-number">2.3.</span> <span class="toc-text">工程部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#新建工程"><span class="toc-number">2.4.</span> <span class="toc-text">新建工程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringCloud-工程案例"><span class="toc-number">3.</span> <span class="toc-text">SpringCloud 工程案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#依赖"><span class="toc-number">3.1.</span> <span class="toc-text">依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">3.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#资源类-amp-启动类"><span class="toc-number">3.3.</span> <span class="toc-text">资源类&amp;启动类</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#启动类"><span class="toc-number">3.3.1.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#资源类"><span class="toc-number">3.3.2.</span> <span class="toc-text">资源类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行程序-amp-验证"><span class="toc-number">3.4.</span> <span class="toc-text">运行程序&amp;验证</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#更改配置-amp-及时刷新"><span class="toc-number">3.4.1.</span> <span class="toc-text">更改配置&amp;及时刷新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ApolloConfigChangeListener-来监听配置变更"><span class="toc-number">3.4.2.</span> <span class="toc-text">@ApolloConfigChangeListener 来监听配置变更</span></a></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境准备"><span class="toc-number">2.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署-Apollo"><span class="toc-number">3.</span> <span class="toc-text">部署 Apollo</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建数据库"><span class="toc-number">3.1.</span> <span class="toc-text">创建数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#portalDB-验证"><span class="toc-number">3.1.1.</span> <span class="toc-text">portalDB 验证</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#configDB-验证"><span class="toc-number">3.1.2.</span> <span class="toc-text">configDB 验证</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#工程配置修改"><span class="toc-number">3.2.</span> <span class="toc-text">工程配置修改</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#apollo-configservice-部署"><span class="toc-number">3.2.1.</span> <span class="toc-text">apollo-configservice 部署</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#apollo-adminservice-配置文件修改"><span class="toc-number">3.2.2.</span> <span class="toc-text">apollo-adminservice 配置文件修改</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#apollo-portal-配置文件修改"><span class="toc-number">3.2.3.</span> <span class="toc-text">apollo-portal 配置文件修改</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#工程部署"><span class="toc-number">3.3.</span> <span class="toc-text">工程部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#新建工程"><span class="toc-number">3.4.</span> <span class="toc-text">新建工程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringCloud-工程案例"><span class="toc-number">4.</span> <span class="toc-text">SpringCloud 工程案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#依赖"><span class="toc-number">4.1.</span> <span class="toc-text">依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">4.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#资源类-amp-启动类"><span class="toc-number">4.3.</span> <span class="toc-text">资源类&amp;启动类</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#启动类"><span class="toc-number">4.3.1.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#资源类"><span class="toc-number">4.3.2.</span> <span class="toc-text">资源类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行程序-amp-验证"><span class="toc-number">4.4.</span> <span class="toc-text">运行程序&amp;验证</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#更改配置-amp-及时刷新"><span class="toc-number">4.4.1.</span> <span class="toc-text">更改配置&amp;及时刷新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ApolloConfigChangeListener-来监听配置变更"><span class="toc-number">4.4.2.</span> <span class="toc-text">@ApolloConfigChangeListener 来监听配置变更</span></a></li></ol></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -756,18 +757,6 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -2437,17 +2426,17 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
         </li>
     
     
@@ -2466,6 +2455,16 @@ top:50vh;
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
         </li>
     
@@ -2476,22 +2475,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
@@ -2516,27 +2505,27 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2018/12/07/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
+            <span class="archive-post-date">12/08</span><a class="archive-post-title" href="/2018/12/08/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessiontwo/">SpringSession系列-请求与响应重写</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessiontwo/">SpringSession系列-请求与响应重写</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/16</span><a class="archive-post-title" href="/2018/11/16/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href="/2018/11/17/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/shufa-20181111/">20181111-书法练习</a>
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href="/2018/11/11/shufa-20181111/">20181111-书法练习</a>
         </li>
     
     

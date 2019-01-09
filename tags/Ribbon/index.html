@@ -351,15 +351,8 @@
                 <span>SpringCloud-负载均衡器 Ribbon</span>
         </a>
         <div class="abstract-content">
-            Ribbon 简介Ribbon 是管理HTTP和TCP服务客户端的负载均衡器。Ribbon 具有一些列带有名称的客户端，也就是带有名称的Ribbon 客户端。每个客户端由可配置的组件构成，负责一类服务的调用请求。Spring Cloud 通过RibbonClientConfiguration 为每个Ribbon 客户端创建一个ApplicationContext 上下文来进行组件装配。Ribbon 作为 Spring Cloud的负载均衡机制的实现，可以与OpenFeign 和 RestTemplate 进行无缝集成，让二者也具有负载均衡的能力。
-负载均衡策略
-
-
-策略类
-命名
-备注
-
-...
+            上一篇 SpringCloud-声明式服务调用 Feign 中介绍了如何使用 Feign 来完成服务调用。因为 Feign 本身已经集成了 Ribbon ，所以也具有负载均衡的能力。那么本篇将使用 RestTemplate + Ribbon 来实现服务调用和负载均衡策略。
+Ribbon 简介Ribbon 是管理HTTP和TCP服务客户端的负载均衡器。Ribbon 具有一些列带有名称的客户端，也就是带有名称的Ribbon 客户端。每个客户端由可配置的组件构成，负责一类服务的调用请求。Spring Cloud 通过RibbonClientConfiguration 为每个Ribbon 客户端...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -2129,18 +2122,6 @@
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 81
@@ -2169,17 +2150,17 @@
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
         </li>
     
     
@@ -2198,6 +2179,16 @@
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
         </li>
     
@@ -2208,22 +2199,12 @@
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
@@ -2248,27 +2229,27 @@
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2018/12/07/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
+            <span class="archive-post-date">12/08</span><a class="archive-post-title" href="/2018/12/08/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessiontwo/">SpringSession系列-请求与响应重写</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessiontwo/">SpringSession系列-请求与响应重写</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/16</span><a class="archive-post-title" href="/2018/11/16/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href="/2018/11/17/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/shufa-20181111/">20181111-书法练习</a>
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href="/2018/11/11/shufa-20181111/">20181111-书法练习</a>
         </li>
     
     

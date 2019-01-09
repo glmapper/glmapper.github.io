@@ -274,7 +274,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">1.6k</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.7k</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -403,7 +403,9 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h2 id="Spring-Cloug-Config-简介"><a href="#Spring-Cloug-Config-简介" class="headerlink" title="Spring Cloug Config 简介"></a>Spring Cloug Config 简介</h2><p>Spring Cloud 提供的配置管理工具包，让你可以把配置放到远程服务器，集中化管理集群配置，目前支持本地存储、Git以及Subversion</p>
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>在分布式系统中，每一个功能模块都能拆分成一个独立的服务，一次请求的完成，可能会调用很多个服务协调来完成，为了方便服务配置文件统一管理，更易于部署、维护，所以就需要一个地方来管理这些配置信息。</p>
+<p>在 spring cloud Config 就提供了这样的能力，通过集中化管理的方式，支持配置文件放在在配置服务的内存中远程 Git 仓库以及Subversion。</p>
+<p>本篇将通过一个简单的 demo ，使用 spring cloud Config 原生提供的基于 Git 的方式来实现微服务体系下的配置管理功能。</p>
 <h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><table>
 <thead>
 <tr>
@@ -495,7 +497,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2018/12/31/springcoud-config-project/">http://www.glmapper.com/2018/12/31/springcoud-config-project/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2018/12/31/springcoud-config-project/">December 31st 2018, 12:16:07 am</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2018/12/31/springcoud-config-project/">January 5th 2019, 12:53:59 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2018/12/31/springcoud-config-project/">January 9th 2019, 11:38:54 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -504,8 +506,8 @@ height:50vh;
         <li class="next">
             
                 <div class="nextSlogan">Next Post</div>
-                <a href="/2018/12/31/springcoud-context-analysis/" title="SpringCloud-Spring Cloud Context">
-                    <div class="nextTitle">SpringCloud-Spring Cloud Context</div>
+                <a href="/2018/12/31/springcloud-overview/" title="SpringCloud 总览">
+                    <div class="nextTitle">SpringCloud 总览</div>
                 </a>
             
         </li>
@@ -644,7 +646,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Cloug-Config-简介"><span class="toc-number">1.</span> <span class="toc-text">Spring Cloug Config 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境准备"><span class="toc-number">2.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工程背景"><span class="toc-number">3.</span> <span class="toc-text">工程背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建-sofa-config-server"><span class="toc-number">4.</span> <span class="toc-text">新建 sofa-config-server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-pom-文件"><span class="toc-number">4.1.</span> <span class="toc-text">修改 pom 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">4.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动类"><span class="toc-number">4.3.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动-amp-验证"><span class="toc-number">4.4.</span> <span class="toc-text">启动 &amp; 验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">5.</span> <span class="toc-text">客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-pom-文件-1"><span class="toc-number">5.1.</span> <span class="toc-text">修改 pom 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件-1"><span class="toc-number">5.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动类-1"><span class="toc-number">5.3.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#资源类"><span class="toc-number">5.4.</span> <span class="toc-text">资源类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动和运行"><span class="toc-number">5.5.</span> <span class="toc-text">启动和运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置动态更新"><span class="toc-number">5.6.</span> <span class="toc-text">配置动态更新</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境准备"><span class="toc-number">2.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工程背景"><span class="toc-number">3.</span> <span class="toc-text">工程背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建-sofa-config-server"><span class="toc-number">4.</span> <span class="toc-text">新建 sofa-config-server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-pom-文件"><span class="toc-number">4.1.</span> <span class="toc-text">修改 pom 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">4.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动类"><span class="toc-number">4.3.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动-amp-验证"><span class="toc-number">4.4.</span> <span class="toc-text">启动 &amp; 验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">5.</span> <span class="toc-text">客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-pom-文件-1"><span class="toc-number">5.1.</span> <span class="toc-text">修改 pom 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件-1"><span class="toc-number">5.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动类-1"><span class="toc-number">5.3.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#资源类"><span class="toc-number">5.4.</span> <span class="toc-text">资源类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动和运行"><span class="toc-number">5.5.</span> <span class="toc-text">启动和运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置动态更新"><span class="toc-number">5.6.</span> <span class="toc-text">配置动态更新</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -657,18 +659,6 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -2338,17 +2328,17 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
         </li>
     
     
@@ -2367,6 +2357,16 @@ top:50vh;
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
         </li>
     
@@ -2377,22 +2377,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
@@ -2417,27 +2407,27 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2018/12/07/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
+            <span class="archive-post-date">12/08</span><a class="archive-post-title" href="/2018/12/08/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessiontwo/">SpringSession系列-请求与响应重写</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessiontwo/">SpringSession系列-请求与响应重写</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/16</span><a class="archive-post-title" href="/2018/11/16/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href="/2018/11/17/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/shufa-20181111/">20181111-书法练习</a>
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href="/2018/11/11/shufa-20181111/">20181111-书法练习</a>
         </li>
     
     

@@ -351,7 +351,8 @@
                 <span>SpringCloud-配置中心 Apollo</span>
         </a>
         <div class="abstract-content">
-            本篇将搭建一套 Apollo 配置中心环境，并通过一个 demo 案例来演示如何在 SpringCloud 体系中使用 Apollo。
+            简介Apollo（阿波罗）是携程框架部门研发的开源配置管理中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性。
+本篇将搭建一套 Apollo 配置中心环境，并通过一个 demo 案例来演示如何在 SpringCloud 体系中使用 Apollo。
 环境准备
 
 
@@ -386,8 +387,7 @@ CentOS
 
 
 
- Apollo 自身需要依赖 Mysql，在部署 Apollo 时需要提前安装 Mysql 数据库。关于 Mysql 的安装可以参考：Linux 下安装Mysql数据库。
-根据官方...
+ ...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -415,7 +415,7 @@ CentOS
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2019/01/05/springcloud-config-analysis/">
+        <a class="abstract-title" href="/2019/01/06/springcloud-config-analysis/">
             
                 <span>SpringCloud-Config 配置中心原理</span>
         </a>
@@ -435,7 +435,7 @@ CentOS
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/05</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/06</span>
             </div>
             <!-- tags  -->
             
@@ -456,7 +456,7 @@ CentOS
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2019/01/05/springcloud-config-zk-project/">
+        <a class="abstract-title" href="/2019/01/06/springcloud-config-zk-project/">
             
                 <span>SpringCloud-配置中心 spring-cloud-config-zookeeper</span>
         </a>
@@ -494,7 +494,7 @@ zk从 ZooKeeper官网 下载 zookeeper-3....
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/05</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/06</span>
             </div>
             <!-- tags  -->
             
@@ -520,7 +520,9 @@ zk从 ZooKeeper官网 下载 zookeeper-3....
                 <span>SpringCloud-配置中心 Config</span>
         </a>
         <div class="abstract-content">
-            Spring Cloug Config 简介Spring Cloud 提供的配置管理工具包，让你可以把配置放到远程服务器，集中化管理集群配置，目前支持本地存储、Git以及Subversion
+            简介在分布式系统中，每一个功能模块都能拆分成一个独立的服务，一次请求的完成，可能会调用很多个服务协调来完成，为了方便服务配置文件统一管理，更易于部署、维护，所以就需要一个地方来管理这些配置信息。
+在 spring cloud Config 就提供了这样的能力，通过集中化管理的方式，支持配置文件放在在配置服务的内存中远程 Git 仓库以及Subversion。
+本篇将通过一个简单的 demo ，使用 spring cloud Config 原生提供的基于 Git 的方式来实现微服务体系下的配置管理功能。
 环境准备
 
 
@@ -534,20 +536,7 @@ JDK
 1.8.0_162
 
 
-SOFABoot/SpringBoot
-3.0.0/2.0.x.RELEASE
-
-
-SpringCloud
-Finchley.RC1
-
-
-IDE
-IDEA
-
-
-
-工程背景本节将通过 SOFABoot 来集成 Spring Cloud Config ，以 git 作为存储，来实现分布式环境下的配置管理。本工程的父工程仍然是《SpringC...
+SOFABoot/Sp...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -2317,18 +2306,6 @@ IDEA
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 81
@@ -2357,17 +2334,17 @@ IDEA
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
         </li>
     
     
@@ -2386,6 +2363,16 @@ IDEA
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
         </li>
     
@@ -2396,22 +2383,12 @@ IDEA
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
@@ -2436,27 +2413,27 @@ IDEA
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2018/12/07/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
+            <span class="archive-post-date">12/08</span><a class="archive-post-title" href="/2018/12/08/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessiontwo/">SpringSession系列-请求与响应重写</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessiontwo/">SpringSession系列-请求与响应重写</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/16</span><a class="archive-post-title" href="/2018/11/16/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href="/2018/11/17/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/shufa-20181111/">20181111-书法练习</a>
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href="/2018/11/11/shufa-20181111/">20181111-书法练习</a>
         </li>
     
     

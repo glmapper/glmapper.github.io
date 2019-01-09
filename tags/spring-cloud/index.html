@@ -351,35 +351,16 @@
                 <span>SpringCloud-断路器 Hystrix</span>
         </a>
         <div class="abstract-content">
-            Hystrix 在实际应用过程中的使用方式很丰富，可以通过注解，也可以通过集成 HystrixCommand 和HystrixObservableCommand 。本篇将通过案例简单说明下说用方式。
-环境准备
+            简介Hystrix 是 Netflix 的一个开源项目，它能够在服务失效的情况下，通过隔离系统依赖服务的方式，防止服务级联失败，造成服务雪崩。同时Hystrix 还提供了失败回滚机制，使得系统能够更快的从异常中恢复。Hystrix 为服务间调用提供了保护和控制。
+Hystrix 具有的功能如下：
 
+当通过客户端调用服务出现高延迟或者调用失败时，能够为系统提供保护机制
+在复杂的分布式场景下，可以防止服务雪崩效应
+提供快速失败（Fail Fast） 同时能够快速恢复
+提供失败回滚和优雅的服务降级机制
+提供近实时的监控、报警和运维控制手段
 
-类别
-值
-
-
-
-
-JDK
-1.8.0_162
-
-
-SOFABoot/SpringBoot
-3.0.0/2.0.x.RELEASE
-
-
-SpringCloud
-Finchley.RC1
-
-
-IDE
-IDEA
-
-
-
-工程背景本节将会创建一个 sofa-hystrix-client 工程，通过 Spring Cloud 提供的负载均衡器 hystrix 实现服务的熔断降级。
-新建 s...
+Hystrix 在实际应用过程中的使用方式很丰富，可...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -410,7 +391,8 @@ IDEA
                 <span>SpringCloud-配置中心 Apollo</span>
         </a>
         <div class="abstract-content">
-            本篇将搭建一套 Apollo 配置中心环境，并通过一个 demo 案例来演示如何在 SpringCloud 体系中使用 Apollo。
+            简介Apollo（阿波罗）是携程框架部门研发的开源配置管理中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性。
+本篇将搭建一套 Apollo 配置中心环境，并通过一个 demo 案例来演示如何在 SpringCloud 体系中使用 Apollo。
 环境准备
 
 
@@ -445,8 +427,7 @@ CentOS
 
 
 
- Apollo 自身需要依赖 Mysql，在部署 Apollo 时需要提前安装 Mysql 数据库。关于 Mysql 的安装可以参考：Linux 下安装Mysql数据库。
-根据官方...
+ ...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -506,161 +487,6 @@ A Spring Cloud application operates by creating a “bootstrap” context, which
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2018/12/31/springcoud-config-project/">
-            
-                <span>SpringCloud-配置中心 Config</span>
-        </a>
-        <div class="abstract-content">
-            Spring Cloug Config 简介Spring Cloud 提供的配置管理工具包，让你可以把配置放到远程服务器，集中化管理集群配置，目前支持本地存储、Git以及Subversion
-环境准备
-
-
-类别
-值
-
-
-
-
-JDK
-1.8.0_162
-
-
-SOFABoot/SpringBoot
-3.0.0/2.0.x.RELEASE
-
-
-SpringCloud
-Finchley.RC1
-
-
-IDE
-IDEA
-
-
-
-工程背景本节将通过 SOFABoot 来集成 Spring Cloud Config ，以 git 作为存储，来实现分布式环境下的配置管理。本工程的父工程仍然是《SpringC...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Config">Config</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/12/31/springcoud-ribbon-project/">
-            
-                <span>SpringCloud-负载均衡器 Ribbon</span>
-        </a>
-        <div class="abstract-content">
-            Ribbon 简介Ribbon 是管理HTTP和TCP服务客户端的负载均衡器。Ribbon 具有一些列带有名称的客户端，也就是带有名称的Ribbon 客户端。每个客户端由可配置的组件构成，负责一类服务的调用请求。Spring Cloud 通过RibbonClientConfiguration 为每个Ribbon 客户端创建一个ApplicationContext 上下文来进行组件装配。Ribbon 作为 Spring Cloud的负载均衡机制的实现，可以与OpenFeign 和 RestTemplate 进行无缝集成，让二者也具有负载均衡的能力。
-负载均衡策略
-
-
-策略类
-命名
-备注
-
-...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Ribbon">Ribbon</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/12/31/springcoud-feign-project/">
-            
-                <span>SpringCloud-声明式服务调用 Feign</span>
-        </a>
-        <div class="abstract-content">
-            环境准备
-
-
-类别
-值
-
-
-
-
-JDK
-1.8.0_162
-
-
-SOFABoot/SpringBoot
-3.0.0/2.0.x.RELEASE
-
-
-SpringCloud
-Finchley.RC1
-
-
-IDE
-IDEA
-
-
-
-工程背景本节将会创建一个 sofa-eureka-consumer-feign 工程，使用 Feign 提供的 web 客户端来访问 sofa-eureka-provider 发布的服务。同时也基于此工程验证基于 Feign 实现的负载均衡。
-新建 sofa-eureka-consumer-feign本工程继续使用《SpringCloud-Eureka 服务注册》中...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Feign">Feign</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
         <a class="abstract-title" href="/2018/12/31/springcoud-eureka-client-analysis/">
             
                 <span>Spring Cloud-Eureka Client 原理解析</span>
@@ -669,132 +495,6 @@ IDEA
             前面一些 demo 中已经介绍了如何使用SOFABoot 来集成 Spring Cloud Netflix Eureka 组件。本篇将来先解析下 Eureka Client 的工作原理。
 Netflix 和 SpringCloudspring-cloud-commons 模块是 spring 在分布式领域上(服务发现，服务注册，断路器，负载均衡)的规范定义。spring-cloud-netflix 是基于此规范的具体实现，Netflix OSS 里的各种组件也都实现了这个 commons 规范。关系如下：
 Spring Cloud Netflix Eureka 服务发现实现原理基于上图，...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Eureka">Eureka</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/12/31/springcoud-eureka-discovery/">
-            
-                <span>SpringCloud-Eureka 服务发现</span>
-        </a>
-        <div class="abstract-content">
-            环境准备
-
-
-类别
-值
-
-
-
-
-JDK
-1.8.0_162
-
-
-SOFABoot/SpringBoot
-3.0.0/2.0.x.RELEASE
-
-
-SpringCloud
-Finchley.RC1
-
-
-IDE
-IDEA
-
-
-
-工程背景本案例使用 SOFABoot 3.0.x 版本集成 SringCloud F版。工程如下：
-
-sofa-eureka-consumer-feign      服务消费方
-
-本工程的父工程继续使用《SpringCloud-Eureka 服务注册》文中新建的父工程。
-新建 sofa-eureka-consumer-discovery这里我们通过 sofa-eur...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Eureka">Eureka</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/12/31/springcoud-eureka-register/">
-            
-                <span>SpringCloud-Eureka 服务注册</span>
-        </a>
-        <div class="abstract-content">
-            
-JDK 8 + SpringBoot 2.0.7 + SpringCloud Finchley.RC1
-
-环境准备
-
-
-类别
-值
-
-
-
-
-JDK
-1.8.0_162
-
-
-SOFABoot/SpringBoot
-3.0.0/2.0.x.RELEASE
-
-
-SpringCloud
-Finchley.RC1
-
-
-IDE
-IDEA
-
-
-
-工程背景本案例使用 SOFABoot 3.0.x 版本集成 SringCloud F版。工程如下：
-
-sofa-eureka-server         服务注册中心
-sofa-eureka-provider      服务提供方
-sofa-eureka-c...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -841,6 +541,199 @@ Feat...
             <div class="abstract-tags">
     
         <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/12/31/springcoud-config-project/">
+            
+                <span>SpringCloud-配置中心 Config</span>
+        </a>
+        <div class="abstract-content">
+            简介在分布式系统中，每一个功能模块都能拆分成一个独立的服务，一次请求的完成，可能会调用很多个服务协调来完成，为了方便服务配置文件统一管理，更易于部署、维护，所以就需要一个地方来管理这些配置信息。
+在 spring cloud Config 就提供了这样的能力，通过集中化管理的方式，支持配置文件放在在配置服务的内存中远程 Git 仓库以及Subversion。
+本篇将通过一个简单的 demo ，使用 spring cloud Config 原生提供的基于 Git 的方式来实现微服务体系下的配置管理功能。
+环境准备
+
+
+类别
+值
+
+
+
+
+JDK
+1.8.0_162
+
+
+SOFABoot/Sp...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="Config">Config</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/12/31/springcoud-ribbon-project/">
+            
+                <span>SpringCloud-负载均衡器 Ribbon</span>
+        </a>
+        <div class="abstract-content">
+            上一篇 SpringCloud-声明式服务调用 Feign 中介绍了如何使用 Feign 来完成服务调用。因为 Feign 本身已经集成了 Ribbon ，所以也具有负载均衡的能力。那么本篇将使用 RestTemplate + Ribbon 来实现服务调用和负载均衡策略。
+Ribbon 简介Ribbon 是管理HTTP和TCP服务客户端的负载均衡器。Ribbon 具有一些列带有名称的客户端，也就是带有名称的Ribbon 客户端。每个客户端由可配置的组件构成，负责一类服务的调用请求。Spring Cloud 通过RibbonClientConfiguration 为每个Ribbon 客户端...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="Ribbon">Ribbon</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/12/31/springcoud-feign-project/">
+            
+                <span>SpringCloud-声明式服务调用 Feign</span>
+        </a>
+        <div class="abstract-content">
+            简介Fegin 是一个声明式的 web 服务客户端，它使得编写 web 服务客户端变得更加容易。使用 Fegin 创建一个接口并对它进行注解。它具有可插拔的注解支持包括 Feign 注解与 JAX-RS 注解，Feign 还支持可插拔的编码器与解码器，Spring Cloud 增加了对 Spring MVC 的注解，Spring Web 默认使用了 HttpMessageConverters。Fegin 还可以集成 Ribbon 和 Hystrix 来提供负载均衡和网络断路器的功能。
+本篇将使用 Fegin + eureka client 来完成服务发现和调用。
+环境准备
+
+
+类别
+值
+...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="Feign">Feign</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/12/31/springcoud-eureka-discovery/">
+            
+                <span>SpringCloud-Eureka 服务发现</span>
+        </a>
+        <div class="abstract-content">
+            本篇将继续接着上一篇 SpringCloud-服务注册 ，通过使用 DiscoveryClient 来实现服务发现，并且消费。
+DiscoveryClient 源自于 spring-cloud-client-discovery ，是 spring cloud 中被定义用来服务发现的公共接口，在 spring cloud 的各类服务发现组件中，都有对应的实现，如 eureka、consul、zookeeper 。它提供从服务注册中心获取服务实例信息的能力。如果我们想自己实现一个服务发现组件，集成到spring cloud 中，就完全可以通过实现此接口来完成。
+环境准备
+
+
+类别
+值
+
+
+
+...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="Eureka">Eureka</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/12/31/springcoud-eureka-register/">
+            
+                <span>SpringCloud-Eureka 服务注册</span>
+        </a>
+        <div class="abstract-content">
+            简介Spring Cloud Netflix Eureka 是 Spring Cloud 提供的用于服务注册和发现的基础组件，在 Spring Cloud 微服务体系中承担着相当重要的角色。Eureka 作为一个开箱即用的基础组件，其屏蔽了底层 Client 和 Server 交互的细节，使得开发者能够快速入手，将更多的精力投入到业务逻辑上去。
+Eureka 是基于 Rest 实现的，及底层客户端和服务端之间的交互是通过 Rest 服务进行交互的。Eureka 包括两个部分，即服务端可客户端。
+
+服务端：Eureka Server ,提供服务注册和发现的功能
+客户端：Eureka Cli...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="Eureka">Eureka</a>
     
 </div>
             
@@ -2597,18 +2490,6 @@ Feat...
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 81
@@ -2637,17 +2518,17 @@ Feat...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
         </li>
     
     
@@ -2666,6 +2547,16 @@ Feat...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
         </li>
     
@@ -2676,22 +2567,12 @@ Feat...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
@@ -2716,27 +2597,27 @@ Feat...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2018/12/07/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
+            <span class="archive-post-date">12/08</span><a class="archive-post-title" href="/2018/12/08/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessiontwo/">SpringSession系列-请求与响应重写</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessiontwo/">SpringSession系列-请求与响应重写</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/16</span><a class="archive-post-title" href="/2018/11/16/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href="/2018/11/17/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/shufa-20181111/">20181111-书法练习</a>
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href="/2018/11/11/shufa-20181111/">20181111-书法练习</a>
         </li>
     
     

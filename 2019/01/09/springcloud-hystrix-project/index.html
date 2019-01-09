@@ -274,7 +274,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">1.7k</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.9k</span>阅读时长: <span class="post-count reading-time">8 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -403,7 +403,16 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>Hystrix 在实际应用过程中的使用方式很丰富，可以通过注解，也可以通过集成 HystrixCommand 和HystrixObservableCommand 。本篇将通过案例简单说明下说用方式。</p>
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Hystrix 是 Netflix 的一个开源项目，它能够在服务失效的情况下，通过隔离系统依赖服务的方式，防止服务级联失败，造成服务雪崩。同时Hystrix 还提供了失败回滚机制，使得系统能够更快的从异常中恢复。Hystrix 为服务间调用提供了保护和控制。</p>
+<p>Hystrix 具有的功能如下：</p>
+<ul>
+<li>当通过客户端调用服务出现高延迟或者调用失败时，能够为系统提供保护机制</li>
+<li>在复杂的分布式场景下，可以防止服务雪崩效应</li>
+<li>提供快速失败（Fail Fast） 同时能够快速恢复</li>
+<li>提供失败回滚和优雅的服务降级机制</li>
+<li>提供近实时的监控、报警和运维控制手段</li>
+</ul>
+<p>Hystrix 在实际应用过程中的使用方式很丰富，可以通过注解，也可以通过集成 HystrixCommand 和HystrixObservableCommand 。本篇将通过案例简单说明下说用方式。</p>
 <h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><table>
 <thead>
 <tr>
@@ -489,7 +498,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2019/01/09/springcloud-hystrix-project/">http://www.glmapper.com/2019/01/09/springcloud-hystrix-project/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2019/01/09/springcloud-hystrix-project/">January 9th 2019, 7:28:18 pm</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2019/01/09/springcloud-hystrix-project/">January 9th 2019, 11:29:40 am</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/01/09/springcloud-hystrix-project/">January 9th 2019, 10:46:54 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -633,7 +642,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#环境准备"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工程背景"><span class="toc-number">2.</span> <span class="toc-text">工程背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建-sofa-hystrix-client"><span class="toc-number">3.</span> <span class="toc-text">新建 sofa-hystrix-client</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改pom文件"><span class="toc-number">3.1.</span> <span class="toc-text">修改pom文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">3.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动类"><span class="toc-number">3.3.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#资源类"><span class="toc-number">3.4.</span> <span class="toc-text">资源类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动-amp-验证"><span class="toc-number">3.5.</span> <span class="toc-text">启动&amp;验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#资源隔离"><span class="toc-number">4.</span> <span class="toc-text">资源隔离</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基于线程池的隔离实现"><span class="toc-number">4.1.</span> <span class="toc-text">基于线程池的隔离实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基于信号量隔离"><span class="toc-number">4.2.</span> <span class="toc-text">基于信号量隔离</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境准备"><span class="toc-number">2.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工程背景"><span class="toc-number">3.</span> <span class="toc-text">工程背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建-sofa-hystrix-client"><span class="toc-number">4.</span> <span class="toc-text">新建 sofa-hystrix-client</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改pom文件"><span class="toc-number">4.1.</span> <span class="toc-text">修改pom文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">4.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动类"><span class="toc-number">4.3.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#资源类"><span class="toc-number">4.4.</span> <span class="toc-text">资源类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动-amp-验证"><span class="toc-number">4.5.</span> <span class="toc-text">启动&amp;验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#资源隔离"><span class="toc-number">5.</span> <span class="toc-text">资源隔离</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基于线程池的隔离实现"><span class="toc-number">5.1.</span> <span class="toc-text">基于线程池的隔离实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基于信号量隔离"><span class="toc-number">5.2.</span> <span class="toc-text">基于信号量隔离</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -646,18 +655,6 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -2327,17 +2324,17 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href="/2019/01/06/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
         </li>
     
     
@@ -2356,6 +2353,16 @@ top:50vh;
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
         </li>
     
@@ -2366,22 +2373,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
@@ -2406,27 +2403,27 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2018/12/07/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
+            <span class="archive-post-date">12/08</span><a class="archive-post-title" href="/2018/12/08/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessiontwo/">SpringSession系列-请求与响应重写</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessiontwo/">SpringSession系列-请求与响应重写</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
+            <span class="archive-post-date">11/25</span><a class="archive-post-title" href="/2018/11/25/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/16</span><a class="archive-post-title" href="/2018/11/16/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href="/2018/11/17/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/shufa-20181111/">20181111-书法练习</a>
+            <span class="archive-post-date">11/11</span><a class="archive-post-title" href="/2018/11/11/shufa-20181111/">20181111-书法练习</a>
         </li>
     
     
