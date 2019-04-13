@@ -22,7 +22,7 @@
     <meta name="description" content="从平凡的世界中全身而退">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>glmapper</title>
+    <title>SpringBoot 中的事件机制 · glmapper</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -203,12 +203,23 @@
 </head>
 
     
+        <body class="post-body">
+    
     
 <header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">glmapper</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">SpringBoot 中的事件机制</a>
+            </div>
+    </div>
     
     <a class="home-link" href="/">glmapper</a>
 </header>
@@ -220,24 +231,74 @@
 
 
 
+
+height:50vh;
 ">
     
     <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
+            
+            SpringBoot 中的事件机制
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="springboot">springboot</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.7k</span>阅读时长: <span class="post-count reading-time">10 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/04/13</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -338,131 +399,177 @@
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/12/07/sofatracer-mvc-plugin/">
-            
-                <span>SOFATracer 插件埋点机制详解</span>
-        </a>
-        <div class="abstract-content">
-            
-SOFATracer 是一个用于分布式系统调用跟踪的组件，通过统一的 traceId 将调用链路中的各种网络调用情况以日志的方式记录下来，以达到透视化网络调用的目的。这些日志可用于故障的快速发现，服务治理等。
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>在这篇文章中<a href="https://juejin.im/post/5b7964d6f265da43412866c7" target="_blank" rel="noopener">聊一聊 Spring 中的扩展机制（一）</a>中对<code>Spring</code>中的事件机制进行了分析。那么对于 <code>SpringBoot</code> 来说，它在 <code>Spring</code> 的基础上又做了哪些拓展呢？本篇将来聊一聊 <code>SpringBoot</code> 中的事件。</p>
+<p>在 SpringBoot 的启动过程中，会通过 SPI 机制去加载 spring.factories 下面的一些类，这里面就包括了事件相关的类。</p>
+<ul>
+<li><p>SpringApplicationRunListener</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># Run Listeners</span><br><span class="line">org.springframework.boot.SpringApplicationRunListener=\</span><br><span class="line">org.springframework.boot.context.event.EventPublishingRunListener</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ApplicationListener</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># Application Listeners</span><br><span class="line">org.springframework.context.ApplicationListener=\</span><br><span class="line">org.springframework.boot.ClearCachesApplicationListener,\</span><br><span class="line">org.springframework.boot.builder.ParentContextCloserApplicationListener,\</span><br><span class="line">org.springframework.boot.context.FileEncodingApplicationListener,\</span><br><span class="line">org.springframework.boot.context.config.AnsiOutputApplicationListener,\</span><br><span class="line">org.springframework.boot.context.config.ConfigFileApplicationListener,\</span><br><span class="line">org.springframework.boot.context.config.DelegatingApplicationListener,\</span><br><span class="line">org.springframework.boot.context.logging.ClasspathLoggingApplicationListener,\</span><br><span class="line">org.springframework.boot.context.logging.LoggingApplicationListener,\</span><br><span class="line">org.springframework.boot.liquibase.LiquibaseServiceLocatorApplicationListener</span><br></pre></td></tr></table></figure>
+<p><code>SpringApplicationRunListener</code> 类是 <code>SpringBoot</code> 中新增的类。<code>SpringApplication</code> 类 中使用它们来间接调用 <code>ApplicationListener</code>。另外还有一个新增的类是<code>SpringApplicationRunListeners</code>，<code>SpringApplicationRunListeners</code> 中包含了多个 <code>SpringApplicationRunListener</code>。</p>
+<h2 id="SpringApplicationRunListener"><a href="#SpringApplicationRunListener" class="headerlink" title="SpringApplicationRunListener"></a>SpringApplicationRunListener</h2><p><code>SpringApplicationRunListener</code> 接口规定了 <code>SpringBoot</code> 的生命周期，在各个生命周期广播相应的事件，调用实际的 <code>ApplicationListener</code> 类。通过对 <code>SpringApplicationRunListener</code> 的分析，也可以对 <code>SpringBoot</code> 的整个启动过程的理解会有很大帮助。</p>
+<p>先来看下<code>SpringApplicationRunListener</code> 接口的代码：</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">SpringApplicationRunListener</span> </span>&#123;</span><br><span class="line">	<span class="comment">//当run方法首次启动时立即调用。可用于非常早期的初始化。</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">starting</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="comment">//在准备好环境后，但在创建ApplicationContext之前调用。</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">environmentPrepared</span><span class="params">(ConfigurableEnvironment environment)</span></span>;</span><br><span class="line">	<span class="comment">//在创建和准备好ApplicationContext之后，但在加载源之前调用。</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">contextPrepared</span><span class="params">(ConfigurableApplicationContext context)</span></span>;</span><br><span class="line">	<span class="comment">//在加载应用程序上下文后但刷新之前调用</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">contextLoaded</span><span class="params">(ConfigurableApplicationContext context)</span></span>;</span><br><span class="line">	<span class="comment">//上下文已刷新，应用程序已启动，但尚未调用commandlinerunner和applicationrunner。</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">started</span><span class="params">(ConfigurableApplicationContext context)</span></span>;</span><br><span class="line">	<span class="comment">//在运行方法完成之前立即调用，此时应用程序上下文已刷新，</span></span><br><span class="line">	<span class="comment">//并且所有commandlinerunner和applicationrunner都已调用。</span></span><br><span class="line">	<span class="comment">//2.0 才有</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">running</span><span class="params">(ConfigurableApplicationContext context)</span></span>;</span><br><span class="line">	<span class="comment">//在运行应用程序时发生故障时调用。2.0 才有</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">failed</span><span class="params">(ConfigurableApplicationContext context, Throwable exception)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="SpringApplicationRunListeners"><a href="#SpringApplicationRunListeners" class="headerlink" title="SpringApplicationRunListeners"></a>SpringApplicationRunListeners</h2><p>上面提到，<code>SpringApplicationRunListeners</code> 是<code>SpringApplicationRunListener</code>的集合，里面包括了很多<code>SpringApplicationRunListener</code>实例；<code>SpringApplication</code> 类实际上使用的是 <code>SpringApplicationRunListeners</code> 类，与 <code>SpringApplicationRunListener</code> 生命周期相同，调用各个周期的 <code>SpringApplicationRunListener</code> 。然后广播相应的事件到 <code>ApplicationListener</code>。</p>
+<blockquote>
+<p>代码详见：<a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/SpringApplicationRunListeners.java" target="_blank" rel="noopener">SpringApplicationRunListeners</a>.</p>
+</blockquote>
+<h3 id="EventPublishingRunListener"><a href="#EventPublishingRunListener" class="headerlink" title="EventPublishingRunListener"></a>EventPublishingRunListener</h3><p><code>EventPublishingRunListener</code> 类是 <code>SpringApplicationRunListener</code>接口的实现类 ，它具有广播事件的功能。其内部使用 <code>ApplicationEventMulticaster</code>在实际刷新上下文之前发布事件。下面来看下 <code>EventPublishingRunListener</code> 类生命周期对应的事件。</p>
+<h3 id="ApplicationStartingEvent"><a href="#ApplicationStartingEvent" class="headerlink" title="ApplicationStartingEvent"></a>ApplicationStartingEvent</h3><p><code>ApplicationStartingEvent</code> 是 <code>SpringBoot</code> 启动开始的时候执行的事件，在该事件中可以获取到 <code>SpringApplication</code> 对象，可做一些执行前的设置，对应的调用方法是 <code>starting()</code>。</p>
+<h3 id="ApplicationEnvironmentPreparedEvent"><a href="#ApplicationEnvironmentPreparedEvent" class="headerlink" title="ApplicationEnvironmentPreparedEvent"></a>ApplicationEnvironmentPreparedEvent</h3><p><code>ApplicationEnvironmentPreparedEvent</code> 是<code>SpringBoot</code> 对应 <code>Enviroment</code> 已经准备完毕时执行的事件，此时上下文 <code>context</code> 还没有创建。在该监听中获取到 <code>ConfigurableEnvironment</code> 后可以对配置信息做操作，例如：修改默认的配置信息，增加额外的配置信息等。对应的生命周期方法是 <code>environmentPrepared(environment)</code>；<code>SpringCloud</code> 中，引导上下文就是在这时初始化的。</p>
+<h3 id="ApplicationContextInitializedEvent"><a href="#ApplicationContextInitializedEvent" class="headerlink" title="ApplicationContextInitializedEvent"></a>ApplicationContextInitializedEvent</h3><p>当 <code>SpringApplication</code> 启动并且准备好 <code>ApplicationContext</code>，并且在加载任何 <code>bean</code> 定义之前调用了 <code>ApplicationContextInitializers</code> 时发布的事件。对应的生命周期方法是<code>contextPrepared()</code></p>
+<h3 id="ApplicationPreparedEvent"><a href="#ApplicationPreparedEvent" class="headerlink" title="ApplicationPreparedEvent"></a>ApplicationPreparedEvent</h3><p><code>ApplicationPreparedEvent</code> 是<code>SpringBoot</code>上下文 <code>context</code> 创建完成是发布的事件；但此时 <code>spring</code> 中的 <code>bean</code> 还没有完全加载完成。这里可以将上下文传递出去做一些额外的操作。但是在该监听器中是无法获取自定义 <code>bean</code> 并进行操作的。对应的生命周期方法是 <code>contextLoaded()</code>。</p>
+<h3 id="ApplicationStartedEvent"><a href="#ApplicationStartedEvent" class="headerlink" title="ApplicationStartedEvent"></a>ApplicationStartedEvent</h3><p>这个事件是在 2.0 版本才引入的；具体发布是在应用程序上下文刷新之后，调用任何 <code>ApplicationRunner</code> 和 <code>CommandLineRunner</code> 运行程序之前。</p>
+<h3 id="ApplicationReadyEvent"><a href="#ApplicationReadyEvent" class="headerlink" title="ApplicationReadyEvent"></a>ApplicationReadyEvent</h3><p>这个和 <code>ApplicationStartedEvent</code> 很类似，也是在应用程序上下文刷新之后之后调用，区别在于此时<code>ApplicationRunner</code> 和 <code>CommandLineRunner</code>已经完成调用了，也意味着 <code>SpringBoot</code> 加载已经完成。</p>
+<h3 id="ApplicationFailedEvent"><a href="#ApplicationFailedEvent" class="headerlink" title="ApplicationFailedEvent"></a>ApplicationFailedEvent</h3><p><code>SpringBoot</code> 启动异常时执行的事件，在异常发生时，最好是添加虚拟机对应的钩子进行资源的回收与释放，能友善的处理异常信息。</p>
+<h3 id="demo-及各个事件的执行顺序"><a href="#demo-及各个事件的执行顺序" class="headerlink" title="demo 及各个事件的执行顺序"></a>demo 及各个事件的执行顺序</h3><p>下面的各个事件对应的demo及打印出来的执行顺序。</p>
+<ul>
+<li><p>GlmapperApplicationStartingEventListener</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlmapperApplicationStartingEventListener</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">ApplicationStartingEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onApplicationEvent</span><span class="params">(ApplicationStartingEvent applicationStartingEvent)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"execute ApplicationStartingEvent ..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>GlmapperApplicationEnvironmentPreparedEvent</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlmapperApplicationEnvironmentPreparedEvent</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">ApplicationEnvironmentPreparedEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onApplicationEvent</span><span class="params">(ApplicationEnvironmentPreparedEvent applicationEnvironmentPreparedEvent)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"execute ApplicationEnvironmentPreparedEvent ..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>GlmapperApplicationContextInitializedEvent</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlmapperApplicationContextInitializedEvent</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">ApplicationContextInitializedEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onApplicationEvent</span><span class="params">(ApplicationContextInitializedEvent applicationContextInitializedEvent)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"execute applicationContextInitializedEvent ..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>GlmapperApplicationPreparedEvent</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class GlmapperApplicationPreparedEvent implements ApplicationListener&lt;ApplicationPreparedEvent&gt; &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void onApplicationEvent(ApplicationPreparedEvent applicationPreparedEvent) &#123;</span><br><span class="line">        System.out.println(&quot;execute ApplicationPreparedEvent ...&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>GlmapperApplicationStartedEvent</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlmapperApplicationStartedEvent</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">ApplicationStartedEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onApplicationEvent</span><span class="params">(ApplicationStartedEvent applicationStartedEvent)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"execute ApplicationStartedEvent ..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>GlmapperApplicationReadyEvent</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlmapperApplicationReadyEvent</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">ApplicationReadyEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onApplicationEvent</span><span class="params">(ApplicationReadyEvent applicationReadyEvent)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"execute ApplicationReadyEvent ..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>执行结果</li>
+</ul>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/1/1680822d81776a67?w=2620&amp;h=806&amp;f=png&amp;s=354682" alt=""></p>
+<h2 id="SpringBoot-中的事件体系"><a href="#SpringBoot-中的事件体系" class="headerlink" title="SpringBoot 中的事件体系"></a>SpringBoot 中的事件体系</h2><p>这里围绕 <code>SpringApplicationRunListener</code> 这个类来说。在实现类 <code>EventPublishingRunListener</code> 中，事件发布有两种模式：</p>
+<ul>
+<li>通过 <code>SimpleApplicationEventMulticaster</code> 进行事件广播</li>
+<li>所有监听器交给相应的 <code>Context</code></li>
+</ul>
+<p>所以<code>EventPublishingRunListener</code> 不仅负责发布事件，而且在合适的时机将 <code>SpringApplication</code> 所获取的监听器和应用上下文作关联。</p>
+<h3 id="SimpleApplicationEventMulticaster"><a href="#SimpleApplicationEventMulticaster" class="headerlink" title="SimpleApplicationEventMulticaster"></a>SimpleApplicationEventMulticaster</h3><p><code>SimpleApplicationEventMulticaster</code>是 <code>Spring</code> 默认的事件广播器。来看下它是怎么工作的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">multicastEvent</span><span class="params">(<span class="keyword">final</span> ApplicationEvent event, @Nullable ResolvableType eventType)</span> </span>&#123;</span><br><span class="line">    ResolvableType type = (eventType != <span class="keyword">null</span> ? eventType : resolveDefaultEventType(event));</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">final</span> ApplicationListener&lt;?&gt; listener : getApplicationListeners(event, type)) &#123;</span><br><span class="line">        Executor executor = getTaskExecutor();</span><br><span class="line">        <span class="keyword">if</span> (executor != <span class="keyword">null</span>) &#123;</span><br><span class="line">            executor.execute(() -&gt; invokeListener(listener, event));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            invokeListener(listener, event);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的代码段可以看出，它是通过遍历注册的每个监听器，并启动来调用每个监听器的 <code>onApplicationEvent</code> 方法。</p>
+<p>下面再来看下 <code>SimpleApplicationEventMulticaster</code> 的类集成结构：<br><img src="https://user-gold-cdn.xitu.io/2019/1/1/1680830a7fd2c4b5?w=1434&amp;h=602&amp;f=png&amp;s=59215" alt=""><br>这里的 <code>AbstractApplicationContext</code> 下面来聊，这个类实际上就负责了事件体系的初始化工作。</p>
+<h3 id="事件体系的初始化"><a href="#事件体系的初始化" class="headerlink" title="事件体系的初始化"></a>事件体系的初始化</h3><p>事件体系的初始化对应在 <code>SpringBoot</code>启动过程的 <code>refreshContext</code>这个方法；<code>refreshContext</code>具体调用 AbstractApplicationContext.refresh()方法，最后调用 initApplicationEventMulticaster() 来完成事件体系的初始化,代码如下：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/1/1680835fb264f84a?w=1618&amp;h=696&amp;f=png&amp;s=223928" alt=""></p>
+<p>用户可以为容器定义一个自定义的事件广播器，只要实现 <code>ApplicationEventMulticaster</code> 就可以了，<code>Spring</code> 会通过 反射的机制将其注册成容器的事件广播器，如果没有找到配置的外部事件广播器，<code>Spring</code> 就是默认使用 <code>SimpleApplicationEventMulticaster</code> 作为事件广播器。</p>
+<h3 id="事件注册"><a href="#事件注册" class="headerlink" title="事件注册"></a>事件注册</h3><p>事件注册是在事件体系初始化完成之后做的事情，也是在 <code>AbstractApplicationContext.refresh()</code> 方法中进行调用的。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/1/16808437ea8623d2?w=1760&amp;h=786&amp;f=png&amp;s=200511" alt=""><br>这里干了三件事：</p>
+<ul>
+<li>首先注册静态指定的 <code>listeners</code>；这里包括我们自定义的那些监听器。</li>
+<li>调用 <code>DefaultListableBeanFactory</code> 中 <code>getBeanNamesForType</code> 得到自定义的 <code>ApplicationListener</code> <code>bean</code> 进行事件注册。</li>
+<li>广播早期的事件。</li>
+</ul>
+<h3 id="事件广播"><a href="#事件广播" class="headerlink" title="事件广播"></a>事件广播</h3><p>事件发布伴随着 <code>SpringBoot</code> 启动的整个生命周期。不同阶段对应发布不同的事件，上面我们已经对各个事件进行了分析，下面就具体看下发布事件的实现：</p>
+<blockquote>
+<p>org.springframework.context.support.AbstractApplicationContext#publishEvent<br><img src="https://user-gold-cdn.xitu.io/2019/1/1/168084a716c01856?w=1344&amp;h=1002&amp;f=png&amp;s=210096" alt=""></p>
+</blockquote>
+<blockquote>
+<p>earlyApplicationEvents 中的事件是广播器未建立的时候保存通知信息，一旦容器建立完成，以后都是直接通知。</p>
+</blockquote>
+<p>广播事件最终还是通过调用 <code>ApplicationEventMulticaster</code> 的 <code>multicastEvent</code> 来实现。而 <code>multicastEvent</code> 也就就是事件执行的方法。</p>
+<h3 id="事件执行"><a href="#事件执行" class="headerlink" title="事件执行"></a>事件执行</h3><p>上面 <code>SimpleApplicationEventMulticaster</code> 小节已经初步介绍了 <code>multicastEvent</code> 这个方法。补充一点， 如果有可用的 <code>taskExecutor</code> 会使用并发的模式执行事件，但是实际上 <code>SimpleApplicationEventMulticaster</code> 并没有提供线程池实现，默认请况下是使用同步的方式执行事件（<code>org.springframework.core.task.SyncTaskExecutor</code>），所以如果需要异步配置的话，需要自己去实现线程池。</p>
+<h2 id="SpringBoot-启动过程中的事件阶段"><a href="#SpringBoot-启动过程中的事件阶段" class="headerlink" title="SpringBoot 启动过程中的事件阶段"></a>SpringBoot 启动过程中的事件阶段</h2><p>这里回到 <code>SpringApplication</code>的<code>run</code>方法，看下 <code>SpringBoot</code> 在启动过程中，各个事件阶段做了哪些事情。</p>
+<h3 id="starting-gt-ApplicationStartingEvent"><a href="#starting-gt-ApplicationStartingEvent" class="headerlink" title="starting -&gt; ApplicationStartingEvent"></a>starting -&gt; ApplicationStartingEvent</h3><p>这里 <code>debug</code> 到 <code>starting</code> 方法，追踪到 <code>multicastEvent</code>，这里 <code>type</code>为 <code>ApplicationStartingEvent</code>；对应的事件如下：<br><img src="https://user-gold-cdn.xitu.io/2019/1/1/16808657f6db440c?w=1206&amp;h=232&amp;f=png&amp;s=70540" alt=""></p>
+<ul>
+<li>LoggerApplicationListener：配置日志系统。使用<code>logging.config</code>环境变量指定的配置或者缺省配置</li>
+<li>BackgroundPreinitializer：尽早触发一些耗时的初始化任务，使用一个后台线程</li>
+<li>DelegatingApplicationListener：监听到事件后转发给环境变量<code>context.listener.classes</code>指定的那些事件监听器</li>
+<li>LiquibaseServiceLocatorApplicationListener：使用一个可以和 <code>SpringBoot</code> 可执行<code>jar</code>包配合工作的版本替换 <code>liquibase ServiceLocator</code></li>
+</ul>
+<h3 id="listeners-environmentPrepared-gt-ApplicationEnvironmentPreparedEvent"><a href="#listeners-environmentPrepared-gt-ApplicationEnvironmentPreparedEvent" class="headerlink" title="listeners.environmentPrepared-&gt;ApplicationEnvironmentPreparedEvent"></a>listeners.environmentPrepared-&gt;ApplicationEnvironmentPreparedEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/16808703538f4265?w=1336&amp;h=354&amp;f=png&amp;s=109143" alt=""></p>
+<ul>
+<li>AnsiOutputApplicationListener：根据<code>spring.output.ansi.enabled</code>参数配置<code>AnsiOutput</code></li>
+<li><p>ConfigFileApplicationListener：<code>EnvironmentPostProcessor</code>，从常见的那些约定的位置读取配置文件，比如从以下目录读取<code>application.properties</code>,<code>application.yml</code>等配置文件：</p>
+<ul>
+<li>classpath:</li>
+<li>file:.</li>
+<li>classpath:config</li>
+<li><p>file:./config/</p>
+<p>也可以配置成从其他指定的位置读取配置文件。</p>
+</li>
+</ul>
+</li>
+<li>ClasspathLoggingApplicationListener：对环境就绪事件<code>ApplicationEnvironmentPreparedEvent</code>/应用失败事<code>件ApplicationFailedEvent</code>做出响应，往日志<code>DEBUG</code>级别输出<code>TCCL(thread context class loader)</code>的 <code>classpath</code>。</li>
+<li>FileEncodingApplicationListener：如果系统文件编码和环境变量中指定的不同则终止应用启动。具体的方法是比较系统属性<code>file.encoding</code>和环境变量<code>spring.mandatory-file-encoding</code>是否相等(大小写不敏感)。</li>
+</ul>
+<h3 id="listeners-contextPrepared-gt-ApplicationContextInitializedEvent"><a href="#listeners-contextPrepared-gt-ApplicationContextInitializedEvent" class="headerlink" title="listeners.contextPrepared-&gt;ApplicationContextInitializedEvent"></a>listeners.contextPrepared-&gt;ApplicationContextInitializedEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/1680877bed3cfbbd?w=1112&amp;h=148&amp;f=png&amp;s=49908" alt=""><br>相关监听器参考上面的描述。</p>
+<h3 id="listeners-contextLoaded-gt-ApplicationPreparedEvent"><a href="#listeners-contextLoaded-gt-ApplicationPreparedEvent" class="headerlink" title="listeners.contextLoaded-&gt;ApplicationPreparedEvent"></a>listeners.contextLoaded-&gt;ApplicationPreparedEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/168087a73a7666bd?w=1122&amp;h=232&amp;f=png&amp;s=71270" alt=""><br>相关监听器参考上面的描述。</p>
+<h3 id="refresh-gt-ContextRefreshedEvent"><a href="#refresh-gt-ContextRefreshedEvent" class="headerlink" title="refresh-&gt;ContextRefreshedEvent"></a>refresh-&gt;ContextRefreshedEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/168087bc9054d773?w=1324&amp;h=234&amp;f=png&amp;s=77283" alt=""></p>
+<ul>
+<li>ConditionEvaluationReportLoggingListener：实际上实现的是 <code>ApplicationContextInitializer</code>接口，其目的是将 <code>ConditionEvaluationReport</code> 写入到日志，使用<code>DEBUG</code>级别输出。程序崩溃报告会触发一个消息输出，建议用户使用调试模式显示报告。它是在应用初始化时绑定一个<code>ConditionEvaluationReportListener</code>事件监听器，然后相应的事件发生时输出<code>ConditionEvaluationReport</code>报告。</li>
+<li>ClearCachesApplicationListener：应用上下文加载完成后对缓存做清除工作，响应事件<code>ContextRefreshedEvent</code>。</li>
+<li>SharedMetadataReaderFactoryContextInitializer：　向<code>context</code>注册了一个<code>BeanFactoryPostProcessor</code>：<code>CachingMetadataReaderFactoryPostProcessor</code>实例。</li>
+<li>ResourceUrlProvider：<code>handling mappings</code>处理</li>
+</ul>
+<h3 id="started-gt-ApplicationStartedEvent"><a href="#started-gt-ApplicationStartedEvent" class="headerlink" title="started-&gt;ApplicationStartedEvent"></a>started-&gt;ApplicationStartedEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/168088a3a77dae6d?w=1142&amp;h=160&amp;f=png&amp;s=51171" alt=""><br>相关监听器参考上面的描述。</p>
+<h3 id="running-gt-ApplicationReadyEvent"><a href="#running-gt-ApplicationReadyEvent" class="headerlink" title="running-&gt;ApplicationReadyEvent"></a>running-&gt;ApplicationReadyEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/168088b04deff509?w=974&amp;h=194&amp;f=png&amp;s=62237" alt=""><br>相关监听器参考上面的描述。</p>
+<h3 id="BackgroundPreinitializer-amp-DelegatingApplicationListener"><a href="#BackgroundPreinitializer-amp-DelegatingApplicationListener" class="headerlink" title="BackgroundPreinitializer&amp;DelegatingApplicationListener"></a>BackgroundPreinitializer&amp;DelegatingApplicationListener</h3><p>这两个贯穿了整个过程，这里拎出来单独解释下：</p>
+<ul>
+<li>BackgroundPreinitializer：对于一些耗时的任务使用一个后台线程尽早触发它们开始执行初始化，这是<code>SpringBoot</code>的缺省行为。这些初始化动作也可以叫做预初始化。可以通过设置系统属性<code>spring.backgroundpreinitializer.ignore</code>为<code>true</code>可以禁用该机制。该机制被禁用时，相应的初始化任务会发生在前台线程。</li>
+<li>DelegatingApplicationListener：监听应用事件，并将这些应用事件广播给环境属性<code>context.listener.classes</code>指定的那些监听器。</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>到此，<code>SpringBoot</code> 中的事件相关的东西就结束了。本文从<code>SpringApplicationRunListener</code>这个类说起，接着介绍 <code>SpringBoot</code> 启动过程的事件以及事件的生命周期。最后介绍了 <code>SpringBoot</code>中的内置的这些 监听器在启动过程中对应的各个阶段。</p>
+<p>新年伊始，祝大家新年快乐！</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://blog.csdn.net/andy_zhang2007/article/details/84105284" target="_blank" rel="noopener">https://blog.csdn.net/andy_zhang2007/article/details/84105284</a></li>
+</ul>
 
-从 RoadMap 和 PR 来看，目前 SOFATracer 已经支持了丰富的组件插件埋点。
-
-目前还未支持的主要是 Dubbo、MQ 以及 Redis 等。本文将从 SOFATracer 已提供的一个插件源码来分析下 SOFATracer 插件的埋点实现。
-1 SOFATracer 插件埋点机制SOFATracer 插件的作用实际上就是对于不同组件进行埋点，以便于收集这些组...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/07</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="SOFATracer">SOFATracer</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Disruptor">Disruptor</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="OpenTracing">OpenTracing</a>
-    
-</div>
-            
-        </div>
     </article>
+    <!-- license  -->
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/11/10/sofatracertwo/">
-            
-                <span>分布式链路跟踪组件 SOFATracer 和 Zipkin 模型转换原理</span>
-        </a>
-        <div class="abstract-content">
-            SOFATracer 是一个用于分布式系统调用跟踪的组件，通过统一的 traceId 将调用链路中的各种网络调用情况以日志的方式记录下来或者上报到 zipkin，以达到透视化网络调用的目的。这种以日志的方式记录下来或者上报到zipkin通常称为 Report，即数据上报 SOFATracer 的数据上报是在遵循 OpenTracing 规范基础上扩展出来的能力，OpenTracing 规范本身只是约定了数据模型和行为。本文主要目的在于分析 SOFATracer 的数据上报功能部分，主要内容如下：
-
-基于 OpenTracing 规范的分布式链路跟踪解决方案
-SOFATracer Repo...
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
+            </p><p>原文链接：<a href="http://www.glmapper.com/2019/04/13/springboot-event-intro/">http://www.glmapper.com/2019/04/13/springboot-event-intro/</a>
+            </p><p>发表日期：<a href="http://www.glmapper.com/2019/04/13/springboot-event-intro/">April 13th 2019, 10:55:41 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/04/13/springboot-event-intro/">April 13th 2019, 10:56:42 pm</a>
+            </p><p>版权声明：转载请注明出处</p>
         </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="OpenTracing">OpenTracing</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="链路跟踪">链路跟踪</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/11/10/sofatracerone/">
-            
-                <span>SOFATracer 中 Disruptor 实践</span>
-        </a>
-        <div class="abstract-content">
-            OpenTraceing 规范
-OpenTracing语义标准
-语义惯例
-官方文档
-
-SOFATracer 对 OpenTraceing 的实现
-SOFATracer  就是根据 OpenTracing 规范 衍生出来的分布式 链路跟 踪的解决方案。
-
-
-GitHub SOFATrcer
-
-概念OpenTracing 标准中有三个重要的相互关联的类型，分别是Tracer, Span和 SpanContext。
-
-【下面的概念说明过程中，如不做说明，所使用的案例代码均以SOFATracer中的实现为例。】
-
-Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或并行执行轨迹...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="SOFATracer">SOFATracer</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Disruptor">Disruptor</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="OpenTracing">OpenTracing</a>
-    
-</div>
-            
-        </div>
-    </article>
     
     <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2019/04/13/zookeeper-client-curator/" title="ZooKeeper 客户端之 Curator">
+                    <div class="prevTitle">ZooKeeper 客户端之 Curator</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
     
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -559,6 +666,24 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringApplicationRunListener"><span class="toc-number">1.</span> <span class="toc-text">SpringApplicationRunListener</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringApplicationRunListeners"><span class="toc-number">2.</span> <span class="toc-text">SpringApplicationRunListeners</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#EventPublishingRunListener"><span class="toc-number">2.1.</span> <span class="toc-text">EventPublishingRunListener</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ApplicationStartingEvent"><span class="toc-number">2.2.</span> <span class="toc-text">ApplicationStartingEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ApplicationEnvironmentPreparedEvent"><span class="toc-number">2.3.</span> <span class="toc-text">ApplicationEnvironmentPreparedEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ApplicationContextInitializedEvent"><span class="toc-number">2.4.</span> <span class="toc-text">ApplicationContextInitializedEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ApplicationPreparedEvent"><span class="toc-number">2.5.</span> <span class="toc-text">ApplicationPreparedEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ApplicationStartedEvent"><span class="toc-number">2.6.</span> <span class="toc-text">ApplicationStartedEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ApplicationReadyEvent"><span class="toc-number">2.7.</span> <span class="toc-text">ApplicationReadyEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ApplicationFailedEvent"><span class="toc-number">2.8.</span> <span class="toc-text">ApplicationFailedEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#demo-及各个事件的执行顺序"><span class="toc-number">2.9.</span> <span class="toc-text">demo 及各个事件的执行顺序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot-中的事件体系"><span class="toc-number">3.</span> <span class="toc-text">SpringBoot 中的事件体系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SimpleApplicationEventMulticaster"><span class="toc-number">3.1.</span> <span class="toc-text">SimpleApplicationEventMulticaster</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件体系的初始化"><span class="toc-number">3.2.</span> <span class="toc-text">事件体系的初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件注册"><span class="toc-number">3.3.</span> <span class="toc-text">事件注册</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件广播"><span class="toc-number">3.4.</span> <span class="toc-text">事件广播</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件执行"><span class="toc-number">3.5.</span> <span class="toc-text">事件执行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot-启动过程中的事件阶段"><span class="toc-number">4.</span> <span class="toc-text">SpringBoot 启动过程中的事件阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#starting-gt-ApplicationStartingEvent"><span class="toc-number">4.1.</span> <span class="toc-text">starting -&gt; ApplicationStartingEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#listeners-environmentPrepared-gt-ApplicationEnvironmentPreparedEvent"><span class="toc-number">4.2.</span> <span class="toc-text">listeners.environmentPrepared-&gt;ApplicationEnvironmentPreparedEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#listeners-contextPrepared-gt-ApplicationContextInitializedEvent"><span class="toc-number">4.3.</span> <span class="toc-text">listeners.contextPrepared-&gt;ApplicationContextInitializedEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#listeners-contextLoaded-gt-ApplicationPreparedEvent"><span class="toc-number">4.4.</span> <span class="toc-text">listeners.contextLoaded-&gt;ApplicationPreparedEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#refresh-gt-ContextRefreshedEvent"><span class="toc-number">4.5.</span> <span class="toc-text">refresh-&gt;ContextRefreshedEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#started-gt-ApplicationStartedEvent"><span class="toc-number">4.6.</span> <span class="toc-text">started-&gt;ApplicationStartedEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#running-gt-ApplicationReadyEvent"><span class="toc-number">4.7.</span> <span class="toc-text">running-&gt;ApplicationReadyEvent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BackgroundPreinitializer-amp-DelegatingApplicationListener"><span class="toc-number">4.8.</span> <span class="toc-text">BackgroundPreinitializer&amp;DelegatingApplicationListener</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">5.</span> <span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -3101,6 +3226,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
