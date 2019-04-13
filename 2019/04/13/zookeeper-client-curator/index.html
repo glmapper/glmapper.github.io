@@ -1,0 +1,3200 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="GuoLei Song">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="GuoLei Song">
+    
+    <meta name="keywords" content="glmapper,spring,spring cloud,宋国磊">
+    
+    <meta name="description" content="从平凡的世界中全身而退">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ZooKeeper 客户端之 Curator · glmapper</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin="">
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin="">
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">glmapper</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">ZooKeeper 客户端之 Curator</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">glmapper</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            ZooKeeper 客户端之 Curator
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="zookeeper">zookeeper</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3.8k</span>阅读时长: <span class="post-count reading-time">16 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/04/13</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>ZooKeeper 是一个分布式的，开放源码的分布式应用程序协调服务，是 Google 的 Chubby 一个开源的实现，它是集群的管理者，监视着集群中各个节点的状态根据节点提交的反馈进行下一步合理操作。最终，将简单易用的接口和性能高效、功能稳定的系统提供给用户。</p>
+<p>Curator 是 Netflix 公司开源的一套  Zookeeper 客户端框架，解决了很多 Zookeeper 客户端非常底层的细节开发工作，包括连接重连、反复注册 Watcher 和 NodeExistsException 异常等等。Curator 包含了几个包：</p>
+<ul>
+<li>curator-framework：对 Zookeeper 的底层 api 的一些封装</li>
+<li>curator-client：提供一些客户端的操作，例如重试策略等</li>
+<li>curator-recipes：封装了一些高级特性，如：Cache 事件监听、选举、分布式锁、分布式计数器、分布式Barrier 等</li>
+</ul>
+<h2 id="Curator-和-zookeeper-的版本问题"><a href="#Curator-和-zookeeper-的版本问题" class="headerlink" title="Curator 和 zookeeper 的版本问题"></a>Curator 和 zookeeper 的版本问题</h2><p>目前 Curator 有 2.x.x 和 3.x.x 两个系列的版本，支持不同版本的 Zookeeper。其中Curator 2.x.x 兼容 Zookeeper的 3.4.x 和 3.5.x。而 Curator 3.x.x 只兼容 Zookeeper 3.5.x，并且提供了一些诸如动态重新配置、watch删除等新特性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Curator 2.x.x - compatible with both ZooKeeper 3.4.x and ZooKeeper 3.5.x</span><br><span class="line">Curator 3.x.x - compatible only with ZooKeeper 3.5.x and includes support for new</span><br></pre></td></tr></table></figure>
+<p>如果跨版本会有兼容性问题，很有可能导致节点操作失败，我当时在使用的时候就踩了这个坑，抛了如下的异常：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KeeperErrorCode = Unimplemented for /***</span><br></pre></td></tr></table></figure>
+<h2 id="Curator-API"><a href="#Curator-API" class="headerlink" title="Curator   API"></a>Curator   API</h2><p>这里就不对比与原生 API 的区别了，Curator 的 api 直接通过 org.apache.curator.framework.CuratorFramework 接口来看，并结合相应的案例进行使用，以备后用。</p>
+<blockquote>
+<p>为了可以直观的看到zookeeper 的节点信息，可以考虑弄一个zk的管控界面，常见的有 zkui 和 zkweb。</p>
+<p>zkui：<a href="https://github.com/DeemOpen/zkui" target="_blank" rel="noopener">https://github.com/DeemOpen/zkui</a></p>
+<p>zkweb：<a href="https://github.com/zhitom/zkweb" target="_blank" rel="noopener">https://github.com/zhitom/zkweb</a></p>
+<p>我用的 zkweb ，虽然界面上看起来没有 zkui 精简，但是在层次展示和一些细节上感觉比 zkui 好一点</p>
+</blockquote>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>之前写的一个在 <a href="http://www.glmapper.com/2019/03/04/zk-on-linux">Linux 上安装部署 Zookeeper</a> 的笔记，其他操作系统请自行谷歌教程吧；</p>
+<p>本文案例工程已经同步到了 github，<a href="https://github.com/glmapper/glmapper-blog-samples" target="_blank" rel="noopener">传送门</a>。</p>
+<blockquote>
+<p>PS : 目前还没有看过Curator的具体源码，所以不会涉及到任何源码解析、实现原理的东西；本篇主要是实际使用时的一些记录，以备后用。如果文中错误之处，希望各位指出。</p>
+</blockquote>
+<h2 id="Curator-客户端的初始化和初始化时机"><a href="#Curator-客户端的初始化和初始化时机" class="headerlink" title="Curator 客户端的初始化和初始化时机"></a>Curator 客户端的初始化和初始化时机</h2><p>在实际的工程中，Zookeeper 客户端的初始化会在程序启动期间完成。</p>
+<h3 id="初始化时机"><a href="#初始化时机" class="headerlink" title="初始化时机"></a>初始化时机</h3><p>在 Spring 或者 SpringBoot 工程中最常见的就是绑定到容器启动的生命周期或者应用启动的生命周期中：</p>
+<ul>
+<li>监听 ContextRefreshedEvent 事件，在容器刷新完成之后初始化 Zookeeper</li>
+<li>监听 ApplicationReadyEvent/ApplicationStartedEvent 事件，初始化 Zookeeper 客户端</li>
+</ul>
+<p>除了上面的方式之外，还有一种常见的是绑定到 bean 的生命周期中</p>
+<ul>
+<li>实现 InitializingBean 接口 ，在 afterPropertiesSet 中完成 Zookeeper 客户端初始化</li>
+</ul>
+<blockquote>
+<p>关于 SpringBoot中的事件机制可以参考之前写过的一篇文章：<a href="https://juejin.im/post/5c2af8915188252a94130422#heading-8" target="_blank" rel="noopener">SpringBoot-SpringBoot中的事件机制</a>。</p>
+</blockquote>
+<h3 id="Curator-初始化"><a href="#Curator-初始化" class="headerlink" title="Curator 初始化"></a>Curator 初始化</h3><p>这里使用 InitializingBean 的这种方式，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ZookeeperCuratorClient</span> <span class="keyword">implements</span> <span class="title">InitializingBean</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> CuratorFramework curatorClient;</span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;glmapper.zookeeper.address:localhost:2181&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> String           connectString;</span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;glmapper.zookeeper.baseSleepTimeMs:1000&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span>              baseSleepTimeMs;</span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;glmapper.zookeeper.maxRetries:3&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span>              maxRetries;</span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;glmapper.zookeeper.sessionTimeoutMs:6000&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span>              sessionTimeoutMs;</span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;glmapper.zookeeper.connectionTimeoutMs:6000&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span>              connectionTimeoutMs;</span><br><span class="line">  </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// custom policy</span></span><br><span class="line">        RetryPolicy retryPolicy = <span class="keyword">new</span> ExponentialBackoffRetry(baseSleepTimeMs, maxRetries);</span><br><span class="line">        <span class="comment">// to build curatorClient</span></span><br><span class="line">        curatorClient = CuratorFrameworkFactory.builder().connectString(connectString)</span><br><span class="line">                .sessionTimeoutMs(sessionTimeoutMs).connectionTimeoutMs(connectionTimeoutMs)</span><br><span class="line">                .retryPolicy(retryPolicy).build();</span><br><span class="line">        curatorClient.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> CuratorFramework <span class="title">getCuratorClient</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> curatorClient;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>glmapper.zookeeper.xxx 是本例中需要在配置文件中配置的 zookeeper 的一些参数，参数解释如下：</p>
+<ul>
+<li>baseSleepTimeMs：重试之间等待的初始时间</li>
+<li>maxRetries：最大重试次数</li>
+<li>connectString：要连接的服务器列表</li>
+<li>sessionTimeoutMs：session 超时时间</li>
+<li>connectionTimeoutMs：连接超时时间</li>
+</ul>
+<p>另外，Curator 客户端初始化时还需要指定重试策略，RetryPolicy 接口是 Curator 中重试连接(当zookeeper失去连接时使用)策略的顶级接口，其类继承体系如下图所示：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/4/13/16a17065aa98b194?w=1024&amp;h=302&amp;f=png&amp;s=73757" alt=""></p>
+<ul>
+<li>RetryOneTime：只重连一次</li>
+<li>RetryNTime：指定重连的次数N</li>
+<li>RetryUtilElapsed：指定最大重连超时时间和重连时间间隔，间歇性重连直到超时或者链接成功</li>
+<li>ExponentialBackoffRetry：基于 “backoff”方式重连，和 RetryUtilElapsed 的区别是重连的时间间隔是动态的。</li>
+<li>BoundedExponentialBackoffRetry： 同 ExponentialBackoffRetry的区别是增加了最大重试次数的控制</li>
+</ul>
+<p>除上述之外，在一些场景中，需要对不同的业务进行隔离，这种情况下，可以通过设置 namespace 来解决，namespace 实际上就是指定zookeeper的根路径，设置之后，后面的所有操作都会基于该根目录。</p>
+<h2 id="Curator-基础-API-使用"><a href="#Curator-基础-API-使用" class="headerlink" title="Curator 基础 API 使用"></a>Curator 基础 API 使用</h2><h3 id="检查节点是否存在"><a href="#检查节点是否存在" class="headerlink" title="检查节点是否存在"></a>检查节点是否存在</h3><p>checkExists 方法返回的是一个 ExistsBuilder 构造器，这个构建器将返回一个 Stat 对象，就像调用了 org.apache.zookeeper.ZooKeeper.exists()一样。null 表示它不存在，而实际的 Stat 对象表示存在。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">checkNodeExist</span><span class="params">(String path)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    Stat stat = curatorClient.checkExists().forPath(path);</span><br><span class="line">    <span class="keyword">if</span> (stat != <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"path = "</span>+path +<span class="string">" has bean exist."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>建议在实际的应用中，操作节点时对所需操作的节点进行 checkExists。</p>
+<h3 id="新增节点"><a href="#新增节点" class="headerlink" title="新增节点"></a>新增节点</h3><ul>
+<li><p>非递归方式创建节点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.create().forPath(&quot;/glmapper&quot;);</span><br><span class="line">curatorClient.create().forPath(&quot;/glmapper/test&quot;);</span><br></pre></td></tr></table></figure>
+<p>先创建/glmapper，然后再在/glmapper 下面创建 /test ，如果直接使用 /glmapper/test 没有先创建 /glmapper 时，会抛出异常：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.apache.zookeeper.KeeperException$NoNodeException: KeeperErrorCode = NoNode for /glmapper/test</span><br></pre></td></tr></table></figure>
+<p>如果需要在创建节点时指定节点中数据，则可以这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.create().forPath(&quot;/glmapper&quot;,&quot;data&quot;.getBytes());</span><br></pre></td></tr></table></figure>
+<p>指定节点类型(EPHEMERAL 临时节点)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.create().withMode(CreateMode.EPHEMERAL).forPath(&quot;/glmapper&quot;,&quot;data&quot;.getBytes());</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>递归方式创建节点</p>
+<p>递归方式创建节点有两个方法，creatingParentsIfNeeded 和 creatingParentContainersIfNeeded。在新版本的 zookeeper 这两个递归创建方法会有区别； creatingParentContainersIfNeeded() 以容器模式递归创建节点，如果旧版本 zookeeper，此方法等于creatingParentsIfNeeded()。</p>
+<p>在非递归方式情况下，如果直接创建 /glmapper/test 会报错，那么在递归的方式下则是可以的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.create().creatingParentContainersIfNeeded().forPath(&quot;/glmapper/test&quot;);</span><br></pre></td></tr></table></figure>
+<p>在递归调用中，如果不指定 CreateMode，则默认<code>PERSISTENT</code>，如果指定为临时节点，则最终节点会是临时节点，父节点仍旧是<code>PERSISTENT</code></p>
+</li>
+</ul>
+<h3 id="删除节点"><a href="#删除节点" class="headerlink" title="删除节点"></a>删除节点</h3><ul>
+<li><p>非递归删除节点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.delete().forPath(&quot;/glmapper/test&quot;);</span><br></pre></td></tr></table></figure>
+<p>指定具体版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.delete().withVersion(-1).forPath(&quot;/glmapper/test&quot;);</span><br></pre></td></tr></table></figure>
+<p>使用 guaranteed 方式删除，guaranteed 会保证在session有效的情况下，后台持续进行该节点的删除操作，直到删除掉</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.delete().guaranteed().withVersion(-1).forPath(&quot;/glmapper/test&quot;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>递归删除当前节点及其子节点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.delete().deletingChildrenIfNeeded().forPath(&quot;/glmapper/test&quot;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="获取节点数据"><a href="#获取节点数据" class="headerlink" title="获取节点数据"></a>获取节点数据</h3><p>获取节点数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">byte[] data = curatorClient.getData().forPath(&quot;/glmapper/test&quot;);</span><br></pre></td></tr></table></figure>
+<p>根据配置的压缩提供程序对数据进行解压缩处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">byte[] data = curatorClient.getData().decompressed().forPath(&quot;/glmapper/test&quot;);</span><br></pre></td></tr></table></figure>
+<p>读取数据并获得Stat信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Stat stat = new Stat();</span><br><span class="line">byte[] data = curatorClient.getData().storingStatIn(stat).forPath(&quot;/glmapper/test&quot;);</span><br></pre></td></tr></table></figure>
+<h3 id="更新节点数据"><a href="#更新节点数据" class="headerlink" title="更新节点数据"></a>更新节点数据</h3><p>设置指定值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.setData().forPath(&quot;/glmapper/test&quot;,&quot;newData&quot;.getBytes());</span><br></pre></td></tr></table></figure>
+<p>设置数据并使用配置的压缩提供程序压缩数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.setData().compressed().forPath(&quot;/glmapper/test&quot;,&quot;newData&quot;.getBytes());</span><br></pre></td></tr></table></figure>
+<p>设置数据，并指定版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.setData().withVersion(-1).forPath(&quot;/glmapper/test&quot;,&quot;newData&quot;.getBytes());</span><br></pre></td></tr></table></figure>
+<h3 id="获取子列表"><a href="#获取子列表" class="headerlink" title="获取子列表"></a>获取子列表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; childrenList = curatorClient.getChildren().forPath(&quot;/glmapper&quot;);</span><br></pre></td></tr></table></figure>
+<h2 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h2><p>Curator 也对 Zookeeper 典型场景之事件监听进行封装，这部分能力实在 curator-recipes 包下的。</p>
+<h3 id="事件类型"><a href="#事件类型" class="headerlink" title="事件类型"></a>事件类型</h3><p>在使用不同的方法时会有不同的事件发生</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> CuratorEventType</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//Corresponds to &#123;@link CuratorFramework#create()&#125;</span></span><br><span class="line">    CREATE,</span><br><span class="line">    <span class="comment">//Corresponds to &#123;@link CuratorFramework#delete()&#125;</span></span><br><span class="line">    DELETE,</span><br><span class="line">		<span class="comment">//Corresponds to &#123;@link CuratorFramework#checkExists()&#125;</span></span><br><span class="line">    EXISTS,</span><br><span class="line">		<span class="comment">//Corresponds to &#123;@link CuratorFramework#getData()&#125;</span></span><br><span class="line">    GET_DATA,</span><br><span class="line">		<span class="comment">//Corresponds to &#123;@link CuratorFramework#setData()&#125;</span></span><br><span class="line">    SET_DATA,</span><br><span class="line">		<span class="comment">//Corresponds to &#123;@link CuratorFramework#getChildren()&#125;</span></span><br><span class="line">    CHILDREN,</span><br><span class="line">		<span class="comment">//Corresponds to &#123;@link CuratorFramework#sync(String, Object)&#125;</span></span><br><span class="line">    SYNC,</span><br><span class="line">		<span class="comment">//Corresponds to &#123;@link CuratorFramework#getACL()&#125;</span></span><br><span class="line">    GET_ACL,</span><br><span class="line">		<span class="comment">//Corresponds to &#123;@link CuratorFramework#setACL()&#125;</span></span><br><span class="line">    SET_ACL,</span><br><span class="line">		<span class="comment">//Corresponds to &#123;@link Watchable#usingWatcher(Watcher)&#125; or &#123;@link Watchable#watched()&#125;</span></span><br><span class="line">    WATCHED,</span><br><span class="line">		<span class="comment">//Event sent when client is being closed</span></span><br><span class="line">    CLOSING</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="事件监听"><a href="#事件监听" class="headerlink" title="事件监听"></a>事件监听</h3><h4 id="一次性监听方式：Watcher"><a href="#一次性监听方式：Watcher" class="headerlink" title="一次性监听方式：Watcher"></a>一次性监听方式：Watcher</h4><p>利用 Watcher 来对节点进行监听操作，可以典型业务场景需要使用可考虑，但一般情况不推荐使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">byte</span>[] data = curatorClient.getData().usingWatcher(<span class="keyword">new</span> Watcher() &#123;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(WatchedEvent watchedEvent)</span> </span>&#123;</span><br><span class="line">       System.out.println(<span class="string">"监听器 watchedEvent："</span> + watchedEvent);</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;).forPath(<span class="string">"/glmapper/test"</span>);</span><br><span class="line">System.out.println(<span class="string">"监听节点内容："</span> + <span class="keyword">new</span> String(data));</span><br><span class="line"><span class="comment">// 第一次变更节点数据</span></span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test"</span>,<span class="string">"newData"</span>.getBytes());</span><br><span class="line"><span class="comment">// 第二次变更节点数据</span></span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test"</span>,<span class="string">"newChangedData"</span>.getBytes());</span><br></pre></td></tr></table></figure>
+<p>上面这段代码对 /glmapper/test 节点注册了一个 Watcher 监听事件，并且返回当前节点的内容。后面进行两次数据变更，实际上第二次变更时，监听已经失效，无法再次获得节点变动事件了。测试中控制台输出的信息如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">监听节点内容：data</span><br><span class="line">watchedEvent：WatchedEvent state:SyncConnected type:NodeDataChanged path:/glmapper/test</span><br></pre></td></tr></table></figure>
+<h4 id="CuratorListener-方式"><a href="#CuratorListener-方式" class="headerlink" title="CuratorListener 方式"></a>CuratorListener 方式</h4><p>CuratorListener 监听，此监听主要针对 background 通知和错误通知。使用此监听器之后，调用inBackground 方法会异步获得监听，对于节点的创建或修改则不会触发监听事件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">CuratorListener listener = <span class="keyword">new</span> CuratorListener()&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">eventReceived</span><span class="params">(CuratorFramework client, CuratorEvent event)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">      System.out.println(<span class="string">"event : "</span> + event);</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;;</span><br><span class="line"><span class="comment">// 绑定监听器</span></span><br><span class="line">curatorClient.getCuratorListenable().addListener(listener);</span><br><span class="line"><span class="comment">// 异步获取节点数据</span></span><br><span class="line">curatorClient.getData().inBackground().forPath(<span class="string">"/glmapper/test"</span>);</span><br><span class="line"><span class="comment">// 更新节点数据</span></span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test"</span>,<span class="string">"newData"</span>.getBytes());</span><br></pre></td></tr></table></figure>
+<p>测试中控制台输出的信息如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">event : CuratorEventImpl&#123;type=GET_DATA, resultCode=0, path=&apos;/glmapper/test&apos;, name=&apos;null&apos;, children=null, context=null, stat=5867,5867,1555140974671,1555140974671,0,0,0,0,4,0,5867</span><br><span class="line">, data=[100, 97, 116, 97], watchedEvent=null, aclList=null&#125;</span><br></pre></td></tr></table></figure>
+<p>这里只触发了一次监听回调，就是 getData 。</p>
+<h4 id="Curator-引入的-Cache-事件监听机制"><a href="#Curator-引入的-Cache-事件监听机制" class="headerlink" title="Curator 引入的 Cache 事件监听机制"></a>Curator 引入的 Cache 事件监听机制</h4><p>Curator 引入了 Cache 来实现对 Zookeeper 服务端事件监听，Cache 事件监听可以理解为一个本地缓存视图与远程 Zookeeper 视图的对比过程。Cache 提供了反复注册的功能。Cache 分为两类注册类型：节点监听和子节点监听。</p>
+<ul>
+<li><p>NodeCache</p>
+<p>监听数据节点本身的变化。对节点的监听需要配合回调函数来进行处理接收到监听事件之后的业务处理。NodeCache 通过 NodeCacheListener 来完成后续处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">String path = <span class="string">"/glmapper/test"</span>;</span><br><span class="line"><span class="keyword">final</span> NodeCache nodeCache = <span class="keyword">new</span> NodeCache(curatorClient,path);</span><br><span class="line"><span class="comment">//如果设置为true则在首次启动时就会缓存节点内容到Cache中。 nodeCache.start(true);</span></span><br><span class="line">nodeCache.start();</span><br><span class="line">nodeCache.getListenable().addListener(<span class="keyword">new</span> NodeCacheListener() &#123;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nodeChanged</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">System.out.println(<span class="string">"触发监听回调，当前节点数据为："</span> + <span class="keyword">new</span> String(nodeCache.getCurrentData().getData()));</span><br><span class="line">&#125;</span><br><span class="line">&#125;);</span><br><span class="line">curatorClient.setData().forPath(path,<span class="string">"1"</span>.getBytes());</span><br><span class="line">curatorClient.setData().forPath(path,<span class="string">"2"</span>.getBytes());</span><br><span class="line">curatorClient.setData().forPath(path,<span class="string">"3"</span>.getBytes());</span><br><span class="line">curatorClient.setData().forPath(path,<span class="string">"4"</span>.getBytes());</span><br><span class="line">curatorClient.setData().forPath(path,<span class="string">"5"</span>.getBytes());</span><br><span class="line">curatorClient.setData().forPath(path,<span class="string">"6"</span>.getBytes());</span><br></pre></td></tr></table></figure>
+<p>注意：在测试过程中，nodeCache.start()，NodeCache 在先后多次修改监听节点的内容时，出现了丢失事件现象，在用例执行的5次中，仅一次监听到了全部事件；如果 nodeCache.start(true)，NodeCache 在先后多次修改监听节点的内容时，不会出现丢失现象。</p>
+<blockquote>
+<p>NodeCache不仅可以监听节点内容变化，还可以监听指定节点是否存在。如果原本节点不存在，那么Cache就会在节点被创建时触发监听事件，如果该节点被删除，就无法再触发监听事件。</p>
+</blockquote>
+</li>
+<li><p>PathChildrenCache</p>
+<p>PathChildrenCache 不会对二级子节点进行监听，只会对子节点进行监听。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">String path = <span class="string">"/glmapper"</span>;</span><br><span class="line">PathChildrenCache pathChildrenCache = <span class="keyword">new</span> PathChildrenCache(curatorClient,path,<span class="keyword">true</span>);</span><br><span class="line"><span class="comment">// 如果设置为true则在首次启动时就会缓存节点内容到Cache中。 nodeCache.start(true);</span></span><br><span class="line">pathChildrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);</span><br><span class="line">pathChildrenCache.getListenable().addListener(<span class="keyword">new</span> PathChildrenCacheListener() &#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">childEvent</span><span class="params">(CuratorFramework curatorFramework, PathChildrenCacheEvent event)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"-----------------------------"</span>);</span><br><span class="line">    System.out.println(<span class="string">"event:"</span>  + event.getType());</span><br><span class="line">    <span class="keyword">if</span> (event.getData()!=<span class="keyword">null</span>)&#123;</span><br><span class="line">      System.out.println(<span class="string">"path:"</span> + event.getData().getPath());</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">"-----------------------------"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line">zookeeperCuratorClient.createNode(<span class="string">"/glmapper/test"</span>,<span class="string">"data"</span>.getBytes(),CreateMode.PERSISTENT);</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test"</span>,<span class="string">"1"</span>.getBytes());</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test"</span>,<span class="string">"2"</span>.getBytes());</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">zookeeperCuratorClient.createNode(<span class="string">"/glmapper/test/second"</span>,<span class="string">"data"</span>.getBytes(),CreateMode.PERSISTENT);</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test/second"</span>,<span class="string">"1"</span>.getBytes());</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test/second"</span>,<span class="string">"2"</span>.getBytes());</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+<p>注意：在测试过程中发现，如果连续两个操作之间不进行一定时间的间隔，会导致无法监听到下一次事件。因此只会监听子节点，所以对二级子节点 /second 下面的操作是监听不到的。测试中控制台输出的信息如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">-----------------------------</span><br><span class="line">event:CHILD_ADDED</span><br><span class="line">path:/glmapper/test</span><br><span class="line">-----------------------------</span><br><span class="line">-----------------------------</span><br><span class="line">event:INITIALIZED</span><br><span class="line">-----------------------------</span><br><span class="line">-----------------------------</span><br><span class="line">event:CHILD_UPDATED</span><br><span class="line">path:/glmapper/test</span><br><span class="line">-----------------------------</span><br><span class="line">-----------------------------</span><br><span class="line">event:CHILD_UPDATED</span><br><span class="line">path:/glmapper/test</span><br><span class="line">-----------------------------</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>TreeCache</p>
+<p>TreeCache 使用一个内部类<code>TreeNode</code>来维护这个一个树结构。并将这个树结构与ZK节点进行了映射。所以TreeCache 可以监听当前节点下所有节点的事件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">String path = <span class="string">"/glmapper"</span>;</span><br><span class="line">TreeCache treeCache = <span class="keyword">new</span> TreeCache(curatorClient,path);</span><br><span class="line">treeCache.getListenable().addListener((client,event)-&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">"-----------------------------"</span>);</span><br><span class="line">    System.out.println(<span class="string">"event:"</span>  + event.getType());</span><br><span class="line">    <span class="keyword">if</span> (event.getData()!=<span class="keyword">null</span>)&#123;</span><br><span class="line">      System.out.println(<span class="string">"path:"</span> + event.getData().getPath());</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">"-----------------------------"</span>);</span><br><span class="line">&#125;);</span><br><span class="line">treeCache.start();</span><br><span class="line">zookeeperCuratorClient.createNode(<span class="string">"/glmapper/test"</span>,<span class="string">"data"</span>.getBytes(),CreateMode.PERSISTENT);</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test"</span>,<span class="string">"1"</span>.getBytes());</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test"</span>,<span class="string">"2"</span>.getBytes());</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">zookeeperCuratorClient.createNode(<span class="string">"/glmapper/test/second"</span>,<span class="string">"data"</span>.getBytes(),CreateMode.PERSISTENT);</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test/second"</span>,<span class="string">"1"</span>.getBytes());</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">curatorClient.setData().forPath(<span class="string">"/glmapper/test/second"</span>,<span class="string">"2"</span>.getBytes());</span><br><span class="line">Thread.sleep(<span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+<p>测试中控制台输出的信息如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">-----------------------------</span><br><span class="line">event:NODE_ADDED</span><br><span class="line">path:/glmapper</span><br><span class="line">-----------------------------</span><br><span class="line">-----------------------------</span><br><span class="line">event:NODE_ADDED</span><br><span class="line">path:/glmapper/test</span><br><span class="line">-----------------------------</span><br><span class="line">-----------------------------</span><br><span class="line">event:NODE_UPDATED</span><br><span class="line">path:/glmapper/test</span><br><span class="line">-----------------------------</span><br><span class="line">-----------------------------</span><br><span class="line">event:NODE_UPDATED</span><br><span class="line">path:/glmapper/test</span><br><span class="line">-----------------------------</span><br><span class="line">-----------------------------</span><br><span class="line">event:NODE_ADDED</span><br><span class="line">path:/glmapper/test/second</span><br><span class="line">-----------------------------</span><br><span class="line">-----------------------------</span><br><span class="line">event:NODE_UPDATED</span><br><span class="line">path:/glmapper/test/second</span><br><span class="line">-----------------------------</span><br><span class="line">-----------------------------</span><br><span class="line">event:NODE_UPDATED</span><br><span class="line">path:/glmapper/test/second</span><br><span class="line">-----------------------------</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="事务操作"><a href="#事务操作" class="headerlink" title="事务操作"></a>事务操作</h2><p> CuratorFramework 的实例包含 inTransaction( ) 接口方法，调用此方法开启一个 ZooKeeper 事务。 可以复合create、 setData、 check、and/or delete 等操作然后调用 commit() 作为一个原子操作提交。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 开启事务  </span></span><br><span class="line">CuratorTransaction curatorTransaction = curatorClient.inTransaction();</span><br><span class="line">Collection&lt;CuratorTransactionResult&gt; commit = </span><br><span class="line">  <span class="comment">// 操作1 </span></span><br><span class="line">curatorTransaction.create().withMode(CreateMode.EPHEMERAL).forPath(<span class="string">"/glmapper/transaction"</span>)</span><br><span class="line">  .and()</span><br><span class="line">  <span class="comment">// 操作2 </span></span><br><span class="line">  .delete().forPath(<span class="string">"/glmapper/test"</span>)</span><br><span class="line">  .and()</span><br><span class="line">  <span class="comment">// 操作3</span></span><br><span class="line">  .setData().forPath(<span class="string">"/glmapper/transaction"</span>, <span class="string">"data"</span>.getBytes())</span><br><span class="line">  .and()</span><br><span class="line">  <span class="comment">// 提交事务</span></span><br><span class="line">  .commit();</span><br><span class="line">Iterator&lt;CuratorTransactionResult&gt; iterator = commit.iterator();</span><br><span class="line"><span class="keyword">while</span> (iterator.hasNext())&#123;</span><br><span class="line">  CuratorTransactionResult next = iterator.next();</span><br><span class="line">  System.out.println(next.getForPath());</span><br><span class="line">  System.out.println(next.getResultPath());</span><br><span class="line">  System.out.println(next.getType());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里debug看了下Collection<curatortransactionresult>信息，面板如下：</curatortransactionresult></p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/4/13/16a1706f1bfb589c?w=2126&amp;h=890&amp;f=png&amp;s=558056" alt=""></p>
+<h2 id="异步操作"><a href="#异步操作" class="headerlink" title="异步操作"></a>异步操作</h2><p>前面提到的增删改查都是同步的，但是 Curator 也提供了异步接口，引入了 BackgroundCallback 接口用于处理异步接口调用之后服务端返回的结果信息。BackgroundCallback 接口中一个重要的回调值为 CuratorEvent，里面包含事件类型、响应吗和节点的详细信息。</p>
+<p>在使用上也是非常简单的，只需要带上 inBackground() 就行，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.getData().inBackground().forPath(<span class="string">"/glmapper/test"</span>);</span><br></pre></td></tr></table></figure>
+<p>通过查看 inBackground 方法定义可以看到，inBackground 支持自定义线程池来处理返回结果之后的业务逻辑。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">inBackground</span><span class="params">(BackgroundCallback callback, Executor executor)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>这里就不贴代码了。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要围绕 Curator 的基本 API 进行了学习记录，对于原理及源码部分没有涉及。这部分如果有时间在慢慢研究吧。另外像分布式锁、分布式自增序列等实现停留在理论阶段，没有实践，不敢妄论，用到再码吧。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://www.cnblogs.com/felixzh/p/5869212.html" target="_blank" rel="noopener">http://www.cnblogs.com/felixzh/p/5869212.html</a></li>
+<li><a href="https://my.oschina.net/roccn/blog/918209" target="_blank" rel="noopener">https://my.oschina.net/roccn/blog/918209</a></li>
+</ul>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
+            </p><p>原文链接：<a href="http://www.glmapper.com/2019/04/13/zookeeper-client-curator/">http://www.glmapper.com/2019/04/13/zookeeper-client-curator/</a>
+            </p><p>发表日期：<a href="http://www.glmapper.com/2019/04/13/zookeeper-client-curator/">April 13th 2019, 10:09:30 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/04/13/zookeeper-client-curator/">April 13th 2019, 10:12:37 pm</a>
+            </p><p>版权声明：转载请注明出处</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2019/03/07/springboot-kafka-introduction/" title="Kafka简介&集成SpringBoot">
+                    <div class="prevTitle">Kafka简介&集成SpringBoot</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:glmapper_2018@163.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/glmapper" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechart.png">
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://weibo.com/u/2412872703" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://juejin.im/user/58fcc0768d6d810058965a06" class="iconfont-archer juejin" target="_blank" title="juejin"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title="rss"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span></span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Curator-和-zookeeper-的版本问题"><span class="toc-number">1.</span> <span class="toc-text">Curator 和 zookeeper 的版本问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Curator-API"><span class="toc-number">2.</span> <span class="toc-text">Curator   API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境准备"><span class="toc-number">3.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Curator-客户端的初始化和初始化时机"><span class="toc-number">4.</span> <span class="toc-text">Curator 客户端的初始化和初始化时机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化时机"><span class="toc-number">4.1.</span> <span class="toc-text">初始化时机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Curator-初始化"><span class="toc-number">4.2.</span> <span class="toc-text">Curator 初始化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Curator-基础-API-使用"><span class="toc-number">5.</span> <span class="toc-text">Curator 基础 API 使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检查节点是否存在"><span class="toc-number">5.1.</span> <span class="toc-text">检查节点是否存在</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#新增节点"><span class="toc-number">5.2.</span> <span class="toc-text">新增节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除节点"><span class="toc-number">5.3.</span> <span class="toc-text">删除节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取节点数据"><span class="toc-number">5.4.</span> <span class="toc-text">获取节点数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新节点数据"><span class="toc-number">5.5.</span> <span class="toc-text">更新节点数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取子列表"><span class="toc-number">5.6.</span> <span class="toc-text">获取子列表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事件"><span class="toc-number">6.</span> <span class="toc-text">事件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#事件类型"><span class="toc-number">6.1.</span> <span class="toc-text">事件类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件监听"><span class="toc-number">6.2.</span> <span class="toc-text">事件监听</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#一次性监听方式：Watcher"><span class="toc-number">6.2.1.</span> <span class="toc-text">一次性监听方式：Watcher</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CuratorListener-方式"><span class="toc-number">6.2.2.</span> <span class="toc-text">CuratorListener 方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Curator-引入的-Cache-事件监听机制"><span class="toc-number">6.2.3.</span> <span class="toc-text">Curator 引入的 Cache 事件监听机制</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事务操作"><span class="toc-number">7.</span> <span class="toc-text">事务操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#异步操作"><span class="toc-number">8.</span> <span class="toc-text">异步操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">9.</span> <span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">10.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 85
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/zookeeper-client-curator/">ZooKeeper 客户端之 Curator</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/07</span><a class="archive-post-title" href="/2019/03/07/springboot-kafka-introduction/">Kafka简介&集成SpringBoot</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/04</span><a class="archive-post-title" href="/2019/03/04/zk-on-linux/">Linux 下安装 Zookeeper</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/19</span><a class="archive-post-title" href="/2019/01/19/springcloud-gateway-predicate-project/">SpringCloud-网关 Gateway 入门体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/09</span><a class="archive-post-title" href="/2019/01/09/springcloud-hystrix-project/">SpringCloud-断路器 Hystrix</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/09</span><a class="archive-post-title" href="/2019/01/09/springcloud-config-apollo/">SpringCloud-配置中心 Apollo</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-config-project/">SpringCloud-配置中心 Config</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcloud-overview/">SpringCloud 总览</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/23</span><a class="archive-post-title" href="/2018/12/23/springsession-id-resolver/">SpringSession系列-sessionId解析和Cookie读写策略</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/shufa-20181216/">20181216-书法练习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/spring-session-redis-map/">SpringSession系列-存储机制之Redis&Map</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2018/12/07/sofatracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessiontwo/">SpringSession系列-请求与响应重写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/16</span><a class="archive-post-title" href="/2018/11/16/sofaboot-health-one/">SOFABoot 健康检查能力分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/shufa-20181111/">20181111-书法练习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc3/">SpringMVC系列源码：DispatcherServlet</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase4/">Spring源码系列：BeanDefinition载入(上)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc1/">SpringMVC源码系列：HandlerMapping</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc2/">SpringMVC源码系列：AbstractHandlerMapping</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase10/">Spring源码系列：依赖注入（三）-属性注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase6/">Spring源码系列：BeanDefinition载入（中）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase2/">Spring源码系列：BeanDefinition 源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-modulemethod/">菜鸟成长系列-模板方法模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase3/">Spring源码系列：BeanFactory的创建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-strategy/">菜鸟成长系列-策略模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc5/">SpringMVC源码系列：九大组件小记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase8/">Spring源码系列：依赖注入（一）getBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc4/">SpringMVC源码系列：AbstractUrlHandlerMapping</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase5/">Spring源码系列：BeanDefinition载入(下)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase7/">Spring源码系列：依赖注入-引言</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase12/">Spring源码系列：BeanWrapper</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase0/">Spring源码系列：Spring的版本变更</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase13/">Spring源码系列：注解说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase11/">Spring源码系列：依赖注入（四）-总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-builder/">菜鸟成长系列-Builder 建造者模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase9/">Spring源码系列：依赖注入（二）createBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc2/">JUC·ThreadPoolExecutor 线程池</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc1/">JUC·Executor 框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-obs/">菜鸟成长系列-观察者模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/alg-one/">算法-排序算法思想及实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-key-word/">JAVA中的关键字</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/mybatisone/">关于Mybatis中SQL语句的整理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase1/">Spring源码系列：Spring的启动过程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springaopone/">聊一聊 AOP ：表现形式与基础概念</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx反向代理和负载均衡策略实战案例</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-two/">多态、接口和抽象类</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-singleton/">菜鸟成长系列-单例模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-maven-ssm/">基于maven构建多模块化的SSM框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/servletbase1/">Web核心-Servlet</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-context-refresh/">Spring源码系列-容器刷新</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/rpcone/">关于rpc的整理和理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodetwo/">每天一道算法题：Z字形转换</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-factory/">菜鸟成长系列-工厂模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-ssm/">项目开发框架-SSM</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodeone/">每天一道算法题：颠倒整数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-one/">一个朋友圈泛型问题引发的“案子”</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode3/">每天一道算法题：最长回文子串</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-bird-three/">菜鸟成长系列-面向对象的6种设计原则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode5/">每天一道算法题：无重复字符的最长子串</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/guavacacheone/">Google Guava 在实际场景中的应用封装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-thread-deadlock/">怎么写一个死锁？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-hashmap/">从源码来聊一聊hashmap</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sessionone/">聊一聊session和cookie</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springaoptwo/">聊一聊 AOP：Advice 源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-thread-base/">JAVA基础知识系列---进程、线程安全</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode4/">每天一道算法题：求两个排序数组的中位数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-one/">面向对象的四大基础特性</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-overall/">菜鸟成长系列-概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/resttemplate1/">聊一聊 RestTemplate</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/logone/">看完这个不会配置 logback ，请你吃瓜！</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofatracerone/">SOFATracer 中 Disruptor 实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofatracertwo/">分布式链路跟踪组件 SOFATracer 和 Zipkin 模型转换原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springextentionone/">聊一聊 Spring 中的扩展机制（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springextentiontwo/">聊一聊 Spring 中的扩展机制(二) - NamespaceHandler</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springsessionone/">：SpringSession系列-集成SpringBoot</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+    
+        <span class="sidebar-tag-name" data-tags="java"><span class="iconfont-archer">&#xe606;</span>java</span>
+    
+        <span class="sidebar-tag-name" data-tags="规划"><span class="iconfont-archer">&#xe606;</span>规划</span>
+    
+        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
+    
+        <span class="sidebar-tag-name" data-tags="guava"><span class="iconfont-archer">&#xe606;</span>guava</span>
+    
+        <span class="sidebar-tag-name" data-tags="泛型"><span class="iconfont-archer">&#xe606;</span>泛型</span>
+    
+        <span class="sidebar-tag-name" data-tags="线程"><span class="iconfont-archer">&#xe606;</span>线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="thread"><span class="iconfont-archer">&#xe606;</span>thread</span>
+    
+        <span class="sidebar-tag-name" data-tags="hash"><span class="iconfont-archer">&#xe606;</span>hash</span>
+    
+        <span class="sidebar-tag-name" data-tags="map"><span class="iconfont-archer">&#xe606;</span>map</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
+    
+        <span class="sidebar-tag-name" data-tags="leetcode"><span class="iconfont-archer">&#xe606;</span>leetcode</span>
+    
+        <span class="sidebar-tag-name" data-tags="logback"><span class="iconfont-archer">&#xe606;</span>logback</span>
+    
+        <span class="sidebar-tag-name" data-tags="slf4j"><span class="iconfont-archer">&#xe606;</span>slf4j</span>
+    
+        <span class="sidebar-tag-name" data-tags="nginx"><span class="iconfont-archer">&#xe606;</span>nginx</span>
+    
+        <span class="sidebar-tag-name" data-tags="代理模式"><span class="iconfont-archer">&#xe606;</span>代理模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="负载均衡"><span class="iconfont-archer">&#xe606;</span>负载均衡</span>
+    
+        <span class="sidebar-tag-name" data-tags="mybatis"><span class="iconfont-archer">&#xe606;</span>mybatis</span>
+    
+        <span class="sidebar-tag-name" data-tags="sql"><span class="iconfont-archer">&#xe606;</span>sql</span>
+    
+        <span class="sidebar-tag-name" data-tags="数据库"><span class="iconfont-archer">&#xe606;</span>数据库</span>
+    
+        <span class="sidebar-tag-name" data-tags="mysql"><span class="iconfont-archer">&#xe606;</span>mysql</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="ssm"><span class="iconfont-archer">&#xe606;</span>ssm</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
+    
+        <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
+    
+        <span class="sidebar-tag-name" data-tags="maven"><span class="iconfont-archer">&#xe606;</span>maven</span>
+    
+        <span class="sidebar-tag-name" data-tags="rpc"><span class="iconfont-archer">&#xe606;</span>rpc</span>
+    
+        <span class="sidebar-tag-name" data-tags="dubbo"><span class="iconfont-archer">&#xe606;</span>dubbo</span>
+    
+        <span class="sidebar-tag-name" data-tags="微服务"><span class="iconfont-archer">&#xe606;</span>微服务</span>
+    
+        <span class="sidebar-tag-name" data-tags="servlet"><span class="iconfont-archer">&#xe606;</span>servlet</span>
+    
+        <span class="sidebar-tag-name" data-tags="书法"><span class="iconfont-archer">&#xe606;</span>书法</span>
+    
+        <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
+    
+        <span class="sidebar-tag-name" data-tags="聊一聊"><span class="iconfont-archer">&#xe606;</span>聊一聊</span>
+    
+        <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
+    
+        <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFABoot"><span class="iconfont-archer">&#xe606;</span>SOFABoot</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFATracer"><span class="iconfont-archer">&#xe606;</span>SOFATracer</span>
+    
+        <span class="sidebar-tag-name" data-tags="Disruptor"><span class="iconfont-archer">&#xe606;</span>Disruptor</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenTracing"><span class="iconfont-archer">&#xe606;</span>OpenTracing</span>
+    
+        <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
+    
+        <span class="sidebar-tag-name" data-tags="链路跟踪"><span class="iconfont-archer">&#xe606;</span>链路跟踪</span>
+    
+        <span class="sidebar-tag-name" data-tags="aop"><span class="iconfont-archer">&#xe606;</span>aop</span>
+    
+        <span class="sidebar-tag-name" data-tags="springboot"><span class="iconfont-archer">&#xe606;</span>springboot</span>
+    
+        <span class="sidebar-tag-name" data-tags="kafka"><span class="iconfont-archer">&#xe606;</span>kafka</span>
+    
+        <span class="sidebar-tag-name" data-tags="zookeeper"><span class="iconfont-archer">&#xe606;</span>zookeeper</span>
+    
+        <span class="sidebar-tag-name" data-tags="Config"><span class="iconfont-archer">&#xe606;</span>Config</span>
+    
+        <span class="sidebar-tag-name" data-tags="Gateway"><span class="iconfont-archer">&#xe606;</span>Gateway</span>
+    
+        <span class="sidebar-tag-name" data-tags="网关"><span class="iconfont-archer">&#xe606;</span>网关</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring cloud"><span class="iconfont-archer">&#xe606;</span>spring cloud</span>
+    
+        <span class="sidebar-tag-name" data-tags="Apollo"><span class="iconfont-archer">&#xe606;</span>Apollo</span>
+    
+        <span class="sidebar-tag-name" data-tags="Hystrix"><span class="iconfont-archer">&#xe606;</span>Hystrix</span>
+    
+        <span class="sidebar-tag-name" data-tags="commons"><span class="iconfont-archer">&#xe606;</span>commons</span>
+    
+        <span class="sidebar-tag-name" data-tags="Eureka"><span class="iconfont-archer">&#xe606;</span>Eureka</span>
+    
+        <span class="sidebar-tag-name" data-tags="Feign"><span class="iconfont-archer">&#xe606;</span>Feign</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ribbon"><span class="iconfont-archer">&#xe606;</span>Ribbon</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring 事件机制"><span class="iconfont-archer">&#xe606;</span>spring 事件机制</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring 扩展机制"><span class="iconfont-archer">&#xe606;</span>spring 扩展机制</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
+    
+        <span class="sidebar-category-name" data-categories="java-基础"><span class="iconfont-archer">&#xe60a;</span>java-基础</span>
+    
+        <span class="sidebar-category-name" data-categories="架构之路"><span class="iconfont-archer">&#xe60a;</span>架构之路</span>
+    
+        <span class="sidebar-category-name" data-categories="缓存"><span class="iconfont-archer">&#xe60a;</span>缓存</span>
+    
+        <span class="sidebar-category-name" data-categories="JUC"><span class="iconfont-archer">&#xe60a;</span>JUC</span>
+    
+        <span class="sidebar-category-name" data-categories="leetcode"><span class="iconfont-archer">&#xe60a;</span>leetcode</span>
+    
+        <span class="sidebar-category-name" data-categories="日志"><span class="iconfont-archer">&#xe60a;</span>日志</span>
+    
+        <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
+    
+        <span class="sidebar-category-name" data-categories="mybatis"><span class="iconfont-archer">&#xe60a;</span>mybatis</span>
+    
+        <span class="sidebar-category-name" data-categories="运维"><span class="iconfont-archer">&#xe60a;</span>运维</span>
+    
+        <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
+    
+        <span class="sidebar-category-name" data-categories="rpc"><span class="iconfont-archer">&#xe60a;</span>rpc</span>
+    
+        <span class="sidebar-category-name" data-categories="web"><span class="iconfont-archer">&#xe60a;</span>web</span>
+    
+        <span class="sidebar-category-name" data-categories="书法"><span class="iconfont-archer">&#xe60a;</span>书法</span>
+    
+        <span class="sidebar-category-name" data-categories="spring"><span class="iconfont-archer">&#xe60a;</span>spring</span>
+    
+        <span class="sidebar-category-name" data-categories="session"><span class="iconfont-archer">&#xe60a;</span>session</span>
+    
+        <span class="sidebar-category-name" data-categories="SOFA"><span class="iconfont-archer">&#xe60a;</span>SOFA</span>
+    
+        <span class="sidebar-category-name" data-categories="spring-mvc"><span class="iconfont-archer">&#xe60a;</span>spring-mvc</span>
+    
+        <span class="sidebar-category-name" data-categories="springboot"><span class="iconfont-archer">&#xe60a;</span>springboot</span>
+    
+        <span class="sidebar-category-name" data-categories="spring-cloud"><span class="iconfont-archer">&#xe60a;</span>spring-cloud</span>
+    
+        <span class="sidebar-category-name" data-categories="spring/session"><span class="iconfont-archer">&#xe60a;</span>spring/session</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "GuoLei Song"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

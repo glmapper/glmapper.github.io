@@ -346,6 +346,50 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/leetcodeone/">
+            
+                <span>每天一道算法题：颠倒整数</span>
+        </a>
+        <div class="abstract-content">
+            题目给定一个范围为 32 位 int 的整数，将其颠倒。
+例 1:
+12输入: 123输出:  321
+例 2:
+12输入: -123输出: -321
+例 3:
+12输入: 120输出: 21
+注意:假设我们的环境只能处理 32 位 int范围内的整数。根据这个假设，如果颠倒后的结果超过这个范围，则返回 0。
+方案这个题目其实挺简单的；思路如下：
+
+判断输入的数字是否大于最大整数，其实这里没有必要判断，因为如果参数输入大于最大整数的话会直接报错。
+将整数转换成字符串
+判断是否是负数，这个依据就是判断字符串中是否存在‘－’
+从后向前开始遍历，注意的是必须后向遍历且初始为0的情况下保持继续向...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="算法">算法</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="leetcode">leetcode</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href="/2018/11/10/rpcone/">
             
                 <span>关于rpc的整理和理解</span>
@@ -741,54 +785,6 @@ logb...
         <a class="post-tag" href="javascript:void(0);" data-tags="logback">logback</a>
     
         <a class="post-tag" href="javascript:void(0);" data-tags="slf4j">slf4j</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/11/10/sofatracerone/">
-            
-                <span>SOFATracer 中 Disruptor 实践</span>
-        </a>
-        <div class="abstract-content">
-            OpenTraceing 规范
-OpenTracing语义标准
-语义惯例
-官方文档
-
-SOFATracer 对 OpenTraceing 的实现
-SOFATracer  就是根据 OpenTracing 规范 衍生出来的分布式 链路跟 踪的解决方案。
-
-
-GitHub SOFATrcer
-
-概念OpenTracing 标准中有三个重要的相互关联的类型，分别是Tracer, Span和 SpanContext。
-
-【下面的概念说明过程中，如不做说明，所使用的案例代码均以SOFATracer中的实现为例。】
-
-Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或并行执行轨迹...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="SOFATracer">SOFATracer</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Disruptor">Disruptor</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="OpenTracing">OpenTracing</a>
     
 </div>
             
@@ -2668,9 +2664,46 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 84
+        Total : 85
         </div>
         <!-- search  -->
         
@@ -2683,6 +2716,11 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/zookeeper-client-curator/">ZooKeeper 客户端之 Curator</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -2735,12 +2773,12 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcloud-overview/">SpringCloud 总览</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-config-project/">SpringCloud-配置中心 Config</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
         </li>
     
     
@@ -2755,12 +2793,7 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-config-project/">SpringCloud-配置中心 Config</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcloud-overview/">SpringCloud 总览</a>
         </li>
     
     
@@ -2770,7 +2803,12 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
         </li>
     
     
@@ -2795,12 +2833,12 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessiontwo/">SpringSession系列-请求与响应重写</a>
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessionthree/">SpringSession系列-分布式Session实现方案</a>
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/springsessiontwo/">SpringSession系列-请求与响应重写</a>
         </li>
     
     
@@ -2815,7 +2853,7 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc2/">SpringMVC源码系列：AbstractHandlerMapping</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc3/">SpringMVC系列源码：DispatcherServlet</a>
         </li>
     
     
@@ -2825,42 +2863,12 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase6/">Spring源码系列：BeanDefinition载入（中）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase11/">Spring源码系列：依赖注入（四）-总结</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase2/">Spring源码系列：BeanDefinition 源码解析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase3/">Spring源码系列：BeanFactory的创建</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase13/">Spring源码系列：注解说明</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-modulemethod/">菜鸟成长系列-模板方法模式</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc1/">SpringMVC源码系列：HandlerMapping</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-strategy/">菜鸟成长系列-策略模式</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc2/">SpringMVC源码系列：AbstractHandlerMapping</a>
         </li>
     
     
@@ -2870,37 +2878,27 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc2/">JUC·ThreadPoolExecutor 线程池</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase6/">Spring源码系列：BeanDefinition载入（中）</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc4/">SpringMVC源码系列：AbstractUrlHandlerMapping</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase2/">Spring源码系列：BeanDefinition 源码解析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase8/">Spring源码系列：依赖注入（一）getBean</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-modulemethod/">菜鸟成长系列-模板方法模式</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase7/">Spring源码系列：依赖注入-引言</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase3/">Spring源码系列：BeanFactory的创建</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase0/">Spring源码系列：Spring的版本变更</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase12/">Spring源码系列：BeanWrapper</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc3/">SpringMVC系列源码：DispatcherServlet</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-strategy/">菜鸟成长系列-策略模式</a>
         </li>
     
     
@@ -2910,7 +2908,12 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-builder/">菜鸟成长系列-Builder 建造者模式</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase8/">Spring源码系列：依赖注入（一）getBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc4/">SpringMVC源码系列：AbstractUrlHandlerMapping</a>
         </li>
     
     
@@ -2920,7 +2923,42 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase7/">Spring源码系列：依赖注入-引言</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase12/">Spring源码系列：BeanWrapper</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase0/">Spring源码系列：Spring的版本变更</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase13/">Spring源码系列：注解说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase11/">Spring源码系列：依赖注入（四）-总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-builder/">菜鸟成长系列-Builder 建造者模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase9/">Spring源码系列：依赖注入（二）createBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc2/">JUC·ThreadPoolExecutor 线程池</a>
         </li>
     
     
@@ -2940,7 +2978,7 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-thread-base/">JAVA基础知识系列---进程、线程安全</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-key-word/">JAVA中的关键字</a>
         </li>
     
     
@@ -2950,82 +2988,7 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/rpcone/">关于rpc的整理和理解</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase1/">Spring源码系列：Spring的启动过程</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-singleton/">菜鸟成长系列-单例模式</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springaoptwo/">聊一聊 AOP：Advice 源码解析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-ssm/">项目开发框架-SSM</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-two/">多态、接口和抽象类</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-factory/">菜鸟成长系列-工厂模式</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx反向代理和负载均衡策略实战案例</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/guavacacheone/">Google Guava 在实际场景中的应用封装</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-hashmap/">从源码来聊一聊hashmap</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-context-refresh/">Spring源码系列-容器刷新</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sessionone/">聊一聊session和cookie</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodeone/">每天一道算法题：颠倒整数</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodetwo/">每天一道算法题：Z字形转换</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-maven-ssm/">基于maven构建多模块化的SSM框架</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-one/">面向对象的四大基础特性</a>
         </li>
     
     
@@ -3035,7 +2998,57 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-overall/">菜鸟成长系列-概述</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx反向代理和负载均衡策略实战案例</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-two/">多态、接口和抽象类</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-singleton/">菜鸟成长系列-单例模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-maven-ssm/">基于maven构建多模块化的SSM框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/servletbase1/">Web核心-Servlet</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-context-refresh/">Spring源码系列-容器刷新</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/rpcone/">关于rpc的整理和理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodetwo/">每天一道算法题：Z字形转换</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-factory/">菜鸟成长系列-工厂模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-ssm/">项目开发框架-SSM</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodeone/">每天一道算法题：颠倒整数</a>
         </li>
     
     
@@ -3045,7 +3058,7 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-thread-deadlock/">怎么写一个死锁？</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode3/">每天一道算法题：最长回文子串</a>
         </li>
     
     
@@ -3060,17 +3073,32 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/servletbase1/">Web核心-Servlet</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/guavacacheone/">Google Guava 在实际场景中的应用封装</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-key-word/">JAVA中的关键字</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-thread-deadlock/">怎么写一个死锁？</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode3/">每天一道算法题：最长回文子串</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-hashmap/">从源码来聊一聊hashmap</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sessionone/">聊一聊session和cookie</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springaoptwo/">聊一聊 AOP：Advice 源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-thread-base/">JAVA基础知识系列---进程、线程安全</a>
         </li>
     
     
@@ -3080,17 +3108,27 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-one/">面向对象的四大基础特性</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-overall/">菜鸟成长系列-概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/resttemplate1/">聊一聊 RestTemplate</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofatracerone/">SOFATracer 中 Disruptor 实践</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/logone/">看完这个不会配置 logback ，请你吃瓜！</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/logone/">看完这个不会配置 logback ，请你吃瓜！</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofatracerone/">SOFATracer 中 Disruptor 实践</a>
         </li>
     
     
@@ -3122,21 +3160,21 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
         <span class="sidebar-tag-name" data-tags="java"><span class="iconfont-archer">&#xe606;</span>java</span>
     
+        <span class="sidebar-tag-name" data-tags="规划"><span class="iconfont-archer">&#xe606;</span>规划</span>
+    
         <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
         <span class="sidebar-tag-name" data-tags="guava"><span class="iconfont-archer">&#xe606;</span>guava</span>
-    
-        <span class="sidebar-tag-name" data-tags="规划"><span class="iconfont-archer">&#xe606;</span>规划</span>
-    
-        <span class="sidebar-tag-name" data-tags="hash"><span class="iconfont-archer">&#xe606;</span>hash</span>
-    
-        <span class="sidebar-tag-name" data-tags="map"><span class="iconfont-archer">&#xe606;</span>map</span>
     
         <span class="sidebar-tag-name" data-tags="泛型"><span class="iconfont-archer">&#xe606;</span>泛型</span>
     
         <span class="sidebar-tag-name" data-tags="线程"><span class="iconfont-archer">&#xe606;</span>线程</span>
     
         <span class="sidebar-tag-name" data-tags="thread"><span class="iconfont-archer">&#xe606;</span>thread</span>
+    
+        <span class="sidebar-tag-name" data-tags="hash"><span class="iconfont-archer">&#xe606;</span>hash</span>
+    
+        <span class="sidebar-tag-name" data-tags="map"><span class="iconfont-archer">&#xe606;</span>map</span>
     
         <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
     
@@ -3148,6 +3186,12 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
         <span class="sidebar-tag-name" data-tags="slf4j"><span class="iconfont-archer">&#xe606;</span>slf4j</span>
     
+        <span class="sidebar-tag-name" data-tags="nginx"><span class="iconfont-archer">&#xe606;</span>nginx</span>
+    
+        <span class="sidebar-tag-name" data-tags="代理模式"><span class="iconfont-archer">&#xe606;</span>代理模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="负载均衡"><span class="iconfont-archer">&#xe606;</span>负载均衡</span>
+    
         <span class="sidebar-tag-name" data-tags="mybatis"><span class="iconfont-archer">&#xe606;</span>mybatis</span>
     
         <span class="sidebar-tag-name" data-tags="sql"><span class="iconfont-archer">&#xe606;</span>sql</span>
@@ -3158,12 +3202,6 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
         <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
     
-        <span class="sidebar-tag-name" data-tags="nginx"><span class="iconfont-archer">&#xe606;</span>nginx</span>
-    
-        <span class="sidebar-tag-name" data-tags="代理模式"><span class="iconfont-archer">&#xe606;</span>代理模式</span>
-    
-        <span class="sidebar-tag-name" data-tags="负载均衡"><span class="iconfont-archer">&#xe606;</span>负载均衡</span>
-    
         <span class="sidebar-tag-name" data-tags="ssm"><span class="iconfont-archer">&#xe606;</span>ssm</span>
     
         <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
@@ -3171,10 +3209,6 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
         <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
     
         <span class="sidebar-tag-name" data-tags="maven"><span class="iconfont-archer">&#xe606;</span>maven</span>
-    
-        <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
-    
-        <span class="sidebar-tag-name" data-tags="聊一聊"><span class="iconfont-archer">&#xe606;</span>聊一聊</span>
     
         <span class="sidebar-tag-name" data-tags="rpc"><span class="iconfont-archer">&#xe606;</span>rpc</span>
     
@@ -3186,21 +3220,25 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
         <span class="sidebar-tag-name" data-tags="书法"><span class="iconfont-archer">&#xe606;</span>书法</span>
     
+        <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
+    
+        <span class="sidebar-tag-name" data-tags="聊一聊"><span class="iconfont-archer">&#xe606;</span>聊一聊</span>
+    
+        <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
+    
+        <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFABoot"><span class="iconfont-archer">&#xe606;</span>SOFABoot</span>
+    
         <span class="sidebar-tag-name" data-tags="SOFATracer"><span class="iconfont-archer">&#xe606;</span>SOFATracer</span>
     
         <span class="sidebar-tag-name" data-tags="Disruptor"><span class="iconfont-archer">&#xe606;</span>Disruptor</span>
     
         <span class="sidebar-tag-name" data-tags="OpenTracing"><span class="iconfont-archer">&#xe606;</span>OpenTracing</span>
     
-        <span class="sidebar-tag-name" data-tags="SOFABoot"><span class="iconfont-archer">&#xe606;</span>SOFABoot</span>
-    
-        <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
-    
-        <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
+        <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
         <span class="sidebar-tag-name" data-tags="链路跟踪"><span class="iconfont-archer">&#xe606;</span>链路跟踪</span>
-    
-        <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
         <span class="sidebar-tag-name" data-tags="aop"><span class="iconfont-archer">&#xe606;</span>aop</span>
     
@@ -3212,13 +3250,13 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
     
         <span class="sidebar-tag-name" data-tags="Config"><span class="iconfont-archer">&#xe606;</span>Config</span>
     
-        <span class="sidebar-tag-name" data-tags="spring cloud"><span class="iconfont-archer">&#xe606;</span>spring cloud</span>
-    
-        <span class="sidebar-tag-name" data-tags="Apollo"><span class="iconfont-archer">&#xe606;</span>Apollo</span>
-    
         <span class="sidebar-tag-name" data-tags="Gateway"><span class="iconfont-archer">&#xe606;</span>Gateway</span>
     
         <span class="sidebar-tag-name" data-tags="网关"><span class="iconfont-archer">&#xe606;</span>网关</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring cloud"><span class="iconfont-archer">&#xe606;</span>spring cloud</span>
+    
+        <span class="sidebar-tag-name" data-tags="Apollo"><span class="iconfont-archer">&#xe606;</span>Apollo</span>
     
         <span class="sidebar-tag-name" data-tags="Hystrix"><span class="iconfont-archer">&#xe606;</span>Hystrix</span>
     
@@ -3271,9 +3309,9 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="java-基础"><span class="iconfont-archer">&#xe60a;</span>java-基础</span>
     
-        <span class="sidebar-category-name" data-categories="缓存"><span class="iconfont-archer">&#xe60a;</span>缓存</span>
-    
         <span class="sidebar-category-name" data-categories="架构之路"><span class="iconfont-archer">&#xe60a;</span>架构之路</span>
+    
+        <span class="sidebar-category-name" data-categories="缓存"><span class="iconfont-archer">&#xe60a;</span>缓存</span>
     
         <span class="sidebar-category-name" data-categories="JUC"><span class="iconfont-archer">&#xe60a;</span>JUC</span>
     
@@ -3281,15 +3319,13 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="日志"><span class="iconfont-archer">&#xe60a;</span>日志</span>
     
+        <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
+    
         <span class="sidebar-category-name" data-categories="mybatis"><span class="iconfont-archer">&#xe60a;</span>mybatis</span>
     
         <span class="sidebar-category-name" data-categories="运维"><span class="iconfont-archer">&#xe60a;</span>运维</span>
     
-        <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
-    
         <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
-    
-        <span class="sidebar-category-name" data-categories="spring"><span class="iconfont-archer">&#xe60a;</span>spring</span>
     
         <span class="sidebar-category-name" data-categories="rpc"><span class="iconfont-archer">&#xe60a;</span>rpc</span>
     
@@ -3297,17 +3333,19 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="书法"><span class="iconfont-archer">&#xe60a;</span>书法</span>
     
-        <span class="sidebar-category-name" data-categories="SOFA"><span class="iconfont-archer">&#xe60a;</span>SOFA</span>
+        <span class="sidebar-category-name" data-categories="spring"><span class="iconfont-archer">&#xe60a;</span>spring</span>
     
         <span class="sidebar-category-name" data-categories="session"><span class="iconfont-archer">&#xe60a;</span>session</span>
     
-        <span class="sidebar-category-name" data-categories="spring-mvc"><span class="iconfont-archer">&#xe60a;</span>spring-mvc</span>
+        <span class="sidebar-category-name" data-categories="SOFA"><span class="iconfont-archer">&#xe60a;</span>SOFA</span>
     
-        <span class="sidebar-category-name" data-categories="spring/session"><span class="iconfont-archer">&#xe60a;</span>spring/session</span>
+        <span class="sidebar-category-name" data-categories="spring-mvc"><span class="iconfont-archer">&#xe60a;</span>spring-mvc</span>
     
         <span class="sidebar-category-name" data-categories="springboot"><span class="iconfont-archer">&#xe60a;</span>springboot</span>
     
         <span class="sidebar-category-name" data-categories="spring-cloud"><span class="iconfont-archer">&#xe60a;</span>spring-cloud</span>
+    
+        <span class="sidebar-category-name" data-categories="spring/session"><span class="iconfont-archer">&#xe60a;</span>spring/session</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
