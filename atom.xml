@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2019-06-30T01:58:10.481Z</updated>
+  <updated>2019-07-23T11:14:17.881Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一个 maven 插件打包问题的排查</title>
+    <link href="http://www.glmapper.com/2019/07/23/maven-debug/"/>
+    <id>http://www.glmapper.com/2019/07/23/maven-debug/</id>
+    <published>2019-07-23T11:12:48.000Z</published>
+    <updated>2019-07-23T11:14:17.881Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近研究 <a href="https://github.com/sofastack/sofa-ark" target="_blank" rel="noopener">sofa-ark</a> 的插件机制时，发现当执行完 <code>maven clean install -DskipTests</code> 时，打在 target 目录下的 <code>xxx.jar</code> 与安装到本地仓库的 <code>xxx.jar</code> 大小不一致。</p><ul><li><p>target 目录下的插件大小<br>  <img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1c9bc8cf80411?w=1328&amp;h=210&amp;f=png&amp;s=161012" alt=""></p></li><li><p>.m2 下的插件大小</p><p>  <img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1c9d0f3dd11d9?w=1354&amp;h=162&amp;f=png&amp;s=255003" alt=""></p></li></ul><p>其实一开始看到这种现象也是懵逼，同一个工程，同一次命令执行，但是得到的两个 jar 包大小差距巨大。那么对于这种问题，我想到的有两点：</p><ul><li>debug 打包插件执行过程</li><li>了解 maven 插件的生命周期</li></ul><h2 id="debug-打包插件执行过程"><a href="#debug-打包插件执行过程" class="headerlink" title="debug 打包插件执行过程"></a>debug 打包插件执行过程</h2><p>这里需要借助 IDEA 中的远程 debug 能力来完成。目前有两个工程，一个是我们的主工程，工程名为上面截图中的 mq-client-ark-plugin ，另一个是打包插件的源码工程，如下图所示：</p><p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1ca642c08e658?w=2816&amp;h=1480&amp;f=png&amp;s=743986" alt=""></p><p>那么下面就一步一步来完成远程 <code>debug</code> 的配置。</p><h3 id="1、使用-mvnDebug-命令开启-debug-模式"><a href="#1、使用-mvnDebug-命令开启-debug-模式" class="headerlink" title="1、使用 mvnDebug 命令开启 debug 模式"></a>1、使用 mvnDebug 命令开启 debug 模式</h3><p>在主工程 <code>mq-client-ark-plugin</code> 的根目录下执行  <code>mvnDebug install</code>（当然除了 <code>install</code> 之外，也可以是 <code>compile</code>、<code>package</code>、<code>test</code>、<code>deploy</code> 等）。</p><p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1caa278bf23ee?w=1700&amp;h=230&amp;f=png&amp;s=99653" alt=""></p><p>当执行完 <code>mvnDebug install</code> 后，可以看到这个阻塞监听 8000 端口了。</p><h3 id="2、源码工程配置远程-debug"><a href="#2、源码工程配置远程-debug" class="headerlink" title="2、源码工程配置远程 debug"></a>2、源码工程配置远程 debug</h3><p>在 <code>idea</code> 主界面找下下图的工具菜单，选择 <code>Edit Configurations...</code><br><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cad637854e1d?w=2108&amp;h=254&amp;f=png&amp;s=174555" alt=""><br>打开配置面板之后，左上角 <code>+</code> 选择 <code>Remote</code><br><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cac7605211e1?w=504&amp;h=132&amp;f=png&amp;s=384137" alt=""><br>填写相关远程 debug 参数</p><p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cabf223e56be?w=2398&amp;h=802&amp;f=png&amp;s=326272" alt=""></p><ul><li><code>Host</code> : 远程目标主机地址，因为之前 主工程也是本地启动的，所以这里就是 <code>localhost</code></li><li><code>Port</code> : 远程目标主机开启的远程 <code>debug</code> 端口</li><li>开启远程 <code>debug</code> 参数：<code>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000</code></li></ul><p>配置完成之后，执行 <code>debug</code> ，可以看下已经连接到了目标机器：</p><p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cb38a0b44364?w=2500&amp;h=786&amp;f=png&amp;s=312933" alt=""></p><p>在来看主工程这里，在源码工程没有执行上面的 <code>debug</code> 按钮之前，一直都是阻塞的，执行之后 <code>maven</code> 执行的生命周期开始了:<br><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cb5176a3b954?w=2308&amp;h=1544&amp;f=png&amp;s=1361618" alt=""></p><p>如上图，因为在源码工程中打了断点，所以当执行到 <code>sofa-ark-maven-plugin</code> 插件时阻塞了。</p><h2 id="从-maven-执行的生命周期找出问题根源"><a href="#从-maven-执行的生命周期找出问题根源" class="headerlink" title="从 maven 执行的生命周期找出问题根源"></a>从 maven 执行的生命周期找出问题根源</h2><p>上面已经搞定了对目标插件源码的 <code>debug</code> 模式的开启，那么下面就是对插件代码进行 <code>debug</code> 操作。节省篇幅，这里直接将断点放在目标代码行位置：</p><p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cb8be741a276?w=2716&amp;h=978&amp;f=png&amp;s=1301147" alt=""></p><p>分析这段代码</p><p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cbc509cac37a?w=2290&amp;h=256&amp;f=png&amp;s=447587" alt=""></p><ul><li>1、获取到项目的 <code>Artifact</code> ,此时 <code>Artifact</code> 的 <code>file</code> 为：<br><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cbdc73f415dc?w=1696&amp;h=58&amp;f=png&amp;s=113162" alt=""></li><li>2、重新设置的 <code>File</code></li><li>3、重新设置了 <code>artifact</code></li></ul><p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cbfc1921d886?w=1520&amp;h=620&amp;f=png&amp;s=512735" alt=""></p><p>如果单从上面 <code>debug</code> 来看，其实很难解释开篇的那个问题。那么这里在回过头来看下 主工程的 <code>maven</code> 执行日志：</p><p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cc26a8c654a2?w=2440&amp;h=1546&amp;f=png&amp;s=1432324" alt=""></p><p>如上图中圈红的部分，代表 <code>maven install</code> 所经历的所有阶段。可以看到 <code>sofa-ark-plugin-maven-plugin</code> 是在  <code>maven-install-plugin</code> 后面，那这意味着什么呢？</p><p><strong>我们知道在 target 目录下得到的 xxx.jar 是打包阶段的产物，而 .m2 下面的是 install 的产物。</strong></p><blockquote><p>当然这里没有涉及到 <code>deploy</code> ，<code>deploy</code> 是 <code>install</code> 之后的操作，比如发布到远程仓库。</p></blockquote><p>现在再来看，因为 <code>sofa-ark-plugin-maven-plugin</code> 在执行 <code>install</code> 插件之前将 目标文件给替换了，所以导致打包生成的 <code>target</code> 目录下的 <code>xxx.jar</code> 和 安装到本地仓库的 <code>xxx.jar</code> 不一致。</p><h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文记录了日常的一个问题排查过程，包括两个小点，一个是如何去 debug maven 的插件，另外一个是简单了解下 maven 打包的生命周期。</p><blockquote><p>关于 maven 打包的生命周期的代码没有具体研究过，不过这里可以大概猜测下，就是 maven 在执行命令时，有个类似于中央控制器的东西，通过解析 maven 命令得到一个 LifeCycle 或者 一个 Pipeline （LifeCycle 或者 Pipeline 实际上就是组装了一系列的插件）。然后 LifeCycle 或者 Pipeline 启动执行，遍历插件，依次执行插件的 execute 方法。</p></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;最近研究 &lt;a href=&quot;https://github.com/sofastack/sofa-ark&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;sofa-ark&lt;/a&gt; 的插件机制时，发现当执行完 &lt;code&gt;maven clean install 
+      
+    
+    </summary>
+    
+      <category term="maven" scheme="http://www.glmapper.com/categories/maven/"/>
+    
+    
+      <category term="java" scheme="http://www.glmapper.com/tags/java/"/>
+    
+      <category term="maven" scheme="http://www.glmapper.com/tags/maven/"/>
+    
+  </entry>
   
   <entry>
     <title>聊一聊 JAR 文件和 MANIFEST.MF</title>
@@ -250,9 +277,9 @@
       <category term="spring cloud" scheme="http://www.glmapper.com/categories/spring-cloud/"/>
     
     
-      <category term="spring cloud" scheme="http://www.glmapper.com/tags/spring-cloud/"/>
-    
       <category term="Config" scheme="http://www.glmapper.com/tags/Config/"/>
+    
+      <category term="spring cloud" scheme="http://www.glmapper.com/tags/spring-cloud/"/>
     
       <category term="Apollo" scheme="http://www.glmapper.com/tags/Apollo/"/>
     
@@ -279,9 +306,9 @@
       <category term="spring cloud" scheme="http://www.glmapper.com/categories/spring-cloud/"/>
     
     
-      <category term="Config" scheme="http://www.glmapper.com/tags/Config/"/>
-    
       <category term="zookeeper" scheme="http://www.glmapper.com/tags/zookeeper/"/>
+    
+      <category term="Config" scheme="http://www.glmapper.com/tags/Config/"/>
     
   </entry>
   
@@ -307,9 +334,9 @@
       <category term="spring cloud" scheme="http://www.glmapper.com/categories/spring-cloud/"/>
     
     
-      <category term="Config" scheme="http://www.glmapper.com/tags/Config/"/>
-    
       <category term="zookeeper" scheme="http://www.glmapper.com/tags/zookeeper/"/>
+    
+      <category term="Config" scheme="http://www.glmapper.com/tags/Config/"/>
     
   </entry>
   
@@ -390,9 +417,9 @@
       <category term="spring cloud" scheme="http://www.glmapper.com/categories/spring-cloud/"/>
     
     
-      <category term="spring cloud" scheme="http://www.glmapper.com/tags/spring-cloud/"/>
-    
       <category term="Config" scheme="http://www.glmapper.com/tags/Config/"/>
+    
+      <category term="spring cloud" scheme="http://www.glmapper.com/tags/spring-cloud/"/>
     
   </entry>
   
@@ -529,34 +556,6 @@
       <category term="spring cloud" scheme="http://www.glmapper.com/tags/spring-cloud/"/>
     
       <category term="Eureka" scheme="http://www.glmapper.com/tags/Eureka/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>SpringCloud 总览</title>
-    <link href="http://www.glmapper.com/2018/12/31/springcloud-overview/"/>
-    <id>http://www.glmapper.com/2018/12/31/springcloud-overview/</id>
-    <published>2018-12-30T16:00:15.000Z</published>
-    <updated>2018-12-30T16:04:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p>本系列基于Spring Cloud <strong>Finchley SR2 &amp; SpringBoot 2.0.7.</strong>RELEASE</p></blockquote><p>Spring Cloud 为开发人员提供了快速构建分布式系统中一些常见模式的工具（例如配置管理、服务发现、断路器、智能路由、微代理、控制总线、一次性令牌、全局锁、leader选举、分布式session、集群状态）。分布式系统的协调导致了样板模式, 使用 Spring Cloud 开发人员可以快速地支持实现这些模式的服务和应用程序。它们可以在任何分布式环境中很好地工作，包括开发人员自己的笔记本电脑，裸机数据中心，以及Cloud Foundry等托管平台。</p><h2 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h2><hr><p>Spring Cloud专注于为典型用例提供良好的开箱即用体验，并为其他用户提供可扩展性机制。</p><ul><li>Distributed/versioned configuration       分布式/版本化配置</li><li>Service registration and discovery         服务注册和发现</li><li>Routing                                                  智能路由</li><li>Service-to-service calls                         service-to-service调用</li><li>Load balancing                                       负载均衡</li><li>Circuit Breakers                                      断路器</li><li>Global locks                                            全局锁</li><li>Leadership election and cluster state     leader选举和集群状态管理</li><li>Distributed messaging                            分布式消息</li></ul><h2 id="主要项目"><a href="#主要项目" class="headerlink" title="主要项目"></a>主要项目</h2><hr><table><thead><tr><th>项目名称<br></th><th>项目职能<br></th></tr></thead><tbody><tr><td>Spring Cloud Config<br></td><td>Spring Cloud 提供的分布式配置中心，为外部配置提供了客户端和服务端的支持。<br></td></tr><tr><td>Spring Cloud Netflix<br></td><td>与各种Netflix OSS组件集成（Eureka，Hystrix，Zuul，Archaius等）。<br></td></tr><tr><td>Spring Cloud Bus<br></td><td>用于将服务和服务实例与分布式消息传递连接在一起的事件总线。用于跨群集传播状态更改（例如，配置更改事件）。<br></td></tr><tr><td>Spring Cloud Cloudfoundry<br></td><td>提供应用程序与 Pivotal Cloud Foundry 集成。提供服务发现实现，还可以轻松实现受SSO和OAuth2保护的资源。<br></td></tr><tr><td>Spring Cloud Open Service Broker<br></td><td>为构建实现 Open service broker API 的服务代理提供了一个起点。    <br></td></tr><tr><td>Spring Cloud Cluster<br></td><td>提供Leadership选举，如：Zookeeper, Redis, Hazelcast, Consul等常见状态模式的抽象和实现。<br></td></tr><tr><td>Spring Cloud Consul<br></td><td>封装了Consul操作，consul 是一个服务发现与配置工具，与Docker容器可以无缝集成。<br></td></tr><tr><td>Spring Cloud Security<br></td><td>基于spring security的安全工具包，为你的应用程序添加安全控制。在Zuul代理中为负载平衡的OAuth2 rest客户端和身份验证头中继提供支持。<br></td></tr><tr><td>Spring Cloud Sleuth<br></td><td>Spring Cloud 提供的分布式链路跟踪组件，兼容zipkin、HTracer和基于日志的跟踪（ELK）<br></td></tr><tr><td>Spring Cloud Data Flow<br></td><td>大数据操作工具，作为Spring XD的替代产品，它是一个混合计算模型，结合了流数据与批量数据的处理方式。<br></td></tr><tr><td>Spring Cloud Stream<br></td><td>数据流操作开发包，封装了与Redis,Rabbit、Kafka等发送接收消息。<br></td></tr><tr><td>Spring Cloud CLI<br></td><td>基于 Spring Boot CLI，可以让你以命令行方式快速建立云组件。<br></td></tr><tr><td>Spring Cloud OpenFeign<br></td><td>一个http client客户端，致力于减少http client客户端构建的复杂性。<br></td></tr><tr><td>Spring Cloud Gateway<br></td><td>Spring Cloud 提供的网关服务组件<br></td></tr><tr><td>Spring Cloud Stream App Starters<br></td><td>Spring Cloud Stream App Starters是基于Spring Boot的Spring 集成应用程序，可提供与外部系统的集成。<br></td></tr><tr><td>Spring Cloud Task</td><td>提供云端计划任务管理、任务调度。<br></td></tr><tr><td>Spring Cloud Task App Starters<br></td><td>Spring Cloud任务应用程序启动器是SpringBoot应用程序，它可以是任何进程，包括不会永远运行的Spring批处理作业，并且在有限的数据处理周期后结束/停止。<br></td></tr><tr><td>Spring Cloud Zookeeper<br></td><td>操作Zookeeper的工具包，用于使用zookeeper方式的服务发现和配置管理。<br></td></tr><tr><td>Spring Cloud AWS<br></td><td>提供与托管的AWS集成<br></td></tr><tr><td>Spring Cloud Connectors<br></td><td>便于云端应用程序在各种PaaS平台连接到后端，如：数据库和消息代理服务。<br></td></tr><tr><td>Spring Cloud Starters<br></td><td>Spring Boot式的启动项目，为Spring Cloud提供开箱即用的依赖管理。<br></td></tr><tr><td>Spring Cloud Contract<br></td><td>Spring Cloud Contract是一个总体项目，其中包含帮助用户成功实施消费者驱动合同方法的解决方案。<br></td></tr><tr><td>Spring Cloud Pipelines<br></td><td>Spring Cloud Pipelines提供了一个固定意见的部署管道，其中包含确保您的应用程序可以零停机方式部署并轻松回滚出错的步骤。<br></td></tr><tr><td>Spring Cloud Function<br></td><td>Spring Cloud Function通过函数促进业务逻辑的实现。 它支持Serverless 提供商之间的统一编程模型，以及独立运行（本地或PaaS）的能力。<br></td></tr></tbody></table><h2 id="SpringCloud-与-SpringBoot-版本兼容关系"><a href="#SpringCloud-与-SpringBoot-版本兼容关系" class="headerlink" title="SpringCloud 与 SpringBoot 版本兼容关系"></a>SpringCloud 与 SpringBoot 版本兼容关系</h2><table><thead><tr><th>Release Train</th><th>Boot Version</th></tr></thead><tbody><tr><td>Greenwich<br></td><td>2.1.x<br></td></tr><tr><td>Finchley<br></td><td>2.0.x<br></td></tr><tr><td>Edgware<br></td><td>1.5.x<br></td></tr><tr><td>Dalston<br></td><td>1.5.x<br></td></tr></tbody></table><h2 id="SpringCloud-与子工程版本关系"><a href="#SpringCloud-与子工程版本关系" class="headerlink" title="SpringCloud 与子工程版本关系"></a>SpringCloud 与子工程版本关系</h2><table><thead><tr><th>Component</th><th>Edgware.SR5</th><th>Finchley.SR2</th><th>Finchley.BUILD-SNAPSHOT</th></tr></thead><tbody><tr><td>spring-cloud-aws<br></td><td>1.2.3.RELEASE<br></td><td>2.0.1.RELEASE<br></td><td>2.0.1.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-bus<br></td><td>1.3.3.RELEASE<br></td><td>2.0.0.RELEASE<br></td><td>2.0.1.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-cli<br></td><td>1.4.1.RELEASE<br></td><td>2.0.0.RELEASE<br></td><td>2.0.1.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-commons<br></td><td>1.3.5.RELEASE<br></td><td>2.0.2.RELEASE<br></td><td>2.0.2.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-contract<br></td><td>1.2.6.RELEASE<br></td><td>2.0.2.RELEASE<br></td><td>2.0.2.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-config<br></td><td>1.4.5.RELEASE<br></td><td>2.0.2.RELEASE<br></td><td>2.0.2.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-netflix<br></td><td>1.4.6.RELEASE<br></td><td>2.0.2.RELEASE<br></td><td>2.0.2.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-security<br></td><td>1.2.3.RELEASE<br></td><td>2.0.1.RELEASE<br></td><td>2.0.1.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-cloudfoundry<br></td><td>1.1.2.RELEASE<br></td><td>2.0.1.RELEASE<br></td><td>2.0.1.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-consul<br></td><td>1.3.5.RELEASE<br></td><td>2.0.1.RELEASE<br></td><td>2.0.2.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-sleuth<br></td><td>1.3.5.RELEASE<br></td><td>2.0.2.RELEASE<br></td><td>2.0.2.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-stream<br></td><td>Ditmars.SR4<br></td><td>Elmhurst.SR1<br></td><td>Elmhurst.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-zookeeper<br></td><td>1.2.2.RELEASE<br></td><td>2.0.0.RELEASE<br></td><td>2.0.1.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-boot<br></td><td>1.5.16.RELEASE<br></td><td>2.0.6.RELEASE<br></td><td>2.0.7.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-task<br></td><td>1.2.3.RELEASE<br></td><td>2.0.0.RELEASE<br></td><td>2.0.1.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-vault<br></td><td>1.1.2.RELEASE<br></td><td>2.0.2.RELEASE<br></td><td>2.0.2.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-gateway<br></td><td>1.0.2.RELEASE<br></td><td>2.0.2.RELEASE<br></td><td>2.0.2.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-openfeign<br></td><td></td><td>2.0.2.RELEASE<br></td><td>2.0.2.BUILD-SNAPSHOT<br></td></tr><tr><td>spring-cloud-function<br></td><td>1.0.1.RELEASE<br></td><td>1.0.0.RELEASE<br></td><td>1.0.1.BUILD-SNAPSHOT<br></td></tr></tbody></table><ul><li>Finchley 构建并使用Spring Boot 2.0.x，与 Spring Boot 1.5.x 不兼容。</li><li>Dalston 和 Edgware 基于 Spring Boot 1.5.x 构建，不兼容 SpringBoot 2.0.x </li><li>Camden 版本迭代正式结束，Dalston 将于2018年12月结束使用，Edgware 将遵循 Spring Boot 1.5.x 的生命周期结束。</li><li>Camden 基于SpringBoot 1.4.x 构建，但是也会支持 1.5.x 版本</li><li>Brixton 和 Angel 迭代结束时间是2017年7月，Brixton 基于SpringBoot 1.3.x ，同时也支持 1.4.x 版本</li><li>Angel 基于 SpringBoot 1.2.x ,在某些方式不兼容 SpringBoot 1.3.x 。</li><li>Brixton 构建在SpringBoot 1.3.x ，不兼容 SpringBoot 1.2.x 。一些基于Angel的库和大多数应用程序可以在Brixton上正常运行，但如果OAuth2具备spring-cloud-security 1.0的特性，则需要在任何地方进行更改。x被使用(它们大多在1.3.0中被移到Spring Boot中)。</li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;blockquote&gt;
-&lt;p&gt;本系列基于Spring Cloud &lt;strong&gt;Finchley SR2 &amp;amp; SpringBoot 2.0.7.&lt;/strong&gt;RELEASE&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Spring Cloud 为开发人员提供了快速构
-      
-    
-    </summary>
-    
-      <category term="spring cloud" scheme="http://www.glmapper.com/categories/spring-cloud/"/>
-    
-    
-      <category term="spring cloud" scheme="http://www.glmapper.com/tags/spring-cloud/"/>
     
   </entry>
   

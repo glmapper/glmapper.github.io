@@ -346,6 +346,47 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/java-design-model-modulemethod/">
+            
+                <span>菜鸟成长系列-模板方法模式</span>
+        </a>
+        <div class="abstract-content">
+            
+模板方法模式在sring中有大量的应用，一般我们会使用模板方法来将当前的实现委托给子类来实现，增强代码的可扩展性和复用性。因为涉及到父子类关系，所以模板方法模式是基于“继承”来实现的；模板方法模式属于行为型模式。
+
+简单地说就是，通过父类来定义一系列的算法骨架，并且约定这些方法及其调用顺序，而具体的某些特定方法由子类实现。
+先来看一个小demo；我们以写博客来举例子，一般我们写博客的步骤如下：
+
+打开目标网站
+打开编辑器
+写文章
+发布文章
+
+实例代码首先是定义一个父类，并且提供一个模板方法。
+12345678910111213141516171819202122232425262728...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="设计模式">设计模式</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href="/2018/11/10/java-design-model-obs/">
             
                 <span>菜鸟成长系列-观察者模式</span>
@@ -400,9 +441,9 @@
             
             <div class="abstract-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-tags="web">web</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
     
         <a class="post-tag" href="javascript:void(0);" data-tags="mvc">mvc</a>
     
@@ -434,9 +475,9 @@ AbstractUrlHandlerMapping实现了从url获取handler的过程，具体的映射
             
             <div class="abstract-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-tags="web">web</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
     
         <a class="post-tag" href="javascript:void(0);" data-tags="mvc">mvc</a>
     
@@ -652,39 +693,6 @@ doGetBean 从容器中查找Bean（BeanFactory链，当前容器-&gt;双亲容�
             前面文章中对依赖注入的触发和bean的创建做了学习记录，本文将来记录一下bean的属性注入过程。Bean的属性注入发生在BeanDefinitionValueResolver这个类中，BeanDefinitionValueResolver这类是用于bean工厂实现的Helper类，职责就是将bean定义对象中包含的值解析为应用于目标bean实例的实际值。
 BeanDefinitionValueResolver类中的resolveValueIfNecessary()方法包含了对所有注入类型的处理。所以本文主要围绕这个方法展开来说。
 resolveValueIfNecessary方法reso...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/11/10/springbase9/">
-            
-                <span>Spring源码系列：依赖注入（二）createBean</span>
-        </a>
-        <div class="abstract-content">
-            在Spring源码系列：依赖注入（一）（AbstractBeanFactory-getBean）最后说道getBean是依赖注入的起点，bean的创建都是通过createBean来完成具体的创建的。createBean的具体实现是在AbstractAutowireCapableBeanFactory中的。本篇就捋一捋这个方法看下bean的创建过程。
-这个方法是AbstractAutowireCapableBeanFactory这个类的中心方法，其作用就是创建一个bean实例，填充bean实例，后置处理等。
-在createBean中主要做了三件事：
-
-判断需要创建的Bean是否可以实例化，...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -2616,110 +2624,9 @@ resolveValueIfNecessary方法reso...
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 88
+        Total : 89
         </div>
         <!-- search  -->
         
@@ -2732,6 +2639,11 @@ resolveValueIfNecessary方法reso...
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/23</span><a class="archive-post-title" href="/2019/07/23/maven-debug/">一个 maven 插件打包问题的排查</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -2785,12 +2697,12 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
         </li>
     
     
@@ -2804,7 +2716,17 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
         </li>
     
     
@@ -2814,12 +2736,7 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
         </li>
     
     
@@ -2834,12 +2751,7 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
         </li>
     
     
@@ -2884,12 +2796,7 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc2/">SpringMVC源码系列：AbstractHandlerMapping</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase2/">Spring源码系列：BeanDefinition 源码解析</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc1/">SpringMVC源码系列：HandlerMapping</a>
         </li>
     
     
@@ -2899,12 +2806,17 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc1/">SpringMVC源码系列：HandlerMapping</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase6/">Spring源码系列：BeanDefinition载入（中）</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase11/">Spring源码系列：依赖注入（四）-总结</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase10/">Spring源码系列：依赖注入（三）-属性注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase2/">Spring源码系列：BeanDefinition 源码解析</a>
         </li>
     
     
@@ -2914,12 +2826,7 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase7/">Spring源码系列：依赖注入-引言</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase3/">Spring源码系列：BeanFactory的创建</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc2/">SpringMVC源码系列：AbstractHandlerMapping</a>
         </li>
     
     
@@ -2929,7 +2836,7 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc4/">SpringMVC源码系列：AbstractUrlHandlerMapping</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc3/">SpringMVC系列源码：DispatcherServlet</a>
         </li>
     
     
@@ -2944,22 +2851,22 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc2/">JUC·ThreadPoolExecutor 线程池</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase9/">Spring源码系列：依赖注入（二）createBean</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase13/">Spring源码系列：注解说明</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase11/">Spring源码系列：依赖注入（四）-总结</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase8/">Spring源码系列：依赖注入（一）getBean</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase7/">Spring源码系列：依赖注入-引言</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-builder/">菜鸟成长系列-Builder 建造者模式</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase3/">Spring源码系列：BeanFactory的创建</a>
         </li>
     
     
@@ -2969,12 +2876,7 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase10/">Spring源码系列：依赖注入（三）-属性注入</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc3/">SpringMVC系列源码：DispatcherServlet</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc4/">SpringMVC源码系列：AbstractUrlHandlerMapping</a>
         </li>
     
     
@@ -2984,17 +2886,22 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-obs/">菜鸟成长系列-观察者模式</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase13/">Spring源码系列：注解说明</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase6/">Spring源码系列：BeanDefinition载入（中）</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-builder/">菜鸟成长系列-Builder 建造者模式</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase9/">Spring源码系列：依赖注入（二）createBean</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springbase8/">Spring源码系列：依赖注入（一）getBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc2/">JUC·ThreadPoolExecutor 线程池</a>
         </li>
     
     
@@ -3004,17 +2911,12 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx反向代理和负载均衡策略实战案例</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-obs/">菜鸟成长系列-观察者模式</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sessionone/">聊一聊session和cookie</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/mybatisone/">关于Mybatis中SQL语句的整理</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/alg-one/">算法-排序算法思想及实现</a>
         </li>
     
     
@@ -3029,7 +2931,12 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodetwo/">每天一道算法题：Z字形转换</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sessionone/">聊一聊session和cookie</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springaoptwo/">聊一聊 AOP：Advice 源码解析</a>
         </li>
     
     
@@ -3039,17 +2946,27 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-maven-ssm/">基于maven构建多模块化的SSM框架</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-hashmap/">从源码来聊一聊hashmap</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-overall/">菜鸟成长系列-概述</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode5/">每天一道算法题：无重复字符的最长子串</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-bird-three/">菜鸟成长系列-面向对象的6种设计原则</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodeone/">每天一道算法题：颠倒整数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/mybatisone/">关于Mybatis中SQL语句的整理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-two/">多态、接口和抽象类</a>
         </li>
     
     
@@ -3059,27 +2976,12 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-context-refresh/">Spring源码系列-容器刷新</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodetwo/">每天一道算法题：Z字形转换</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-one/">一个朋友圈泛型问题引发的“案子”</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-one/">面向对象的四大基础特性</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/rpcone/">关于rpc的整理和理解</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodeone/">每天一道算法题：颠倒整数</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-bird-three/">菜鸟成长系列-面向对象的6种设计原则</a>
         </li>
     
     
@@ -3094,27 +2996,22 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-one/">面向对象的四大基础特性</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/rpcone/">关于rpc的整理和理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-thread-base/">JAVA基础知识系列---进程、线程安全</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springaoptwo/">聊一聊 AOP：Advice 源码解析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/guavacacheone/">Google Guava 在实际场景中的应用封装</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-two/">多态、接口和抽象类</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-hashmap/">从源码来聊一聊hashmap</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-ssm/">项目开发框架-SSM</a>
         </li>
     
     
@@ -3124,7 +3021,22 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode5/">每天一道算法题：无重复字符的最长子串</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/guavacacheone/">Google Guava 在实际场景中的应用封装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-overall/">菜鸟成长系列-概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-one/">一个朋友圈泛型问题引发的“案子”</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-maven-ssm/">基于maven构建多模块化的SSM框架</a>
         </li>
     
     
@@ -3134,17 +3046,22 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx反向代理和负载均衡策略实战案例</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-context-refresh/">Spring源码系列-容器刷新</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode3/">每天一道算法题：最长回文子串</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/alg-one/">算法-排序算法思想及实现</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-ssm/">项目开发框架-SSM</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofatracerone/">SOFATracer 中 Disruptor 实践</a>
         </li>
     
     
@@ -3164,17 +3081,12 @@ resolveValueIfNecessary方法reso...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springextentionone/">聊一聊 Spring 中的扩展机制（一）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofatracerone/">SOFATracer 中 Disruptor 实践</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springextentiontwo/">聊一聊 Spring 中的扩展机制(二) - NamespaceHandler</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/springextentionone/">聊一聊 Spring 中的扩展机制（一）</a>
         </li>
     
     
@@ -3187,15 +3099,13 @@ resolveValueIfNecessary方法reso...
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+    
         <span class="sidebar-tag-name" data-tags="java"><span class="iconfont-archer">&#xe606;</span>java</span>
     
         <span class="sidebar-tag-name" data-tags="cas"><span class="iconfont-archer">&#xe606;</span>cas</span>
     
         <span class="sidebar-tag-name" data-tags="规划"><span class="iconfont-archer">&#xe606;</span>规划</span>
-    
-        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
-    
-        <span class="sidebar-tag-name" data-tags="泛型"><span class="iconfont-archer">&#xe606;</span>泛型</span>
     
         <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
@@ -3209,29 +3119,25 @@ resolveValueIfNecessary方法reso...
     
         <span class="sidebar-tag-name" data-tags="thread"><span class="iconfont-archer">&#xe606;</span>thread</span>
     
+        <span class="sidebar-tag-name" data-tags="泛型"><span class="iconfont-archer">&#xe606;</span>泛型</span>
+    
         <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
     
         <span class="sidebar-tag-name" data-tags="leetcode"><span class="iconfont-archer">&#xe606;</span>leetcode</span>
     
-        <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
+        <span class="sidebar-tag-name" data-tags="maven"><span class="iconfont-archer">&#xe606;</span>maven</span>
+    
+        <span class="sidebar-tag-name" data-tags="mybatis"><span class="iconfont-archer">&#xe606;</span>mybatis</span>
+    
+        <span class="sidebar-tag-name" data-tags="sql"><span class="iconfont-archer">&#xe606;</span>sql</span>
+    
+        <span class="sidebar-tag-name" data-tags="数据库"><span class="iconfont-archer">&#xe606;</span>数据库</span>
     
         <span class="sidebar-tag-name" data-tags="logback"><span class="iconfont-archer">&#xe606;</span>logback</span>
     
         <span class="sidebar-tag-name" data-tags="slf4j"><span class="iconfont-archer">&#xe606;</span>slf4j</span>
-    
-        <span class="sidebar-tag-name" data-tags="mysql"><span class="iconfont-archer">&#xe606;</span>mysql</span>
-    
-        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
-    
-        <span class="sidebar-tag-name" data-tags="ssm"><span class="iconfont-archer">&#xe606;</span>ssm</span>
-    
-        <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
-    
-        <span class="sidebar-tag-name" data-tags="mybatis"><span class="iconfont-archer">&#xe606;</span>mybatis</span>
-    
-        <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
-    
-        <span class="sidebar-tag-name" data-tags="maven"><span class="iconfont-archer">&#xe606;</span>maven</span>
     
         <span class="sidebar-tag-name" data-tags="nginx"><span class="iconfont-archer">&#xe606;</span>nginx</span>
     
@@ -3239,13 +3145,19 @@ resolveValueIfNecessary方法reso...
     
         <span class="sidebar-tag-name" data-tags="负载均衡"><span class="iconfont-archer">&#xe606;</span>负载均衡</span>
     
-        <span class="sidebar-tag-name" data-tags="sql"><span class="iconfont-archer">&#xe606;</span>sql</span>
+        <span class="sidebar-tag-name" data-tags="mysql"><span class="iconfont-archer">&#xe606;</span>mysql</span>
     
-        <span class="sidebar-tag-name" data-tags="数据库"><span class="iconfont-archer">&#xe606;</span>数据库</span>
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
     
         <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
     
         <span class="sidebar-tag-name" data-tags="聊一聊"><span class="iconfont-archer">&#xe606;</span>聊一聊</span>
+    
+        <span class="sidebar-tag-name" data-tags="ssm"><span class="iconfont-archer">&#xe606;</span>ssm</span>
     
         <span class="sidebar-tag-name" data-tags="rpc"><span class="iconfont-archer">&#xe606;</span>rpc</span>
     
@@ -3253,11 +3165,7 @@ resolveValueIfNecessary方法reso...
     
         <span class="sidebar-tag-name" data-tags="微服务"><span class="iconfont-archer">&#xe606;</span>微服务</span>
     
-        <span class="sidebar-tag-name" data-tags="书法"><span class="iconfont-archer">&#xe606;</span>书法</span>
-    
-        <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
-    
-        <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
+        <span class="sidebar-tag-name" data-tags="servlet"><span class="iconfont-archer">&#xe606;</span>servlet</span>
     
         <span class="sidebar-tag-name" data-tags="SOFATracer"><span class="iconfont-archer">&#xe606;</span>SOFATracer</span>
     
@@ -3265,11 +3173,15 @@ resolveValueIfNecessary方法reso...
     
         <span class="sidebar-tag-name" data-tags="OpenTracing"><span class="iconfont-archer">&#xe606;</span>OpenTracing</span>
     
+        <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
+    
+        <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
+    
+        <span class="sidebar-tag-name" data-tags="书法"><span class="iconfont-archer">&#xe606;</span>书法</span>
+    
         <span class="sidebar-tag-name" data-tags="SOFABoot"><span class="iconfont-archer">&#xe606;</span>SOFABoot</span>
     
         <span class="sidebar-tag-name" data-tags="链路跟踪"><span class="iconfont-archer">&#xe606;</span>链路跟踪</span>
-    
-        <span class="sidebar-tag-name" data-tags="servlet"><span class="iconfont-archer">&#xe606;</span>servlet</span>
     
         <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
@@ -3279,27 +3191,27 @@ resolveValueIfNecessary方法reso...
     
         <span class="sidebar-tag-name" data-tags="kafka"><span class="iconfont-archer">&#xe606;</span>kafka</span>
     
-        <span class="sidebar-tag-name" data-tags="spring cloud"><span class="iconfont-archer">&#xe606;</span>spring cloud</span>
+        <span class="sidebar-tag-name" data-tags="zookeeper"><span class="iconfont-archer">&#xe606;</span>zookeeper</span>
     
         <span class="sidebar-tag-name" data-tags="Config"><span class="iconfont-archer">&#xe606;</span>Config</span>
-    
-        <span class="sidebar-tag-name" data-tags="Apollo"><span class="iconfont-archer">&#xe606;</span>Apollo</span>
-    
-        <span class="sidebar-tag-name" data-tags="zookeeper"><span class="iconfont-archer">&#xe606;</span>zookeeper</span>
     
         <span class="sidebar-tag-name" data-tags="Gateway"><span class="iconfont-archer">&#xe606;</span>Gateway</span>
     
         <span class="sidebar-tag-name" data-tags="网关"><span class="iconfont-archer">&#xe606;</span>网关</span>
     
-        <span class="sidebar-tag-name" data-tags="Hystrix"><span class="iconfont-archer">&#xe606;</span>Hystrix</span>
+        <span class="sidebar-tag-name" data-tags="spring cloud"><span class="iconfont-archer">&#xe606;</span>spring cloud</span>
     
-        <span class="sidebar-tag-name" data-tags="commons"><span class="iconfont-archer">&#xe606;</span>commons</span>
+        <span class="sidebar-tag-name" data-tags="Apollo"><span class="iconfont-archer">&#xe606;</span>Apollo</span>
+    
+        <span class="sidebar-tag-name" data-tags="Hystrix"><span class="iconfont-archer">&#xe606;</span>Hystrix</span>
     
         <span class="sidebar-tag-name" data-tags="Eureka"><span class="iconfont-archer">&#xe606;</span>Eureka</span>
     
-        <span class="sidebar-tag-name" data-tags="Ribbon"><span class="iconfont-archer">&#xe606;</span>Ribbon</span>
+        <span class="sidebar-tag-name" data-tags="commons"><span class="iconfont-archer">&#xe606;</span>commons</span>
     
         <span class="sidebar-tag-name" data-tags="Feign"><span class="iconfont-archer">&#xe606;</span>Feign</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ribbon"><span class="iconfont-archer">&#xe606;</span>Ribbon</span>
     
         <span class="sidebar-tag-name" data-tags="spring 扩展机制"><span class="iconfont-archer">&#xe606;</span>spring 扩展机制</span>
     
@@ -3338,39 +3250,41 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
+        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
+    
         <span class="sidebar-category-name" data-categories="java-基础"><span class="iconfont-archer">&#xe60a;</span>java-基础</span>
     
         <span class="sidebar-category-name" data-categories="架构之路"><span class="iconfont-archer">&#xe60a;</span>架构之路</span>
     
-        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
-    
         <span class="sidebar-category-name" data-categories="缓存"><span class="iconfont-archer">&#xe60a;</span>缓存</span>
-    
-        <span class="sidebar-category-name" data-categories="leetcode"><span class="iconfont-archer">&#xe60a;</span>leetcode</span>
     
         <span class="sidebar-category-name" data-categories="JUC"><span class="iconfont-archer">&#xe60a;</span>JUC</span>
     
-        <span class="sidebar-category-name" data-categories="日志"><span class="iconfont-archer">&#xe60a;</span>日志</span>
+        <span class="sidebar-category-name" data-categories="leetcode"><span class="iconfont-archer">&#xe60a;</span>leetcode</span>
     
-        <span class="sidebar-category-name" data-categories="运维"><span class="iconfont-archer">&#xe60a;</span>运维</span>
-    
-        <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
-    
-        <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
+        <span class="sidebar-category-name" data-categories="maven"><span class="iconfont-archer">&#xe60a;</span>maven</span>
     
         <span class="sidebar-category-name" data-categories="mybatis"><span class="iconfont-archer">&#xe60a;</span>mybatis</span>
     
+        <span class="sidebar-category-name" data-categories="日志"><span class="iconfont-archer">&#xe60a;</span>日志</span>
+    
+        <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
+    
+        <span class="sidebar-category-name" data-categories="运维"><span class="iconfont-archer">&#xe60a;</span>运维</span>
+    
         <span class="sidebar-category-name" data-categories="spring"><span class="iconfont-archer">&#xe60a;</span>spring</span>
+    
+        <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
     
         <span class="sidebar-category-name" data-categories="rpc"><span class="iconfont-archer">&#xe60a;</span>rpc</span>
     
-        <span class="sidebar-category-name" data-categories="书法"><span class="iconfont-archer">&#xe60a;</span>书法</span>
-    
-        <span class="sidebar-category-name" data-categories="session"><span class="iconfont-archer">&#xe60a;</span>session</span>
+        <span class="sidebar-category-name" data-categories="web"><span class="iconfont-archer">&#xe60a;</span>web</span>
     
         <span class="sidebar-category-name" data-categories="SOFA"><span class="iconfont-archer">&#xe60a;</span>SOFA</span>
     
-        <span class="sidebar-category-name" data-categories="web"><span class="iconfont-archer">&#xe60a;</span>web</span>
+        <span class="sidebar-category-name" data-categories="session"><span class="iconfont-archer">&#xe60a;</span>session</span>
+    
+        <span class="sidebar-category-name" data-categories="书法"><span class="iconfont-archer">&#xe60a;</span>书法</span>
     
         <span class="sidebar-category-name" data-categories="spring-mvc"><span class="iconfont-archer">&#xe60a;</span>spring-mvc</span>
     
