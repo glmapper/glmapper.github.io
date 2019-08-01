@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[shell 脚本简单归纳和实践]]></title>
+    <url>%2F2019%2F08%2F01%2Fshell-record%2F</url>
+    <content type="text"><![CDATA[if 条件 OPTION OPTION 解释 [-a file] 如果file存在则为真 ，也可以表示为 and: 条件与if [ -z “condition1” -a -z “condition2” ] [-b file] 如果file存在且是一个块特殊文件则为真 [-c file] 如果file存在且是一个字特殊文件则为真 [-d file] 如果 file 文件存在且是一个目录则为真，d前的!是逻辑非 #表示目录不存在，则执行后面的 then 操作 if [ ! -d lcd_path/par_date ] [-e file] 如果 file文件存在则为真 [-f file] 如果 file 存在且是一个普通文件则为真 [-g file] 如果 file 存在且已经设置了SGID则为真（SUID 是 Set User ID, SGID 是 Set Group ID的意思） [-h file] 如果 file 存在且是一个符号连接则为真 [-k file] 如果 file 存在且已经设置粘制位则为真 [-p file] 如果file存在且是一个名字管道（F如果O）则为真。管道是linux里面进程间通信的一种方式，其他的还有像信号（signal）、信号量、消息队列、共享内存、套接字（socket）等 [-r file] 如果file存在且是可读的则为真 [-s file] 如果file存在且大小不为0则为真 [-t FD] 如果文件描述符FD打开且指向一个终端则为真 [-u file] 如果file存在且设置了SUID（set userID）则为真 [-w file 如果file存在且是可写的则为真 [-x file] 如果file存在且是可执行的则为真 [-O file] 如果file存在且属有效用户ID则为真 [-G file] 如果file存在且属有效用户组则为真 [-L file] 如果file存在且是一个符号连接则为真 [-N file] 如果file存在and has been mod如果ied since it was last read则为真 [-S file] 如果file存在且是一个套接字则为真 [-o optionname] 如果shell选项“optionname”开启则为真 [-z string] “string”的长度为零则为真 [-n string] or [string] “string”的长度为非零non-zero则为真 if 基本判断 [file1 –nt file2] 如果file1 has been changed more recently than file2或者file1 exists and file2 does not则为真 [file1 –ot file2] 如果file1比file2要老，或者file2存在且file1不存在则为真 [file1 –ef file2] 如果file1和file2指向相同的设备和节点号则为真 [sting1==string2] 如果2个字符串相同。“=”may be used instead of “==”for strict posix compliance则为真 [string1!=string2] 如果字符串不相等则为真 [string1&lt;string2] 如果“string1”sorts before“string2”lexicographically in the current locale则为真 [arg1 OP arg2] “OP”is one of –eq,-ne,-lt,-le,-gt or –ge 截取字符串 # 号截取，删除左边字符，保留右边字符。 （非贪婪匹配） 1234var=http://www.glmapper.com# # 号是运算符，*/ 表示从左边开始删除第一个 / 号及左边的所有字符,即删除 http://echo $&#123;var#*//&#125;#结果 www.glmapper.com ## 号截取，删除左边字符，保留右边字符。（贪婪匹配）** 12345var=http://www.glmapper.com# ##*/ 表示从左边开始删除最后（最右边）一个 / 号及左边的所有字符echo $&#123;var##*//&#125;# 结果 www.glmapper.com %号截取，删除右边字符，保留左边字符 （非贪婪匹配）** 1234var=http://www.glmapper.com# %/* 表示从右边开始，删除第一个 / 号及右边的字符echo $&#123;var%/*&#125;# 结果是：http:/ %% 号截取，删除右边字符，保留左边字符 （贪婪匹配）** 1234var=http://www.glmapper.com# %%/* 表示从右边开始，删除最后（最左边）一个 / 号及右边的字符echo $&#123;var%%/*&#125;# 结果 ：http: 从左边第几个字符开始，及字符的个数 1234var=http://www.glmapper.com# 其中的 0 表示左边第一个字符开始，5 表示字符的总个数echo $&#123;var:0:5&#125;# 结果 http: 从左边第几个字符开始，一直到结束 1234var=http://www.glmapper.com# 其中的 7 表示左边第8个字符开始，一直到结束。echo $&#123;var:7&#125;# 结果 www.glmapper.com 从右边第几个字符开始，及字符的个数 1234var=http://www.glmapper.com# 其中的 0-3 表示右边算起第3个字符开始，3 表示字符的个数echo $&#123;var:0-3:3&#125;# 结果 com 从右边第几个字符开始，一直到结束 1234var=http://www.glmapper.com# 表示从右边第 3 个字符开始，一直到结束echo $&#123;var:0-3&#125;# 结果 com 左边的第一个字符是用 0 表示，右边的第一个字符用 0-1 表示 basename basename 命令简介去除文件名的目录部分和后缀部分。basename 命令读取 String 参数，删除以 /(斜杠) 结尾的前缀以及任何指定的 Suffix 参数，并将剩余的基本文件名称写至标准输出。basename 和 dirname 命令通常用于 shell 脚本中的命令替换来指定和指定的输入文件名称有所差异的输出文件名称。**基本语法如下： 12basename NAME [SUFFIX]basename OPTION 基本示例12345basename /usr/bin/sort# 返回 sortbasename /usr/bin/sort/glmapper.txt# 返回 glmapper.txt 创建基本文件名称的规则 如果 String 参数是 //(双斜杠) 或如果 String 参数包含的都是斜杠字符，则将字符串更改为单个 /(斜杠) 12345basename //usr//bin//sort//glmapper.txt# 返回 glmapper.txtbasename ////# 返回 / 从指定字符串除去任何拖尾的 / 字符。 12basename /usr/bin/sort/# 返回 sort 如果在 String 参数中剩余任何 / 字符，则除去字符串的前缀直到（包含）最后一个 / 字符。 如果指定 Suffix 参数，且它和字符串中的剩余的字符相同，则不修改此字符串 12345basename /usr/bin/sort/glmapper.txt glmapper.txt # 返回glmapper.txt basename /usr/bin/sort/glmapper.txt .txt # 返回 glmapper shell 查看当前目录下文件的个数测试准备，test 目录下有 test1、test2 两个文件夹和一个 1.txt 文件。 12345-test├── 1.txt├── test1│ └── test1_1.txt└── test2 查看当前目录下文件的个数 12➜ test ls -l | grep "^-" | wc -l 1 # 1.txt 查看当前目录下文件的个数，包括子目录里的 12➜ test ls -lR| grep "^-" | wc -l 2 # 1.txt test1_1.txt 查看某目录下文件夹（目录）的个数，包括子目录里的 12➜ test ls -lR| grep "^d" | wc -l 2 # test1 test2 说明： 12341、ls -l ：长列表输出该目录下文件信息(注意这里的文件,不同于一般的文件,可能是目录、链接、设备文件等)2、grep "^-" ：这里将长列表输出信息过滤一部分,只保留一般文件,如果只保留目录就是 ^d3、wc -l ： 统计输出信息的行数,已经过滤得只剩一般文件了,统计结果就是一般文件信息的行数, 又一行信息对应一个文件,也就是文件的个数 利用简单的命令组合实现配置文件的获取测试准备，在 1.txt 中 增加两个属性： 12name=glmapperage=26 12345cat /Users/guolei/logs/test/1.txt | sed 's|[[:blank:]]||g' | grep "^name=" | cut -d= -f2# 返回 glmapper cat /Users/guolei/logs/test/1.txt | sed 's|[[:blank:]]||g' | grep "^age=" | cut -d= -f2# 返回 26 函数封装与返回以上面的解析配置文件为例，将其封装成一个函数 12345678function load_param()&#123; # 接受的第一个参数是文件地址 local properties_file=$1 # 接受的第二个参数是属性名 local param=$2 RESULT=`cat $properties_file | sed 's|[[:blank:]]||g' | grep "^$param=" | cut -d= -f2`&#125; 调用函数并且获取返回值 1234load_param 1.txt namePROP_VAL=$RESULTecho $PROP_VAL# 返回 glmapper shell 实现日志文件的归档处理日志归档简单来说就是，每次希望启动，会将前一次程序运行产生的日志和本地运行产生的日志隔离开来，归档结果就是产生类似于如下的日志文件： stdout.log.20170909 stdout.log.20170709 stdout 所以日志文件的归档在生产脚本中是必须要考虑的，否则就到导致每次产生的文件都会被写入同一份日志文件中。下面是实践过程中归纳的一个日志归档函数： 123456789101112131415161718192021# archive logfunction archive_log() &#123; local FILE_STDOUT_LOG=$LOG_ROOT/stdout.log local FILE_STDERR_LOG=$LOG_ROOT/stderr.log if [ ! -e $LOG_ROOT ] ; then mkdir -p $LOG_ROOT fi NOW=`date +%Y%m%d.%H%M%S` # scroll SOFABoot STDOUT log if [ -e $FILE_STDOUT_LOG ] ; then mv $FILE_STDOUT_LOG $FILE_STDOUT_LOG.$NOW fi # scroll SOFABoot STDERR log if [ -e $FILE_STDERR_LOG ] ; then mv $FILE_STDERR_LOG $FILE_STDERR_LOG.$NOW fi FILE_STDOUT_LOG_GLOBAL=$FILE_STDOUT_LOG; FILE_STDERR_LOG_GLOBAL=$FILE_STDERR_LOG;&#125; 一个简单的 SOFABoot 启动脚本deploy.sh 简单的启动脚本： 123456789101112LOG_ROOT= $1;APP_PATH= $2;# 检查 JAVA_HOMEif [ -z "$JAVA_HOME" ]; then echo "JAVA_HOME not set, exit" exit 1fi# 使用前面的那个日志归档函数archive_log# 启动 java 程序java -jar $APP_PATH &gt;&gt; $FILE_STDOUT_LOG_GLOBAL 2&gt;&gt; $FILE_STDOUT_LOG_GLOBAL &amp; 运行： 1sh deploy.sh ./logs app.jar 小结本文记录日常中常遇到的 shell 命令，基础知识部分零碎的参考了网上一些同学的博客，在此做了归纳。也欢迎大家指正。如果你有比较骚气的操作，也欢迎评论席留言，我会验证后更新到文章中来。]]></content>
+      <categories>
+        <category>运维</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>shell</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[一个 maven 插件打包问题的排查]]></title>
     <url>%2F2019%2F07%2F23%2Fmaven-debug%2F</url>
     <content type="text"><![CDATA[最近研究 sofa-ark 的插件机制时，发现当执行完 maven clean install -DskipTests 时，打在 target 目录下的 xxx.jar 与安装到本地仓库的 xxx.jar 大小不一致。 target 目录下的插件大小 .m2 下的插件大小 其实一开始看到这种现象也是懵逼，同一个工程，同一次命令执行，但是得到的两个 jar 包大小差距巨大。那么对于这种问题，我想到的有两点： debug 打包插件执行过程 了解 maven 插件的生命周期 debug 打包插件执行过程这里需要借助 IDEA 中的远程 debug 能力来完成。目前有两个工程，一个是我们的主工程，工程名为上面截图中的 mq-client-ark-plugin ，另一个是打包插件的源码工程，如下图所示： 那么下面就一步一步来完成远程 debug 的配置。 1、使用 mvnDebug 命令开启 debug 模式在主工程 mq-client-ark-plugin 的根目录下执行 mvnDebug install（当然除了 install 之外，也可以是 compile、package、test、deploy 等）。 当执行完 mvnDebug install 后，可以看到这个阻塞监听 8000 端口了。 2、源码工程配置远程 debug在 idea 主界面找下下图的工具菜单，选择 Edit Configurations...打开配置面板之后，左上角 + 选择 Remote填写相关远程 debug 参数 Host : 远程目标主机地址，因为之前 主工程也是本地启动的，所以这里就是 localhost Port : 远程目标主机开启的远程 debug 端口 开启远程 debug 参数：-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000 配置完成之后，执行 debug ，可以看下已经连接到了目标机器： 在来看主工程这里，在源码工程没有执行上面的 debug 按钮之前，一直都是阻塞的，执行之后 maven 执行的生命周期开始了: 如上图，因为在源码工程中打了断点，所以当执行到 sofa-ark-maven-plugin 插件时阻塞了。 从 maven 执行的生命周期找出问题根源上面已经搞定了对目标插件源码的 debug 模式的开启，那么下面就是对插件代码进行 debug 操作。节省篇幅，这里直接将断点放在目标代码行位置： 分析这段代码 1、获取到项目的 Artifact ,此时 Artifact 的 file 为： 2、重新设置的 File 3、重新设置了 artifact 如果单从上面 debug 来看，其实很难解释开篇的那个问题。那么这里在回过头来看下 主工程的 maven 执行日志： 如上图中圈红的部分，代表 maven install 所经历的所有阶段。可以看到 sofa-ark-plugin-maven-plugin 是在 maven-install-plugin 后面，那这意味着什么呢？ 我们知道在 target 目录下得到的 xxx.jar 是打包阶段的产物，而 .m2 下面的是 install 的产物。 当然这里没有涉及到 deploy ，deploy 是 install 之后的操作，比如发布到远程仓库。 现在再来看，因为 sofa-ark-plugin-maven-plugin 在执行 install 插件之前将 目标文件给替换了，所以导致打包生成的 target 目录下的 xxx.jar 和 安装到本地仓库的 xxx.jar 不一致。 小结本文记录了日常的一个问题排查过程，包括两个小点，一个是如何去 debug maven 的插件，另外一个是简单了解下 maven 打包的生命周期。 关于 maven 打包的生命周期的代码没有具体研究过，不过这里可以大概猜测下，就是 maven 在执行命令时，有个类似于中央控制器的东西，通过解析 maven 命令得到一个 LifeCycle 或者 一个 Pipeline （LifeCycle 或者 Pipeline 实际上就是组装了一系列的插件）。然后 LifeCycle 或者 Pipeline 启动执行，遍历插件，依次执行插件的 execute 方法。]]></content>
@@ -385,8 +397,8 @@
         <category>spring mvc</category>
       </categories>
       <tags>
-        <tag>web</tag>
         <tag>spring</tag>
+        <tag>web</tag>
         <tag>mvc</tag>
       </tags>
   </entry>
@@ -398,8 +410,8 @@
         <category>spring mvc</category>
       </categories>
       <tags>
-        <tag>web</tag>
         <tag>spring</tag>
+        <tag>web</tag>
         <tag>mvc</tag>
       </tags>
   </entry>
@@ -582,8 +594,8 @@
         <category>spring mvc</category>
       </categories>
       <tags>
-        <tag>web</tag>
         <tag>spring</tag>
+        <tag>web</tag>
         <tag>mvc</tag>
       </tags>
   </entry>
@@ -595,8 +607,8 @@
         <category>spring mvc</category>
       </categories>
       <tags>
-        <tag>web</tag>
         <tag>spring</tag>
+        <tag>web</tag>
         <tag>mvc</tag>
       </tags>
   </entry>
@@ -608,8 +620,8 @@
         <category>spring mvc</category>
       </categories>
       <tags>
-        <tag>web</tag>
         <tag>spring</tag>
+        <tag>web</tag>
         <tag>mvc</tag>
       </tags>
   </entry>
@@ -727,9 +739,9 @@
       <tags>
         <tag>maven</tag>
         <tag>mybatis</tag>
-        <tag>web</tag>
-        <tag>spring</tag>
         <tag>ssm</tag>
+        <tag>spring</tag>
+        <tag>web</tag>
       </tags>
   </entry>
   <entry>
@@ -774,9 +786,9 @@
       </categories>
       <tags>
         <tag>mybatis</tag>
-        <tag>web</tag>
-        <tag>spring</tag>
         <tag>ssm</tag>
+        <tag>spring</tag>
+        <tag>web</tag>
       </tags>
   </entry>
   <entry>
@@ -1021,8 +1033,8 @@
         <category>spring</category>
       </categories>
       <tags>
-        <tag>web</tag>
         <tag>spring</tag>
+        <tag>web</tag>
         <tag>restful</tag>
         <tag>聊一聊</tag>
       </tags>
@@ -1049,8 +1061,8 @@
       </categories>
       <tags>
         <tag>聊一聊</tag>
-        <tag>spring 扩展机制</tag>
         <tag>spring 事件机制</tag>
+        <tag>spring 扩展机制</tag>
       </tags>
   </entry>
   <entry>
