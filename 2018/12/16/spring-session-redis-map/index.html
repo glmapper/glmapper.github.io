@@ -403,7 +403,7 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>@<a href="SpringSession：存储机制设计">TOC</a><br>在之前的文章中已经对<code>SpringSession</code>的功能结构，请求/响应重写等做了介绍。本文将继续来介绍下<code>SpringSession</code>中存储部分的设计。存储是分布式<code>session</code>中算是最核心的部分，通过引入三方的存储容器来实现<code>session</code>的存储，从而有效的解决<code>session</code>共享的问题。</p>
+        <p>在之前的文章中已经对<code>SpringSession</code>的功能结构，请求/响应重写等做了介绍。本文将继续来介绍下<code>SpringSession</code>中存储部分的设计。存储是分布式<code>session</code>中算是最核心的部分，通过引入三方的存储容器来实现<code>session</code>的存储，从而有效的解决<code>session</code>共享的问题。</p>
 <h2 id="1、SpringSession存储的顶级抽象接口"><a href="#1、SpringSession存储的顶级抽象接口" class="headerlink" title="1、SpringSession存储的顶级抽象接口"></a>1、SpringSession存储的顶级抽象接口</h2><p><code>SpringSession</code>存储的顶级抽象接口是<code>org.springframework.session</code>包下的<code>SessionRepository</code>这个接口。<code>SessionRepository</code>的类图结构如下：</p>
 <p><img src="https://user-gold-cdn.xitu.io/2018/12/16/167b2ef7ce8c6b58?w=1662&amp;h=600&amp;f=png&amp;s=66844" alt=""></p>
 <p>这里先来看下<code>SessionRepository</code>这个顶层接口中定义了哪些方法：</p>
@@ -479,7 +479,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2018/12/16/spring-session-redis-map/">http://www.glmapper.com/2018/12/16/spring-session-redis-map/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2018/12/16/spring-session-redis-map/">December 16th 2018, 1:30:38 am</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2018/12/16/spring-session-redis-map/">December 23rd 2018, 12:10:10 am</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2018/12/16/spring-session-redis-map/">August 24th 2019, 8:56:58 am</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     

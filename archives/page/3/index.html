@@ -525,10 +525,10 @@ sessionId 解析策略SpringSession中对于sessionId的解析相关的策略是
                 <span>SpringSession系列-存储机制之Redis&amp;Map</span>
         </a>
         <div class="abstract-content">
-            @TOC在之前的文章中已经对SpringSession的功能结构，请求/响应重写等做了介绍。本文将继续来介绍下SpringSession中存储部分的设计。存储是分布式session中算是最核心的部分，通过引入三方的存储容器来实现session的存储，从而有效的解决session共享的问题。
+            在之前的文章中已经对SpringSession的功能结构，请求/响应重写等做了介绍。本文将继续来介绍下SpringSession中存储部分的设计。存储是分布式session中算是最核心的部分，通过引入三方的存储容器来实现session的存储，从而有效的解决session共享的问题。
 1、SpringSession存储的顶级抽象接口SpringSession存储的顶级抽象接口是org.springframework.session包下的SessionRepository这个接口。SessionRepository的类图结构如下：
 
-这里先来看下SessionRepository这个...
+这里先来看下SessionRepository这个顶层接口...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
