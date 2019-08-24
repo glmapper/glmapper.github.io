@@ -401,7 +401,10 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>ZooKeeper 是一个分布式的，开放源码的分布式应用程序协调服务，是 Google 的 Chubby 一个开源的实现，它是集群的管理者，监视着集群中各个节点的状态根据节点提交的反馈进行下一步合理操作。最终，将简单易用的接口和性能高效、功能稳定的系统提供给用户。</p>
+        <blockquote>
+<p>原文链接：<a href="http://www.glmapper.com/2019/04/13/zookeeper-client-curator/">ZooKeeper 客户端之 Curator</a></p>
+</blockquote>
+<p>ZooKeeper 是一个分布式的、开放源码的分布式应用程序协调服务，是 Google 的 Chubby 一个开源的实现。它是集群的管理者，监视着集群中各个节点的状态，根据节点提交的反馈进行下一步合理操作。最终，将简单易用的接口和性能高效、功能稳定的系统提供给用户。</p>
 <p>Curator 是 Netflix 公司开源的一套  Zookeeper 客户端框架，解决了很多 Zookeeper 客户端非常底层的细节开发工作，包括连接重连、反复注册 Watcher 和 NodeExistsException 异常等等。Curator 包含了几个包：</p>
 <ul>
 <li>curator-framework：对 Zookeeper 的底层 api 的一些封装</li>
@@ -410,16 +413,16 @@ height:50vh;
 </ul>
 <h2 id="Curator-和-zookeeper-的版本问题"><a href="#Curator-和-zookeeper-的版本问题" class="headerlink" title="Curator 和 zookeeper 的版本问题"></a>Curator 和 zookeeper 的版本问题</h2><p>目前 Curator 有 2.x.x 和 3.x.x 两个系列的版本，支持不同版本的 Zookeeper。其中Curator 2.x.x 兼容 Zookeeper的 3.4.x 和 3.5.x。而 Curator 3.x.x 只兼容 Zookeeper 3.5.x，并且提供了一些诸如动态重新配置、watch删除等新特性。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Curator 2.x.x - compatible with both ZooKeeper 3.4.x and ZooKeeper 3.5.x</span><br><span class="line">Curator 3.x.x - compatible only with ZooKeeper 3.5.x and includes support for new</span><br></pre></td></tr></table></figure>
-<p>如果跨版本会有兼容性问题，很有可能导致节点操作失败，我当时在使用的时候就踩了这个坑，抛了如下的异常：</p>
+<p>如果跨版本会有兼容性问题，很有可能导致节点操作失败，当时在使用的时候就踩了这个坑，抛了如下的异常：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KeeperErrorCode = Unimplemented for /***</span><br></pre></td></tr></table></figure>
-<h2 id="Curator-API"><a href="#Curator-API" class="headerlink" title="Curator   API"></a>Curator   API</h2><p>这里就不对比与原生 API 的区别了，Curator 的 api 直接通过 org.apache.curator.framework.CuratorFramework 接口来看，并结合相应的案例进行使用，以备后用。</p>
+<h2 id="Curator-API"><a href="#Curator-API" class="headerlink" title="Curator   API"></a>Curator   API</h2><p>这里就不对比与原生 API 的区别了，Curator 的 API 直接通过 org.apache.curator.framework.CuratorFramework 接口来看，并结合相应的案例进行使用，以备后用。</p>
 <blockquote>
-<p>为了可以直观的看到zookeeper 的节点信息，可以考虑弄一个zk的管控界面，常见的有 zkui 和 zkweb。</p>
+<p>为了可以直观的看到 Zookeeper 的节点信息，可以考虑弄一个 zk 的管控界面，常见的有 zkui 和 zkweb。</p>
 <p>zkui：<a href="https://github.com/DeemOpen/zkui" target="_blank" rel="noopener">https://github.com/DeemOpen/zkui</a></p>
 <p>zkweb：<a href="https://github.com/zhitom/zkweb" target="_blank" rel="noopener">https://github.com/zhitom/zkweb</a></p>
 <p>我用的 zkweb ，虽然界面上看起来没有 zkui 精简，但是在层次展示和一些细节上感觉比 zkui 好一点</p>
 </blockquote>
-<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>之前写的一个在 <a href="http://www.glmapper.com/2019/03/04/zk-on-linux">Linux 上安装部署 Zookeeper</a> 的笔记，其他操作系统请自行谷歌教程吧；</p>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>之前写的一个在 <a href="http://www.glmapper.com/2019/03/04/zk-on-linux">Linux 上安装部署 Zookeeper</a> 的笔记，其他操作系统请自行谷歌教程吧。</p>
 <p>本文案例工程已经同步到了 github，<a href="https://github.com/glmapper/glmapper-blog-samples" target="_blank" rel="noopener">传送门</a>。</p>
 <blockquote>
 <p>PS : 目前还没有看过Curator的具体源码，所以不会涉及到任何源码解析、实现原理的东西；本篇主要是实际使用时的一些记录，以备后用。如果文中错误之处，希望各位指出。</p>
@@ -544,7 +547,8 @@ height:50vh;
 <h2 id="异步操作"><a href="#异步操作" class="headerlink" title="异步操作"></a>异步操作</h2><p>前面提到的增删改查都是同步的，但是 Curator 也提供了异步接口，引入了 BackgroundCallback 接口用于处理异步接口调用之后服务端返回的结果信息。BackgroundCallback 接口中一个重要的回调值为 CuratorEvent，里面包含事件类型、响应吗和节点的详细信息。</p>
 <p>在使用上也是非常简单的，只需要带上 inBackground() 就行，如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curatorClient.getData().inBackground().forPath(<span class="string">"/glmapper/test"</span>);</span><br></pre></td></tr></table></figure>
-<p>通过查看 inBackground 方法定义可以看到，inBackground 支持自定义线程池来处理返回结果之后的业务逻辑。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">inBackground</span><span class="params">(BackgroundCallback callback, Executor executor)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>通过查看 inBackground 方法定义可以看到，inBackground 支持自定义线程池来处理返回结果之后的业务逻辑。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">inBackground</span><span class="params">(BackgroundCallback callback, Executor executor)</span></span>;</span><br></pre></td></tr></table></figure>
 <p>这里就不贴代码了。</p>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要围绕 Curator 的基本 API 进行了学习记录，对于原理及源码部分没有涉及。这部分如果有时间在慢慢研究吧。另外像分布式锁、分布式自增序列等实现停留在理论阶段，没有实践，不敢妄论，用到再码吧。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
@@ -559,7 +563,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2019/04/13/zookeeper-client-curator/">http://www.glmapper.com/2019/04/13/zookeeper-client-curator/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2019/04/13/zookeeper-client-curator/">April 13th 2019, 10:09:30 pm</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2019/04/13/zookeeper-client-curator/">April 13th 2019, 10:12:37 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/04/13/zookeeper-client-curator/">August 24th 2019, 8:50:59 am</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
