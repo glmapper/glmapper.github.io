@@ -264,6 +264,12 @@ height:50vh;
             <div class="post-intros">
                 <!-- 文章页标签  -->
                 
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="springboot">springboot</a>
+    
+</div>
+                
                 
                     <div class="post-intro-read">
                         <span>字数统计: <span class="post-count word-count">2.2k</span>阅读时长: <span class="post-count reading-time">9 min</span></span>
@@ -399,11 +405,11 @@ height:50vh;
 <p>微信公众号：<strong><a href="#jump_10">glmapper工作室</a></strong><br><br>掘金专栏：<a href="https://juejin.im/user/58fcc0768d6d810058965a06" target="_blank" rel="noopener">glmapper</a><br><br>微          博：<a href="https://weibo.com/u/2412872703" target="_blank" rel="noopener">疯狂的石头_henu</a><br><br>欢迎关注，一起学习分享技术</p>
 </blockquote>
 <p>SpringBoot 作为目前非常流行的微服务框架，它使得构建独立的 Spring 生产级应用变得非常简单，因此受到很多互联网企业的青睐。</p>
-<p>最近在写 <a href="https://github.com/sofastack/sofa-tracer" target="_blank" rel="noopener">SOFATracer</a> 集成 Spring Cloud Stream RocketMQ 的过程中，遇到了一些问题，比如：BeanPostProcessor 不生效，如何在 BeanPostProcessor 不生效的情况下去修改一个 Bean 等，这些问题其实都是和 Bean 的生命周期有关系的，当然也和容器启动的过程有关系。SpringBoot 的启动过程对于我来说其实不算陌生，也可以说是比较熟悉，但是之前没有完整的梳理过这一款的东西，再实际的应用过程成难免再去踩一些坑。另外想到之前也写过一篇 <a href="./springboot-series-fatjar">SpringBoot系列- FatJar 启动原理</a>，刚好承接上篇，继续来探索 SpringBoot 中的一些知识点。</p>
+<p>最近在写 <a href="https://github.com/sofastack/sofa-tracer" target="_blank" rel="noopener">SOFATracer</a> 集成 Spring Cloud Stream RocketMQ 的过程中，遇到了一些问题，比如：BeanPostProcessor 不生效，如何在 BeanPostProcessor 不生效的情况下去修改一个 Bean 等，这些问题其实都是和 Bean 的生命周期有关系的，当然也和容器启动的过程有关系。SpringBoot 的启动过程对于我来说其实不算陌生，也可以说是比较熟悉，但是之前没有完整的梳理过这一款的东西，再实际的应用过程成难免再去踩一些坑。另外想到之前也写过一篇 <a href="http://www.glmapper.com/2019/12/08/springboot-series-fatjar/">SpringBoot系列- FatJar 启动原理</a>，刚好承接上篇，继续来探索 SpringBoot 中的一些知识点。</p>
 <blockquote>
 <p>注：本篇基于 SpringBoot 2.1.0.RELEASE 版本，SpringBoot 各个版本之间可能存在差异，不过大体流程基本差不多，所以各位看官在实际的工作过程中也</p>
 </blockquote>
-<h2 id="启动入口"><a href="#启动入口" class="headerlink" title="启动入口"></a>启动入口</h2><p>在这篇<a href="./springboot-series-fatjar">SpringBoot系列- FatJar 启动原理</a> 文章中介绍得到，JarLaunch 最后是构建了一个 MainMethodRunner 实例对象，然后通过反射的方式调用了 BootStrap 类中的 main 方法，这里的 ’BootStrap 类中的 main 方法‘ 实际上就是 SpringBoot 的业务入口，也就是常见的下面的代码片段：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlmapperApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(GlmapperApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="启动入口"><a href="#启动入口" class="headerlink" title="启动入口"></a>启动入口</h2><p>在这篇<a href="http://www.glmapper.com/2019/12/08/springboot-series-fatjar/">SpringBoot系列- FatJar 启动原理</a> 文章中介绍得到，JarLaunch 最后是构建了一个 MainMethodRunner 实例对象，然后通过反射的方式调用了 BootStrap 类中的 main 方法，这里的 ’BootStrap 类中的 main 方法‘ 实际上就是 SpringBoot 的业务入口，也就是常见的下面的代码片段：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlmapperApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(GlmapperApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>从代码可以非常直观的了解到，启动是通过调用 SpringApplication 的静态方法 run；这个 run 方法内部其实是会构造一个 SpringApplication 的实例，然后再调用这里实例的 run 方法来启动 SpringBoot的。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Static helper that can be used to run a &#123;<span class="doctag">@link</span> SpringApplication&#125; from the</span></span><br><span class="line"><span class="comment">* specified sources using default settings and user supplied arguments.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> primarySources the primary sources to load</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> args the application arguments (usually passed from a Java main method)</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the running &#123;<span class="doctag">@link</span> ApplicationContext&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ConfigurableApplicationContext <span class="title">run</span><span class="params">(Class&lt;?&gt;[] primarySources,</span></span></span><br><span class="line"><span class="function"><span class="params">    String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> SpringApplication(primarySources).run(args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>因此，如果要分析 SpringBoot 的启动过程，我们需要熟悉 SpringApplication 的构造过程以及 SpringApplication 的 run 方法执行过程即可。</p>
@@ -425,7 +431,7 @@ height:50vh;
 <li>4、listeners 执行时机及顺序</li>
 <li>5、异常处理逻辑</li>
 </ul>
-<p>关于 Listeners 执行时机及顺序在之前的文章中有做过非常详细的分析，详见：<a href="./springboot-series-event.md">SpringBoot 系列-事件机制详解</a>。下面就对其他的 4 个点做下详细的分析。</p>
+<p>关于 Listeners 执行时机及顺序在之前的文章中有做过非常详细的分析，详见：<a href="http://www.glmapper.com/2019/04/13/springboot-series-event/">SpringBoot 系列-事件机制详解</a>。下面就对其他的 4 个点做下详细的分析。</p>
 <blockquote>
 <p>分析启动过程，本质上是对其整个容器生命周期有个了解，包括 listeners 执行各个事件的时机、PostProcessor 执行的时机，Enviroment Ready 的时机等等。掌握这些扩展和时机，可以在实际的业务开发中来做很多事情。</p>
 </blockquote>
@@ -445,7 +451,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2019/12/07/springboot-series-started/">http://www.glmapper.com/2019/12/07/springboot-series-started/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2019/12/07/springboot-series-started/">December 7th 2019, 3:04:28 pm</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2019/12/07/springboot-series-started/">December 8th 2019, 11:54:44 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/12/07/springboot-series-started/">December 9th 2019, 12:01:16 am</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -453,17 +459,12 @@ height:50vh;
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href="/2019/12/08/springboot-series-fatjar/" title="SpringBoot系列-FatJar 启动原理">
-                    <div class="nextTitle">SpringBoot系列-FatJar 启动原理</div>
-                </a>
-            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href="/2019/10/06/springboot-series-server-tomcat/" title="SpringBoot 系列-内嵌 Tomcat 的实现原理解析">
-                    <div class="prevTitle">SpringBoot 系列-内嵌 Tomcat 的实现原理解析</div>
+                <a href="/2019/10/13/springboot-series-fatjar/" title="SpringBoot 系列-FatJar 启动原理">
+                    <div class="prevTitle">SpringBoot 系列-FatJar 启动原理</div>
                 </a>
             
         </li>
@@ -2563,12 +2564,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/08</span><a class="archive-post-title" href="/2019/12/08/springboot-series-fatjar/">SpringBoot系列-FatJar 启动原理</a>
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2019/12/07/springboot-series-started/">SpringBoot 系列-启动过程分析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2019/12/07/springboot-series-started/">SpringBoot 系列-启动过程分析</a>
+            <span class="archive-post-date">10/13</span><a class="archive-post-title" href="/2019/10/13/springboot-series-fatjar/">SpringBoot 系列-FatJar 启动原理</a>
         </li>
     
     

@@ -22,7 +22,7 @@
     <meta name="description" content="从平凡的世界中全身而退">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>glmapper</title>
+    <title>SpringBoot 系列-FatJar 启动原理 · glmapper</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -203,12 +203,23 @@
 </head>
 
     
+        <body class="post-body">
+    
     
 <header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">glmapper</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">SpringBoot 系列-FatJar 启动原理</a>
+            </div>
+    </div>
     
     <a class="home-link" href="/">glmapper</a>
 </header>
@@ -220,24 +231,74 @@
 
 
 
+
+height:50vh;
 ">
     
     <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
+            
+            SpringBoot 系列-FatJar 启动原理
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="springboot">springboot</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.4k</span>阅读时长: <span class="post-count reading-time">10 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/10/13</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -338,42 +399,123 @@
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2019/10/06/springboot-series-server-tomcat/">
-            
-                <span>SpringBoot 系列-内嵌 Tomcat 的实现原理解析</span>
-        </a>
-        <div class="abstract-content">
-            对于一个 SpringBoot web 工程来说，一个主要的依赖标志就是有 spring-boot-starter-web 这个 starter ，spring-boot-starter-web 模块在 spring boot 中其实并没有代码存在，只是在 pom.xml 中携带了一些依赖，包括 web、webmvc、tomcat 等：
-1234567891011121314151617181920212223242526&lt;dependencies&gt;    &lt;dependency&gt;    	&lt;groupId&gt;org.springframework.bo...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/10/06</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring boot">spring boot</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Tomcat">Tomcat</a>
-    
-</div>
-            
-        </div>
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>之前有写过一篇文章来介绍 JAR 文件和 MENIFEST.MF 文件，详见：<a href="https://juejin.im/post/5d16cc8cf265da1b8d163237" target="_blank" rel="noopener">聊一聊 JAR 文件和 MANIFEST.MF</a>，在这篇文章中介绍了 JAR 文件的内部结构。本篇将继续延续前面的节奏，来介绍下，在 SpringBoot 中，是如何将一个 FatJar 运行起来的。</p>
+<h2 id="FatJar-解压之后的文件目录"><a href="#FatJar-解压之后的文件目录" class="headerlink" title="FatJar 解压之后的文件目录"></a>FatJar 解压之后的文件目录</h2><p>从 <a href="https://start.spring.io/" target="_blank" rel="noopener">Spring 官网</a> 或者通过 Idea 创建一个新的 SpringBoot 工程，方便起见，建议什么依赖都不加，默认带入的空的 SpringBoot 工程即可。</p>
+<p>通过 maven 命令进行打包，打包成功之后得到的构建产物截图如下：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/11/11/16e5a74d591ef623?w=519&amp;h=232&amp;f=png&amp;s=74986" alt=""></p>
+<p>在前面的文章中有提到，jar 包是zip 包的一种变种，因此也可以通过 unzip 来解压</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip -q guides-for-jarlaunch-0.0.1-SNAPSHOT.jar -d mock</span><br></pre></td></tr></table></figure>
+<p>解压的 mock 目录，使用 tree 指令，看到整个解压之后的 FatJar 的目录结构如下（部分省略）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── BOOT-INF</span><br><span class="line">│   ├── classes</span><br><span class="line">│   │   ├── application.properties  # 用户-配置文件</span><br><span class="line">│   │   └── com</span><br><span class="line">│   │       └── glmapper</span><br><span class="line">│   │           └── bridge</span><br><span class="line">│   │               └── boot</span><br><span class="line">│   │                   └── BootStrap.class  # 用户-启动类</span><br><span class="line">│   └── lib</span><br><span class="line">│       ├── jakarta.annotation-api-1.3.5.jar</span><br><span class="line">│       ├── jul-to-slf4j-1.7.28.jar</span><br><span class="line">│       ├── log4j-xxx.jar # 表示 log4j 相关的依赖简写</span><br><span class="line">│       ├── logback-xxx.jar # 表示 logback 相关的依赖简写</span><br><span class="line">│       ├── slf4j-api-1.7.28.jar</span><br><span class="line">│       ├── snakeyaml-1.25.jar</span><br><span class="line">│       ├── spring-xxx.jar   # 表示 spring 相关的依赖简写</span><br><span class="line">├── META-INF</span><br><span class="line">│   ├── MANIFEST.MF</span><br><span class="line">│   └── maven</span><br><span class="line">│       └── com.glmapper.bridge.boot</span><br><span class="line">│           └── guides-for-jarlaunch</span><br><span class="line">│               ├── pom.properties</span><br><span class="line">│               └── pom.xml</span><br><span class="line">└── org</span><br><span class="line">    └── springframework</span><br><span class="line">        └── boot</span><br><span class="line">            └── loader</span><br><span class="line">                ├── ExecutableArchiveLauncher.class</span><br><span class="line">                ├── JarLauncher.class</span><br><span class="line">                ├── LaunchedURLClassLoader$UseFastConnectionExceptionsEnumeration.class</span><br><span class="line">                ├── LaunchedURLClassLoader.class</span><br><span class="line">                ├── Launcher.class</span><br><span class="line">                ├── MainMethodRunner.class</span><br><span class="line">                ├── PropertiesLauncher$1.class</span><br><span class="line">                ├── PropertiesLauncher$ArchiveEntryFilter.class</span><br><span class="line">                ├── PropertiesLauncher$PrefixMatchingArchiveFilter.class</span><br><span class="line">                ├── PropertiesLauncher.class</span><br><span class="line">                ├── WarLauncher.class</span><br><span class="line">                ├── archive</span><br><span class="line">                │   ├── # 省略</span><br><span class="line">                ├── data</span><br><span class="line">                │   ├── # 省略</span><br><span class="line">                ├── jar</span><br><span class="line">                │   ├── # 省略</span><br><span class="line">                └── util</span><br><span class="line">                    └── SystemPropertyUtils.class</span><br></pre></td></tr></table></figure>
+<p>简单来看，FatJar 解压之后包括三个文件夹：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">├── BOOT-INF # 存放的是业务相关的，包括业务开发的类和配置文件，以及依赖的jar</span><br><span class="line">│   ├── classes</span><br><span class="line">│   └── lib</span><br><span class="line">├── META-INF # 包括 MANIFEST.MF 描述文件和 maven 的构建信息</span><br><span class="line">│   ├── MANIFEST.MF</span><br><span class="line">│   └── maven</span><br><span class="line">└── org # SpringBoot 相关的类</span><br><span class="line">    └── springframework</span><br></pre></td></tr></table></figure>
+<p>我们平时在 debug SpringBoot 工程的启动流程时，一般都是从 SpringApplication#run 方法开始</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BootStrap</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 入口</span></span><br><span class="line">        SpringApplication.run(BootStrap.class,args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于 java 程序来说，我们知道启动入口必须有 main 函数，这里看起来是符合条件的，但是有一点就是，通过 java 指令执行一个带有 main 函数的类时，是不需要有 -jar 参数的，比如新建一个 BootStrap.java 文件，内容为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BootStrap</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过 javac 编译此文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javac BootStrap.java</span><br></pre></td></tr></table></figure></p>
+<p>然后就可以得到编译之后的 .class 文件 BootStrap.class ，此时可以通过 java 指令直接执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java BootStrap  <span class="comment"># 输出 Hello World</span></span><br></pre></td></tr></table></figure></p>
+<p>那么对于 java -jar 呢？这个其实在 <a href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html" target="_blank" rel="noopener">java 的官方文档</a> 中是有明确描述的：</p>
+<ul>
+<li>-jar filename</li>
+</ul>
+<blockquote>
+<p>Executes a program encapsulated in a JAR file. The filename argument is the name of a JAR file with a manifest that contains a line in the form Main-Class:classname that defines the class with the public static void main(String[] args) method that serves as your application’s starting point.</p>
+</blockquote>
+<blockquote>
+<p>When you use the -jar option, the specified JAR file is the source of all user classes, and other class path settings are ignored.</p>
+</blockquote>
+<p>简单说就是，java -jar 命令引导的具体启动类必须配置在 MANIFEST.MF 资源的 Main-Class 属性中。</p>
+<p>那回过头再去看下之前打包好、解压之后的文件目录，找到 /META-INF/MANIFEST.MF 文件，看下元数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Manifest-Version: 1.0</span><br><span class="line">Implementation-Title: guides-for-jarlaunch</span><br><span class="line">Implementation-Version: 0.0.1-SNAPSHOT</span><br><span class="line">Start-Class: com.glmapper.bridge.boot.BootStrap</span><br><span class="line">Spring-Boot-Classes: BOOT-INF/classes/</span><br><span class="line">Spring-Boot-Lib: BOOT-INF/lib/</span><br><span class="line">Build-Jdk-Spec: 1.8</span><br><span class="line">Spring-Boot-Version: 2.2.0.RELEASE</span><br><span class="line">Created-By: Maven Archiver 3.4.0</span><br><span class="line"># Main-Class 在这里，指向的是 JarLauncher</span><br><span class="line">Main-Class: org.springframework.boot.loader.JarLauncher</span><br></pre></td></tr></table></figure>
+<p>org.springframework.boot.loader.JarLauncher 类存放在 org/springframework/boot/loader 下面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">└── boot</span><br><span class="line">    └── loader</span><br><span class="line">        ├── ExecutableArchiveLauncher.class</span><br><span class="line">        ├── JarLauncher.class  # JarLauncher</span><br><span class="line">        ├── # 省略</span><br></pre></td></tr></table></figure>
+<p>这样就基本理清楚了， FatJar 中，org.springframework.boot.loader 下面的类负责引导启动 SpringBoot 工程，作为入口，BOOT-INF 中存放业务代码和依赖，META-INF 下存在元数据描述。</p>
+<h2 id="JarLaunch-FatJar-的启动器"><a href="#JarLaunch-FatJar-的启动器" class="headerlink" title="JarLaunch - FatJar 的启动器"></a>JarLaunch - FatJar 的启动器</h2><p>在分析 JarLaunch 之前，这里插一下，org.springframework.boot.loader 下的这些类是如何被打包在 FatJar 里面的</p>
+<h3 id="spring-boot-maven-plugin-打包-spring-boot-loader-过程"><a href="#spring-boot-maven-plugin-打包-spring-boot-loader-过程" class="headerlink" title="spring-boot-maven-plugin 打包 spring-boot-loader 过程"></a>spring-boot-maven-plugin 打包 spring-boot-loader 过程</h3><p>因为在新建的空的 SpringBoot 工程中并没有任何地方显示的引入或者编写相关的类。实际上，对于每个新建的 SpringBoot 工程，可以在其 pom.xml 文件中看到如下插件：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>这个是 SpringBoot 官方提供的用于打包 FatJar 的插件，org.springframework.boot.loader 下的类其实就是通过这个插件打进去的；</p>
+<p>下面是此插件将 loader 相关类打入 FatJar 的一个执行流程：</p>
+<blockquote>
+<p>org.springframework.boot.maven#execute-&gt;<br>org.springframework.boot.maven#repackage -&gt; org.springframework.boot.loader.tools.Repackager#repackage-&gt;<br>org.springframework.boot.loader.tools.Repackager#writeLoaderClasses-&gt;<br>org.springframework.boot.loader.tools.JarWriter#writeLoaderClasses</p>
+</blockquote>
+<p>最终的执行方法就是下面这个方法，通过注释可以看出，该方法的作用就是将 spring-boot-loader 的classes 写入到 FatJar 中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Write the required spring-boot-loader classes to the JAR.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IOException if the classes cannot be written</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeLoaderClasses</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">	writeLoaderClasses(NESTED_LOADER_JAR);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="JarLaunch-基本原理"><a href="#JarLaunch-基本原理" class="headerlink" title="JarLaunch 基本原理"></a>JarLaunch 基本原理</h3><p>基于前面的分析，这里考虑一个问题，能否直接通过 java BootStrap 来直接运行 SpringBoot 工程呢？这样在不需要 -jar 参数和 JarLaunch 引导的情况下，直接使用最原始的 java 指令理论上是不是也可以，因为有 main 方法。</p>
+<h4 id="通过-java-BootStrap-方式启动"><a href="#通过-java-BootStrap-方式启动" class="headerlink" title="通过 java BootStrap 方式启动"></a>通过 <code>java BootStrap</code> 方式启动</h4><p>BootStrap 类的如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BootStrap</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(BootStrap.class,args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译之后，执行 <code>java com.glmapper.bridge.boot.BootStrap</code>，然后抛出异常了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; java.lang.NoClassDefFoundError: org/springframework/boot/SpringApplication</span><br><span class="line">        at com.glmapper.bridge.boot.BootStrap.main(BootStrap.java:13)</span><br><span class="line">Caused by: java.lang.ClassNotFoundException: org.springframework.boot.SpringApplication</span><br><span class="line">        at java.net.URLClassLoader.findClass(URLClassLoader.java:381)</span><br><span class="line">        at java.lang.ClassLoader.loadClass(ClassLoader.java:424)</span><br><span class="line">        at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:338)</span><br><span class="line">        at java.lang.ClassLoader.loadClass(ClassLoader.java:357)</span><br><span class="line">        ... 1 more</span><br></pre></td></tr></table></figure>
+<p>从异常堆栈来看，是因为找不到 SpringApplication 这个类；这里其实还是比较好理解的，BootStrap 类中引入了 SpringApplication，但是这个类是在 BOOT-INF/lib 下的，而 java 指令在启动时也没有指定 class path 。</p>
+<blockquote>
+<p>这里不再赘述，通过 -classpath + -Xbootclasspath 的方式尝试了下，貌似也不行，如果有通过 java 指令直接运行成功的，欢迎留言沟通。</p>
+</blockquote>
+<h4 id="通过-java-JarLaunch-启动"><a href="#通过-java-JarLaunch-启动" class="headerlink" title="通过 java JarLaunch 启动"></a>通过 <code>java JarLaunch 启动</code></h4><p>再通过 <code>java org.springframework.boot.loader.JarLauncher</code> 方式启动，可以看到是可以的。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/11/11/16e5b0890224d5f5?w=2718&amp;h=594&amp;f=png&amp;s=457239" alt=""></p>
+<p>那这里基本可以猜到，JarLauncher 方式启动时，一定会通过某种方式将所需要依赖的 JAR 文件作为 BootStrap 的依赖引入进来。下面就来简单分析下 JarLauncher 启动时，作为启动引导类，它做了哪些事情。</p>
+<h4 id="基本原理分析"><a href="#基本原理分析" class="headerlink" title="基本原理分析"></a>基本原理分析</h4><p>JarLaunch 类的定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JarLauncher</span> <span class="keyword">extends</span> <span class="title">ExecutableArchiveLauncher</span> </span>&#123;</span><br><span class="line">    <span class="comment">// BOOT-INF/classes/</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String BOOT_INF_CLASSES = <span class="string">"BOOT-INF/classes/"</span>;</span><br><span class="line">    <span class="comment">// BOOT-INF/lib/</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String BOOT_INF_LIB = <span class="string">"BOOT-INF/lib/"</span>;</span><br><span class="line">    <span class="comment">// 空构造函数</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">JarLauncher</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 带有指定 Archive 的构造函数</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">JarLauncher</span><span class="params">(Archive archive)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">super</span>(archive);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 是否是可嵌套的对象</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isNestedArchive</span><span class="params">(Archive.Entry entry)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">if</span> (entry.isDirectory()) &#123;</span><br><span class="line">    		<span class="keyword">return</span> entry.getName().equals(BOOT_INF_CLASSES);</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">return</span> entry.getName().startsWith(BOOT_INF_LIB);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// main 函数</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    	<span class="keyword">new</span> JarLauncher().launch(args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过代码，我们很明显可以看到几个关键的信息点：</p>
+<ul>
+<li><code>BOOT_INF_CLASSES</code> 和 <code>BOOT_INF_LIB</code>  两个常量对应的是前面解压之后的两个文件目录</li>
+<li>JarLaunch 中包含一个 main 函数，作为启动入口</li>
+</ul>
+<p>但是单从 main 来看，只是构造了一个 JarLaunch 对象，然后执行其 launch 方法，并没有我们期望看到的构建所需依赖的地方。实际上这部分是在 JarLaunch 的父类 ExecutableArchiveLauncher 的构造函数中来完成的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ExecutableArchiveLauncher</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 构建 archive </span></span><br><span class="line">    	<span class="keyword">this</span>.archive = createArchive();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">    	<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(ex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构建 Archive</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> Archive <span class="title">createArchive</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    ProtectionDomain protectionDomain = getClass().getProtectionDomain();</span><br><span class="line">    CodeSource codeSource = protectionDomain.getCodeSource();</span><br><span class="line">    URI location = (codeSource != <span class="keyword">null</span>) ? codeSource.getLocation().toURI() : <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">// 这里就是拿到当前的 classpath </span></span><br><span class="line">    <span class="comment">// /Users/xxx/Documents/test/glmapper-springboot-study-guides/guides-for-jarlaunch/target/mock/</span></span><br><span class="line">    String path = (location != <span class="keyword">null</span>) ? location.getSchemeSpecificPart() : <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">if</span> (path == <span class="keyword">null</span>) &#123;</span><br><span class="line">    	<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Unable to determine code source archive"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    File root = <span class="keyword">new</span> File(path);</span><br><span class="line">    <span class="keyword">if</span> (!root.exists()) &#123;</span><br><span class="line">    	<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Unable to determine code source archive from "</span> + root);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 构建 Archive </span></span><br><span class="line">    <span class="keyword">return</span> (root.isDirectory() ? <span class="keyword">new</span> ExplodedArchive(root) : <span class="keyword">new</span> JarFileArchive(root));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>PS: 关于 Archive 的概念这里由于篇幅有限，不再展开说明。</p>
+</blockquote>
+<p>通过上面构建了一个 Archive ，然后继续执行 launch 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">launch</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="comment">// 注册协议，利用了 java.net.URLStreamHandler 的扩展机制，SpringBoot</span></span><br><span class="line">    <span class="comment">// 扩展出了一种可以解析 jar in jar 的协议</span></span><br><span class="line">    JarFile.registerUrlProtocolHandler();</span><br><span class="line">    <span class="comment">// 通过 classpath 来构建一个 ClassLoader</span></span><br><span class="line">    ClassLoader classLoader = createClassLoader(getClassPathArchives());</span><br><span class="line">    <span class="comment">// launch </span></span><br><span class="line">    launch(args, getMainClass(), classLoader);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面值需要关注下 getMainClass() 方法即可，这里就是获取 MENIFEST.MF 中指定的 Start-Class ，实际上就是我们的工程里面的 BootStrap 类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> String <span class="title">getMainClass</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="comment">// 从 archive 中拿到 Manifest</span></span><br><span class="line">    Manifest manifest = <span class="keyword">this</span>.archive.getManifest();</span><br><span class="line">    String mainClass = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">if</span> (manifest != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 获取 Start-Class</span></span><br><span class="line">    	mainClass = manifest.getMainAttributes().getValue(<span class="string">"Start-Class"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mainClass == <span class="keyword">null</span>) &#123;</span><br><span class="line">    	<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(</span><br><span class="line">    			<span class="string">"No 'Start-Class' manifest entry specified in "</span> + <span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 返回 mainClass</span></span><br><span class="line">    <span class="keyword">return</span> mainClass;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终是通过构建了一个 MainMethodRunner 实例对象，然后通过反射的方式调用了 BootStrap 类中的 main 方法：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/11/11/16e5b26a4615f6c9?w=1754&amp;h=356&amp;f=png&amp;s=460314" alt=""></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文主要从 JarLaunch 的角度分析了下 SpringBoot 的启动方式，对常规 java 方式和 java -jar 等启动方式进行了简单的演示；同时简单阐述了下 JarLaunch 启动的基本工作原理。对于其中 构建 Archive 、自定义协议 Handler 等未做深入探究，后面也会针对相关点再做单独分析。</p>
+
     </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
+            </p><p>原文链接：<a href="http://www.glmapper.com/2019/10/13/springboot-series-fatjar/">http://www.glmapper.com/2019/10/13/springboot-series-fatjar/</a>
+            </p><p>发表日期：<a href="http://www.glmapper.com/2019/10/13/springboot-series-fatjar/">October 13th 2019, 10:55:41 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/10/13/springboot-series-fatjar/">December 9th 2019, 12:00:13 am</a>
+            </p><p>版权声明：转载请注明出处</p>
+        </div>
     
     <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2019/12/07/springboot-series-started/" title="SpringBoot 系列-启动过程分析">
+                    <div class="nextTitle">SpringBoot 系列-启动过程分析</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2019/10/06/springboot-series-server-tomcat/" title="SpringBoot 系列-内嵌 Tomcat 的实现原理解析">
+                    <div class="prevTitle">SpringBoot 系列-内嵌 Tomcat 的实现原理解析</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
     
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -470,6 +612,24 @@
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#FatJar-解压之后的文件目录"><span class="toc-number">1.</span> <span class="toc-text">FatJar 解压之后的文件目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JarLaunch-FatJar-的启动器"><span class="toc-number">2.</span> <span class="toc-text">JarLaunch - FatJar 的启动器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#spring-boot-maven-plugin-打包-spring-boot-loader-过程"><span class="toc-number">2.1.</span> <span class="toc-text">spring-boot-maven-plugin 打包 spring-boot-loader 过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JarLaunch-基本原理"><span class="toc-number">2.2.</span> <span class="toc-text">JarLaunch 基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#通过-java-BootStrap-方式启动"><span class="toc-number">2.2.1.</span> <span class="toc-text">通过 java BootStrap 方式启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#通过-java-JarLaunch-启动"><span class="toc-number">2.2.2.</span> <span class="toc-text">通过 java JarLaunch 启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#基本原理分析"><span class="toc-number">2.2.3.</span> <span class="toc-text">基本原理分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">3.</span> <span class="toc-text">小结</span></a></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -2437,12 +2597,12 @@
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/08</span><a class="archive-post-title" href="/2019/12/08/springboot-series-fatjar/">SpringBoot系列-FatJar 启动原理</a>
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2019/12/07/springboot-series-started/">SpringBoot 系列-启动过程分析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2019/12/07/springboot-series-started/">SpringBoot 系列-启动过程分析</a>
+            <span class="archive-post-date">10/13</span><a class="archive-post-title" href="/2019/10/13/springboot-series-fatjar/">SpringBoot 系列-FatJar 启动原理</a>
         </li>
     
     
@@ -3170,6 +3330,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
