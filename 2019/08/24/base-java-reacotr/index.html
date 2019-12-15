@@ -437,7 +437,7 @@ height:50vh;
 <h2 id="Project-Reactor"><a href="#Project-Reactor" class="headerlink" title="Project Reactor"></a>Project Reactor</h2><p>Project Reactor 是一个基于 Java 8 的实现了响应式流规范 （Reactive Streams specification）的响应式库。</p>
 <p>Reactor 引入了实现 Publisher 的响应式类 Flux 和 Mono，以及丰富的操作方式。 一个 Flux 对象代表一个包含 0..N 个元素的响应式序列，而一个 Mono 对象代表一个包含零或者一个（0..1）元素的结果。</p>
 <h3 id="Flux-和-Mono"><a href="#Flux-和-Mono" class="headerlink" title="Flux 和 Mono"></a>Flux 和 Mono</h3><p>Flux 是生产者，即我们上面提到的 Publisher，它代表的是一个包含 0-N 个元素的异步序列，Mono可以看做 Flux 的有一个特例，代表 0-1 个元素，如果不需要生产任何元素，只是需要一个完成任务的信号，可以使用 Mono。</p>
-<h4 id="Flux-包含-0-N-个元素的异步序列"><a href="#Flux-包含-0-N-个元素的异步序列" class="headerlink" title="Flux-包含 0-N 个元素的异步序列"></a>Flux-包含 0-N 个元素的异步序列</h4><p><img src="https://user-gold-cdn.xitu.io/2019/6/2/16b15a03f9385f59?w=640&amp;h=227&amp;f=png&amp;s=77358" alt="Flux"></p>
+<h4 id="Flux-包含-0-N-个元素的异步序列"><a href="#Flux-包含-0-N-个元素的异步序列" class="headerlink" title="Flux-包含 0-N 个元素的异步序列"></a>Flux-包含 0-N 个元素的异步序列</h4><p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/reactor/reactor-flux.jpg" alt="Flux"></p>
 <p>先来看这张图，这里是直接从官方文档上贴过来的。就这张图做下说明，先来关注几个点：</p>
 <ul>
 <li>从左到右的时间序列轴</li>
@@ -454,7 +454,7 @@ height:50vh;
 <blockquote>
 <p>Flux<t> 是一个能够发出 0 到 N 个元素的标准的 Publisher<t>，它会被一个 “error”  或 “completion” 信号终止。因此，一个 Flux 的结果可能是一个 value、completion 或 error。 就像在响应式流规范中规定的那样，这三种类型的信号被翻译为面向下游的 <code>onNext</code>，<code>onComplete</code>和<code>onError</code>方法。</t></t></p>
 </blockquote>
-<h4 id="Mono-异步的-0-1-结果"><a href="#Mono-异步的-0-1-结果" class="headerlink" title="Mono-异步的 0-1 结果"></a>Mono-异步的 0-1 结果</h4><p><img src="https://user-gold-cdn.xitu.io/2019/6/2/16b15c30fed69197?w=640&amp;h=227&amp;f=png&amp;s=60634" alt="Mono"></p>
+<h4 id="Mono-异步的-0-1-结果"><a href="#Mono-异步的-0-1-结果" class="headerlink" title="Mono-异步的 0-1 结果"></a>Mono-异步的 0-1 结果</h4><p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/reactor/reactor-mono.jpg" alt="Mono"></p>
 <p>这张图也来自官方文档，和上面 Flux 的区别就是，Mono 最多只能 emitted 一个元素。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mono.just(<span class="string">"glmapper"</span>).subscribe(System.out::println);</span><br></pre></td></tr></table></figure></p>
 <h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>通过上面两段小的代码来看，最直观的感受是，Flux 相当于一个 List，Mono 相当于 Optional。其实在编程中所有的结果我们都可以用 List 来 表示，但是当只返回一个或者没有结果时，用 Optional 可能会更精确些。</p>
 <blockquote>
@@ -468,7 +468,7 @@ height:50vh;
 <li>back pressure：背压。对 MQ 有了解的应该清楚，消息积压一般是在消费端，也就是说生产端只负责生产，并不会关心消费端的消费能力，这样就到导致 pressure 积压在消费端，这个是正向的。从上面对 Reactor 中的一些了解，Subscriber 是主动向 Publisher 请求的，这样当消费端消费的速度没有生产者快时，这些消息还是积压在生产端；这种好处就是生产者可以根据实际情况适当的调整生产消息的速度。</li>
 <li>Hot VS Cold ：参考 <a href="https://htmlpreview.github.io/?https://github.com/get-set/reactor-core/blob/master-zh/src/docs/index.html#reactor.hotCold" target="_blank" rel="noopener">Hot VS Cold</a></li>
 </ul>
-<h3 id="核心调用过程"><a href="#核心调用过程" class="headerlink" title="核心调用过程"></a>核心调用过程</h3><p>Reactor 的核心调用过程大致可以分为图中的几个阶段<br><img src="https://user-gold-cdn.xitu.io/2019/6/2/16b18a9947994dc3?w=921&amp;h=224&amp;f=png&amp;s=9932" alt=""></p>
+<h3 id="核心调用过程"><a href="#核心调用过程" class="headerlink" title="核心调用过程"></a>核心调用过程</h3><p>Reactor 的核心调用过程大致可以分为图中的几个阶段<br><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/reactor/reactor-processor.jpg" alt=""></p>
 <ul>
 <li>声明：无论是使用 just 或者其他什么方式创建反应式流，这个过程都可以称之为声明，因为此时这些代码不会被实际的执行。</li>
 <li>subscribe：当调用 subscribe 时，整个执行过程便进入 subscribe 阶段，经过一系列的调用之后，subscribe 动作会代理给具体的 Flux 来实现。</li>
@@ -547,7 +547,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2019/08/24/base-java-reacotr/">http://www.glmapper.com/2019/08/24/base-java-reacotr/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2019/08/24/base-java-reacotr/">August 24th 2019, 8:59:26 am</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2019/08/24/base-java-reacotr/">December 14th 2019, 11:09:50 am</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/08/24/base-java-reacotr/">December 16th 2019, 12:06:01 am</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
