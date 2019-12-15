@@ -405,10 +405,10 @@ height:50vh;
     <article class="article-entry">
         <p>最近研究 <a href="https://github.com/sofastack/sofa-ark" target="_blank" rel="noopener">sofa-ark</a> 的插件机制时，发现当执行完 <code>maven clean install -DskipTests</code> 时，打在 target 目录下的 <code>xxx.jar</code> 与安装到本地仓库的 <code>xxx.jar</code> 大小不一致。</p>
 <ul>
-<li><p>target 目录下的插件大小<br>  <img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1c9bc8cf80411?w=1328&amp;h=210&amp;f=png&amp;s=161012" alt=""></p>
+<li><p>target 目录下的插件大小<br>  <img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-one.jpg" alt=""></p>
 </li>
 <li><p>.m2 下的插件大小</p>
-<p>  <img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1c9d0f3dd11d9?w=1354&amp;h=162&amp;f=png&amp;s=255003" alt=""></p>
+<p>  <img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-two.jpg" alt=""></p>
 </li>
 </ul>
 <p>其实一开始看到这种现象也是懵逼，同一个工程，同一次命令执行，但是得到的两个 jar 包大小差距巨大。那么对于这种问题，我想到的有两点：</p>
@@ -417,34 +417,34 @@ height:50vh;
 <li>了解 maven 插件的生命周期</li>
 </ul>
 <h2 id="debug-打包插件执行过程"><a href="#debug-打包插件执行过程" class="headerlink" title="debug 打包插件执行过程"></a>debug 打包插件执行过程</h2><p>这里需要借助 IDEA 中的远程 debug 能力来完成。目前有两个工程，一个是我们的主工程，工程名为上面截图中的 mq-client-ark-plugin ，另一个是打包插件的源码工程，如下图所示：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1ca642c08e658?w=2816&amp;h=1480&amp;f=png&amp;s=743986" alt=""></p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-three.jpg" alt=""></p>
 <p>那么下面就一步一步来完成远程 <code>debug</code> 的配置。</p>
 <h3 id="1、使用-mvnDebug-命令开启-debug-模式"><a href="#1、使用-mvnDebug-命令开启-debug-模式" class="headerlink" title="1、使用 mvnDebug 命令开启 debug 模式"></a>1、使用 mvnDebug 命令开启 debug 模式</h3><p>在主工程 <code>mq-client-ark-plugin</code> 的根目录下执行  <code>mvnDebug install</code>（当然除了 <code>install</code> 之外，也可以是 <code>compile</code>、<code>package</code>、<code>test</code>、<code>deploy</code> 等）。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1caa278bf23ee?w=1700&amp;h=230&amp;f=png&amp;s=99653" alt=""></p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-four.jpg" alt=""></p>
 <p>当执行完 <code>mvnDebug install</code> 后，可以看到这个阻塞监听 8000 端口了。</p>
-<h3 id="2、源码工程配置远程-debug"><a href="#2、源码工程配置远程-debug" class="headerlink" title="2、源码工程配置远程 debug"></a>2、源码工程配置远程 debug</h3><p>在 <code>idea</code> 主界面找下下图的工具菜单，选择 <code>Edit Configurations...</code><br><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cad637854e1d?w=2108&amp;h=254&amp;f=png&amp;s=174555" alt=""><br>打开配置面板之后，左上角 <code>+</code> 选择 <code>Remote</code><br><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cac7605211e1?w=504&amp;h=132&amp;f=png&amp;s=384137" alt=""><br>填写相关远程 debug 参数</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cabf223e56be?w=2398&amp;h=802&amp;f=png&amp;s=326272" alt=""></p>
+<h3 id="2、源码工程配置远程-debug"><a href="#2、源码工程配置远程-debug" class="headerlink" title="2、源码工程配置远程 debug"></a>2、源码工程配置远程 debug</h3><p>在 <code>idea</code> 主界面找下下图的工具菜单，选择 <code>Edit Configurations...</code><br><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-five.jpg" alt=""><br>打开配置面板之后，左上角 <code>+</code> 选择 <code>Remote</code><br><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-six.jpg" alt=""><br>填写相关远程 debug 参数</p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-seven.jpg" alt=""></p>
 <ul>
 <li><code>Host</code> : 远程目标主机地址，因为之前 主工程也是本地启动的，所以这里就是 <code>localhost</code></li>
 <li><code>Port</code> : 远程目标主机开启的远程 <code>debug</code> 端口</li>
 <li>开启远程 <code>debug</code> 参数：<code>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000</code></li>
 </ul>
 <p>配置完成之后，执行 <code>debug</code> ，可以看下已经连接到了目标机器：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cb38a0b44364?w=2500&amp;h=786&amp;f=png&amp;s=312933" alt=""></p>
-<p>在来看主工程这里，在源码工程没有执行上面的 <code>debug</code> 按钮之前，一直都是阻塞的，执行之后 <code>maven</code> 执行的生命周期开始了:<br><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cb5176a3b954?w=2308&amp;h=1544&amp;f=png&amp;s=1361618" alt=""></p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-eight.jpg" alt=""></p>
+<p>在来看主工程这里，在源码工程没有执行上面的 <code>debug</code> 按钮之前，一直都是阻塞的，执行之后 <code>maven</code> 执行的生命周期开始了:<br><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-nine.jpg" alt=""></p>
 <p>如上图，因为在源码工程中打了断点，所以当执行到 <code>sofa-ark-maven-plugin</code> 插件时阻塞了。</p>
 <h2 id="从-maven-执行的生命周期找出问题根源"><a href="#从-maven-执行的生命周期找出问题根源" class="headerlink" title="从 maven 执行的生命周期找出问题根源"></a>从 maven 执行的生命周期找出问题根源</h2><p>上面已经搞定了对目标插件源码的 <code>debug</code> 模式的开启，那么下面就是对插件代码进行 <code>debug</code> 操作。节省篇幅，这里直接将断点放在目标代码行位置：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cb8be741a276?w=2716&amp;h=978&amp;f=png&amp;s=1301147" alt=""></p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-ten.jpg" alt=""></p>
 <p>分析这段代码</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cbc509cac37a?w=2290&amp;h=256&amp;f=png&amp;s=447587" alt=""></p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-11.jpg" alt=""></p>
 <ul>
 <li>1、获取到项目的 <code>Artifact</code> ,此时 <code>Artifact</code> 的 <code>file</code> 为：<br><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cbdc73f415dc?w=1696&amp;h=58&amp;f=png&amp;s=113162" alt=""></li>
 <li>2、重新设置的 <code>File</code></li>
 <li>3、重新设置了 <code>artifact</code></li>
 </ul>
-<p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cbfc1921d886?w=1520&amp;h=620&amp;f=png&amp;s=512735" alt=""></p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-12.jpg" alt=""></p>
 <p>如果单从上面 <code>debug</code> 来看，其实很难解释开篇的那个问题。那么这里在回过头来看下 主工程的 <code>maven</code> 执行日志：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/7/23/16c1cc26a8c654a2?w=2440&amp;h=1546&amp;f=png&amp;s=1432324" alt=""></p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/maven-pack/maven-pack-13.jpg" alt=""></p>
 <p>如上图中圈红的部分，代表 <code>maven install</code> 所经历的所有阶段。可以看到 <code>sofa-ark-plugin-maven-plugin</code> 是在  <code>maven-install-plugin</code> 后面，那这意味着什么呢？</p>
 <p><strong>我们知道在 target 目录下得到的 xxx.jar 是打包阶段的产物，而 .m2 下面的是 install 的产物。</strong></p>
 <blockquote>
@@ -463,7 +463,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2019/07/23/maven-debug/">http://www.glmapper.com/2019/07/23/maven-debug/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2019/07/23/maven-debug/">July 23rd 2019, 7:12:48 pm</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2019/07/23/maven-debug/">August 24th 2019, 8:49:09 am</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/07/23/maven-debug/">December 15th 2019, 11:58:03 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
