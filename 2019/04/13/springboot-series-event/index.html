@@ -458,7 +458,7 @@ height:50vh;
 <ul>
 <li>执行结果</li>
 </ul>
-<p><img src="https://user-gold-cdn.xitu.io/2019/1/1/1680822d81776a67?w=2620&amp;h=806&amp;f=png&amp;s=354682" alt=""></p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-one.jpg" alt=""></p>
 <h2 id="SpringBoot-中的事件体系"><a href="#SpringBoot-中的事件体系" class="headerlink" title="SpringBoot 中的事件体系"></a>SpringBoot 中的事件体系</h2><p>这里围绕 <code>SpringApplicationRunListener</code> 这个类来说。在实现类 <code>EventPublishingRunListener</code> 中，事件发布有两种模式：</p>
 <ul>
 <li>通过 <code>SimpleApplicationEventMulticaster</code> 进行事件广播</li>
@@ -468,12 +468,12 @@ height:50vh;
 <h3 id="SimpleApplicationEventMulticaster"><a href="#SimpleApplicationEventMulticaster" class="headerlink" title="SimpleApplicationEventMulticaster"></a>SimpleApplicationEventMulticaster</h3><p><code>SimpleApplicationEventMulticaster</code>是 <code>Spring</code> 默认的事件广播器。来看下它是怎么工作的：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">multicastEvent</span><span class="params">(<span class="keyword">final</span> ApplicationEvent event, @Nullable ResolvableType eventType)</span> </span>&#123;</span><br><span class="line">    ResolvableType type = (eventType != <span class="keyword">null</span> ? eventType : resolveDefaultEventType(event));</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">final</span> ApplicationListener&lt;?&gt; listener : getApplicationListeners(event, type)) &#123;</span><br><span class="line">        Executor executor = getTaskExecutor();</span><br><span class="line">        <span class="keyword">if</span> (executor != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 异步的</span></span><br><span class="line">            executor.execute(() -&gt; invokeListener(listener, event));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            invokeListener(listener, event);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>从上面的代码段可以看出，它是通过遍历注册的每个监听器，并启动来调用每个监听器的 <code>onApplicationEvent</code> 方法。</p>
-<p>下面再来看下 <code>SimpleApplicationEventMulticaster</code> 的类集成结构：<br><img src="https://user-gold-cdn.xitu.io/2019/1/1/1680830a7fd2c4b5?w=1434&amp;h=602&amp;f=png&amp;s=59215" alt=""><br>这里的 <code>AbstractApplicationContext</code> 下面来聊，这个类实际上就负责了事件体系的初始化工作。</p>
+<p>下面再来看下 <code>SimpleApplicationEventMulticaster</code> 的类集成结构：<br><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-two.jpg" alt=""><br>这里的 <code>AbstractApplicationContext</code> 下面来聊，这个类实际上就负责了事件体系的初始化工作。</p>
 <h3 id="事件体系的初始化"><a href="#事件体系的初始化" class="headerlink" title="事件体系的初始化"></a>事件体系的初始化</h3><p>事件体系的初始化对应在 <code>SpringBoot</code>启动过程的 <code>refreshContext</code>这个方法；<code>refreshContext</code>具体调用 AbstractApplicationContext.refresh()方法，最后调用 initApplicationEventMulticaster() 来完成事件体系的初始化,代码如下：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/1/1/1680835fb264f84a?w=1618&amp;h=696&amp;f=png&amp;s=223928" alt=""></p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-three.jpg" alt=""></p>
 <p>用户可以为容器定义一个自定义的事件广播器，只要实现 <code>ApplicationEventMulticaster</code> 就可以了，<code>Spring</code> 会通过 反射的机制将其注册成容器的事件广播器，如果没有找到配置的外部事件广播器，<code>Spring</code> 就是默认使用 <code>SimpleApplicationEventMulticaster</code> 作为事件广播器。</p>
 <h3 id="事件注册"><a href="#事件注册" class="headerlink" title="事件注册"></a>事件注册</h3><p>事件注册是在事件体系初始化完成之后做的事情，也是在 <code>AbstractApplicationContext.refresh()</code> 方法中进行调用的。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/1/1/16808437ea8623d2?w=1760&amp;h=786&amp;f=png&amp;s=200511" alt=""><br>这里干了三件事：</p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-four.jpg" alt=""><br>这里干了三件事：</p>
 <ul>
 <li>首先注册静态指定的 <code>listeners</code>；这里包括我们自定义的那些监听器。</li>
 <li>调用 <code>DefaultListableBeanFactory</code> 中 <code>getBeanNamesForType</code> 得到自定义的 <code>ApplicationListener</code> <code>bean</code> 进行事件注册。</li>
@@ -481,7 +481,7 @@ height:50vh;
 </ul>
 <h3 id="事件广播"><a href="#事件广播" class="headerlink" title="事件广播"></a>事件广播</h3><p>事件发布伴随着 <code>SpringBoot</code> 启动的整个生命周期。不同阶段对应发布不同的事件，上面我们已经对各个事件进行了分析，下面就具体看下发布事件的实现：</p>
 <blockquote>
-<p>org.springframework.context.support.AbstractApplicationContext#publishEvent<br><img src="https://user-gold-cdn.xitu.io/2019/1/1/168084a716c01856?w=1344&amp;h=1002&amp;f=png&amp;s=210096" alt=""></p>
+<p>org.springframework.context.support.AbstractApplicationContext#publishEvent<br><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-five.jpg" alt=""></p>
 </blockquote>
 <blockquote>
 <p>earlyApplicationEvents 中的事件是广播器未建立的时候保存通知信息，一旦容器建立完成，以后都是直接通知。</p>
@@ -489,14 +489,14 @@ height:50vh;
 <p>广播事件最终还是通过调用 <code>ApplicationEventMulticaster</code> 的 <code>multicastEvent</code> 来实现。而 <code>multicastEvent</code> 也就就是事件执行的方法。</p>
 <h3 id="事件执行"><a href="#事件执行" class="headerlink" title="事件执行"></a>事件执行</h3><p>上面 <code>SimpleApplicationEventMulticaster</code> 小节已经初步介绍了 <code>multicastEvent</code> 这个方法。补充一点， 如果有可用的 <code>taskExecutor</code> 会使用并发的模式执行事件，但是实际上 <code>SimpleApplicationEventMulticaster</code> 并没有提供线程池实现，默认请况下是使用同步的方式执行事件（<code>org.springframework.core.task.SyncTaskExecutor</code>），所以如果需要异步配置的话，需要自己去实现线程池。</p>
 <h2 id="SpringBoot-启动过程中的事件阶段"><a href="#SpringBoot-启动过程中的事件阶段" class="headerlink" title="SpringBoot 启动过程中的事件阶段"></a>SpringBoot 启动过程中的事件阶段</h2><p>这里回到 <code>SpringApplication</code>的<code>run</code>方法，看下 <code>SpringBoot</code> 在启动过程中，各个事件阶段做了哪些事情。</p>
-<h3 id="starting-gt-ApplicationStartingEvent"><a href="#starting-gt-ApplicationStartingEvent" class="headerlink" title="starting -&gt; ApplicationStartingEvent"></a>starting -&gt; ApplicationStartingEvent</h3><p>这里 <code>debug</code> 到 <code>starting</code> 方法，追踪到 <code>multicastEvent</code>，这里 <code>type</code>为 <code>ApplicationStartingEvent</code>；对应的事件如下：<br><img src="https://user-gold-cdn.xitu.io/2019/1/1/16808657f6db440c?w=1206&amp;h=232&amp;f=png&amp;s=70540" alt=""></p>
+<h3 id="starting-gt-ApplicationStartingEvent"><a href="#starting-gt-ApplicationStartingEvent" class="headerlink" title="starting -&gt; ApplicationStartingEvent"></a>starting -&gt; ApplicationStartingEvent</h3><p>这里 <code>debug</code> 到 <code>starting</code> 方法，追踪到 <code>multicastEvent</code>，这里 <code>type</code>为 <code>ApplicationStartingEvent</code>；对应的事件如下：<br><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-six.jpg" alt=""></p>
 <ul>
 <li>LoggerApplicationListener：配置日志系统。使用<code>logging.config</code>环境变量指定的配置或者缺省配置</li>
 <li>BackgroundPreinitializer：尽早触发一些耗时的初始化任务，使用一个后台线程</li>
 <li>DelegatingApplicationListener：监听到事件后转发给环境变量<code>context.listener.classes</code>指定的那些事件监听器</li>
 <li>LiquibaseServiceLocatorApplicationListener：使用一个可以和 <code>SpringBoot</code> 可执行<code>jar</code>包配合工作的版本替换 <code>liquibase ServiceLocator</code></li>
 </ul>
-<h3 id="listeners-environmentPrepared-gt-ApplicationEnvironmentPreparedEvent"><a href="#listeners-environmentPrepared-gt-ApplicationEnvironmentPreparedEvent" class="headerlink" title="listeners.environmentPrepared-&gt;ApplicationEnvironmentPreparedEvent"></a>listeners.environmentPrepared-&gt;ApplicationEnvironmentPreparedEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/16808703538f4265?w=1336&amp;h=354&amp;f=png&amp;s=109143" alt=""></p>
+<h3 id="listeners-environmentPrepared-gt-ApplicationEnvironmentPreparedEvent"><a href="#listeners-environmentPrepared-gt-ApplicationEnvironmentPreparedEvent" class="headerlink" title="listeners.environmentPrepared-&gt;ApplicationEnvironmentPreparedEvent"></a>listeners.environmentPrepared-&gt;ApplicationEnvironmentPreparedEvent</h3><p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-seven.jpg" alt=""></p>
 <ul>
 <li>AnsiOutputApplicationListener：根据<code>spring.output.ansi.enabled</code>参数配置<code>AnsiOutput</code></li>
 <li><p>ConfigFileApplicationListener：<code>EnvironmentPostProcessor</code>，从常见的那些约定的位置读取配置文件，比如从以下目录读取<code>application.properties</code>,<code>application.yml</code>等配置文件：</p>
@@ -512,17 +512,17 @@ height:50vh;
 <li>ClasspathLoggingApplicationListener：对环境就绪事件<code>ApplicationEnvironmentPreparedEvent</code>/应用失败事<code>件ApplicationFailedEvent</code>做出响应，往日志<code>DEBUG</code>级别输出<code>TCCL(thread context class loader)</code>的 <code>classpath</code>。</li>
 <li>FileEncodingApplicationListener：如果系统文件编码和环境变量中指定的不同则终止应用启动。具体的方法是比较系统属性<code>file.encoding</code>和环境变量<code>spring.mandatory-file-encoding</code>是否相等(大小写不敏感)。</li>
 </ul>
-<h3 id="listeners-contextPrepared-gt-ApplicationContextInitializedEvent"><a href="#listeners-contextPrepared-gt-ApplicationContextInitializedEvent" class="headerlink" title="listeners.contextPrepared-&gt;ApplicationContextInitializedEvent"></a>listeners.contextPrepared-&gt;ApplicationContextInitializedEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/1680877bed3cfbbd?w=1112&amp;h=148&amp;f=png&amp;s=49908" alt=""><br>相关监听器参考上面的描述。</p>
-<h3 id="listeners-contextLoaded-gt-ApplicationPreparedEvent"><a href="#listeners-contextLoaded-gt-ApplicationPreparedEvent" class="headerlink" title="listeners.contextLoaded-&gt;ApplicationPreparedEvent"></a>listeners.contextLoaded-&gt;ApplicationPreparedEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/168087a73a7666bd?w=1122&amp;h=232&amp;f=png&amp;s=71270" alt=""><br>相关监听器参考上面的描述。</p>
-<h3 id="refresh-gt-ContextRefreshedEvent"><a href="#refresh-gt-ContextRefreshedEvent" class="headerlink" title="refresh-&gt;ContextRefreshedEvent"></a>refresh-&gt;ContextRefreshedEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/168087bc9054d773?w=1324&amp;h=234&amp;f=png&amp;s=77283" alt=""></p>
+<h3 id="listeners-contextPrepared-gt-ApplicationContextInitializedEvent"><a href="#listeners-contextPrepared-gt-ApplicationContextInitializedEvent" class="headerlink" title="listeners.contextPrepared-&gt;ApplicationContextInitializedEvent"></a>listeners.contextPrepared-&gt;ApplicationContextInitializedEvent</h3><p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-12.jpg" alt=""><br>相关监听器参考上面的描述。</p>
+<h3 id="listeners-contextLoaded-gt-ApplicationPreparedEvent"><a href="#listeners-contextLoaded-gt-ApplicationPreparedEvent" class="headerlink" title="listeners.contextLoaded-&gt;ApplicationPreparedEvent"></a>listeners.contextLoaded-&gt;ApplicationPreparedEvent</h3><p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-eight.jpg" alt=""><br>相关监听器参考上面的描述。</p>
+<h3 id="refresh-gt-ContextRefreshedEvent"><a href="#refresh-gt-ContextRefreshedEvent" class="headerlink" title="refresh-&gt;ContextRefreshedEvent"></a>refresh-&gt;ContextRefreshedEvent</h3><p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-nine.jpg" alt=""></p>
 <ul>
 <li>ConditionEvaluationReportLoggingListener：实际上实现的是 <code>ApplicationContextInitializer</code>接口，其目的是将 <code>ConditionEvaluationReport</code> 写入到日志，使用<code>DEBUG</code>级别输出。程序崩溃报告会触发一个消息输出，建议用户使用调试模式显示报告。它是在应用初始化时绑定一个<code>ConditionEvaluationReportListener</code>事件监听器，然后相应的事件发生时输出<code>ConditionEvaluationReport</code>报告。</li>
 <li>ClearCachesApplicationListener：应用上下文加载完成后对缓存做清除工作，响应事件<code>ContextRefreshedEvent</code>。</li>
 <li>SharedMetadataReaderFactoryContextInitializer：　向<code>context</code>注册了一个<code>BeanFactoryPostProcessor</code>：<code>CachingMetadataReaderFactoryPostProcessor</code>实例。</li>
 <li>ResourceUrlProvider：<code>handling mappings</code>处理</li>
 </ul>
-<h3 id="started-gt-ApplicationStartedEvent"><a href="#started-gt-ApplicationStartedEvent" class="headerlink" title="started-&gt;ApplicationStartedEvent"></a>started-&gt;ApplicationStartedEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/168088a3a77dae6d?w=1142&amp;h=160&amp;f=png&amp;s=51171" alt=""><br>相关监听器参考上面的描述。</p>
-<h3 id="running-gt-ApplicationReadyEvent"><a href="#running-gt-ApplicationReadyEvent" class="headerlink" title="running-&gt;ApplicationReadyEvent"></a>running-&gt;ApplicationReadyEvent</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/1/168088b04deff509?w=974&amp;h=194&amp;f=png&amp;s=62237" alt=""><br>相关监听器参考上面的描述。</p>
+<h3 id="started-gt-ApplicationStartedEvent"><a href="#started-gt-ApplicationStartedEvent" class="headerlink" title="started-&gt;ApplicationStartedEvent"></a>started-&gt;ApplicationStartedEvent</h3><p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-ten.jpg" alt=""><br>相关监听器参考上面的描述。</p>
+<h3 id="running-gt-ApplicationReadyEvent"><a href="#running-gt-ApplicationReadyEvent" class="headerlink" title="running-&gt;ApplicationReadyEvent"></a>running-&gt;ApplicationReadyEvent</h3><p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/bootevents/boot-event-11.jpg" alt=""><br>相关监听器参考上面的描述。</p>
 <h3 id="BackgroundPreinitializer-amp-DelegatingApplicationListener"><a href="#BackgroundPreinitializer-amp-DelegatingApplicationListener" class="headerlink" title="BackgroundPreinitializer&amp;DelegatingApplicationListener"></a>BackgroundPreinitializer&amp;DelegatingApplicationListener</h3><p>这两个贯穿了整个过程，这里拎出来单独解释下：</p>
 <ul>
 <li>BackgroundPreinitializer：对于一些耗时的任务使用一个后台线程尽早触发它们开始执行初始化，这是<code>SpringBoot</code>的缺省行为。这些初始化动作也可以叫做预初始化。可以通过设置系统属性<code>spring.backgroundpreinitializer.ignore</code>为<code>true</code>可以禁用该机制。该机制被禁用时，相应的初始化任务会发生在前台线程。</li>
@@ -541,7 +541,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2019/04/13/springboot-series-event/">http://www.glmapper.com/2019/04/13/springboot-series-event/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2019/04/13/springboot-series-event/">April 13th 2019, 10:55:41 pm</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2019/04/13/springboot-series-event/">December 9th 2019, 9:09:40 am</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/04/13/springboot-series-event/">December 16th 2019, 12:13:05 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -3194,7 +3194,7 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-session-cookie/">聊一聊session和cookie</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-session-cookie/">聊一聊 session和cookie</a>
         </li>
     
     
