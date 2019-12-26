@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2019-12-24T11:00:09.099Z</updated>
+  <updated>2019-12-26T16:42:42.037Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="http://www.glmapper.com/2019/12/24/springboot-series-summary/"/>
     <id>http://www.glmapper.com/2019/12/24/springboot-series-summary/</id>
     <published>2019-12-24T10:55:55.000Z</published>
-    <updated>2019-12-24T11:00:09.099Z</updated>
+    <updated>2019-12-26T16:42:42.037Z</updated>
     
-    <content type="html"><![CDATA[<ul><li>源码解析系列：<ul><li><a href="http://www.glmapper.com/2019/10/13/springboot-series-fatjar/">SpringBoot 系列-FatJar技术解析</a></li><li><a href="http://www.glmapper.com/2019/12/07/springboot-series-started/">SpringBoot 系列-启动过程解析</a></li><li><a href="http://www.glmapper.com/2019/04/13/springboot-series-event/">SpringBoot 系列-事件机制解析</a></li><li><a href="http://www.glmapper.com/2019/12/14/springboot-series-bean-life/">SpringBoot 系列-Bean 的生命周期与扩展</a></li><li>SpringBoot 系列-日志框架解析</li><li><a href="http://www.glmapper.com/2019/12/09/springboot-series-access-resource/">SpringBoot 系列-资源访问解析</a></li><li><a href="http://www.glmapper.com/2019/10/06/springboot-series-server-tomcat/">SpringBoot 系列-内嵌Web容器解析</a></li><li>SpringBoot 系列-自动配置解析</li><li>SpringBoot 系列-外部化配置解析</li><li>SpringBoot 系列-Production-ready 解析</li></ul></li><li>实践系列<ul><li>SpringBoot 实践-集成消息中间件</li><li>SpringBoot 实践-集成 Dubbo</li><li>SpringBoot 实践-集成 REDIS</li><li>SpringBoot 实践-集成 NOSQL</li><li>SpringBoot 实践-集成 Oauth2</li><li>SpringBoot 实践-集成 Quartz Scheduler</li><li>SpringBoot 实践-集成 服务链路跟踪组件</li><li>SpringBoot 实践-镜像化部署</li><li>SpringBoot 实践-使用 K8S 部署 SpringBoot 工程</li></ul></li></ul>]]></content>
+    <content type="html"><![CDATA[<ul><li>源码解析系列：<ul><li><a href="http://www.glmapper.com/2019/10/13/springboot-series-fatjar/">SpringBoot 系列-FatJar技术解析</a></li><li><a href="http://www.glmapper.com/2019/12/07/springboot-series-started/">SpringBoot 系列-启动过程解析</a></li><li><a href="http://www.glmapper.com/2019/04/13/springboot-series-event/">SpringBoot 系列-事件机制解析</a></li><li><a href="http://www.glmapper.com/2019/12/14/springboot-series-bean-life/">SpringBoot 系列-Bean 的生命周期与扩展</a></li><li><a href="http://www.glmapper.com/2019/12/14/springboot-series-log/">SpringBoot 系列-日志框架解析</a></li><li><a href="http://www.glmapper.com/2019/12/09/springboot-series-access-resource/">SpringBoot 系列-资源访问解析</a></li><li><a href="http://www.glmapper.com/2019/10/06/springboot-series-server-tomcat/">SpringBoot 系列-内嵌Web容器解析</a></li><li>SpringBoot 系列-自动配置解析</li><li>SpringBoot 系列-外部化配置解析</li><li>SpringBoot 系列-Production-ready 解析</li></ul></li><li>实践系列<ul><li>SpringBoot 实践-集成消息中间件</li><li>SpringBoot 实践-集成 Dubbo</li><li>SpringBoot 实践-集成 REDIS</li><li>SpringBoot 实践-集成 NOSQL</li><li>SpringBoot 实践-集成 Oauth2</li><li>SpringBoot 实践-集成 Quartz Scheduler</li><li>SpringBoot 实践-集成 服务链路跟踪组件</li><li>SpringBoot 实践-镜像化部署</li><li>SpringBoot 实践-使用 K8S 部署 SpringBoot 工程</li></ul></li></ul>]]></content>
     
     <summary type="html">
     
