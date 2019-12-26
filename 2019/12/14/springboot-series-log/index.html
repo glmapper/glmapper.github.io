@@ -430,7 +430,41 @@ height:50vh;
 <p>当启用 debug 级别时，将配置一系列核心日志记录器(嵌入式容器、Hibernate 和 Spring Boot) 以输出更多信息。启用 debug 模式并不会将应用程序配置为记录所有具有 debug 级别的消息。同样的，也可以使用 <code>—-trace</code> 标记来启动 trace 级别模式来启动应用程序。</p>
 <h2 id="彩色编码输出"><a href="#彩色编码输出" class="headerlink" title="彩色编码输出"></a>彩色编码输出</h2><p>如果你的终端支持 ANSI，你可以通过设置 “spring.output.ansi.enable“ 配置项值来指定颜色（前提是官方已经支持的颜色）。颜色编码是通过使用 <code>%clr</code> 转换字来配置的，最简单的就是根据日志级别对输出的日志进行着色，如下面的示例所示:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%clr(%5p)</span><br></pre></td></tr></table></figure>
-<p>下表是官方提供的描述日志级别到颜色的映射关系表:<br>|  Level   | Color  |<br>|  —-  | —-  |<br>| FATAL  | Red |<br>| ERROR  | Red |<br>| WARN  | Yellow |<br>| INFO  | Green |<br>| DEBUG  | Green |<br>| TRACE  | Green |</p>
+<p>下表是官方提供的描述日志级别到颜色的映射关系表:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Color</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FATAL</td>
+<td>Red</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>Red</td>
+</tr>
+<tr>
+<td>WARN</td>
+<td>Yellow</td>
+</tr>
+<tr>
+<td>INFO</td>
+<td>Green</td>
+</tr>
+<tr>
+<td>DEBUG</td>
+<td>Green</td>
+</tr>
+<tr>
+<td>TRACE</td>
+<td>Green</td>
+</tr>
+</tbody>
+</table>
 <p>如果你想要使文本变成黄色，可以使用以下设置:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%clr(%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125;)&#123;yellow&#125;</span><br></pre></td></tr></table></figure>
 <p>目前支持的颜色和样式包括 : blue、cyan、faint、green、magenta、red、yellow。</p>
@@ -667,7 +701,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2019/12/14/springboot-series-log/">http://www.glmapper.com/2019/12/14/springboot-series-log/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2019/12/14/springboot-series-log/">December 14th 2019, 11:17:40 am</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2019/12/14/springboot-series-log/">December 27th 2019, 12:41:31 am</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2019/12/14/springboot-series-log/">December 27th 2019, 12:51:17 am</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
