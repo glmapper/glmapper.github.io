@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[SpringBoot系列-配置解析]]></title>
+    <url>%2F2019%2F12%2F29%2Fspringboot-series-propertysource%2F</url>
+    <content type="text"><![CDATA[注：本文基于 SpringBoot 2.1.11 版本 说到配置，你能想到的是什么？ 在日常的开发和运维过程中，可以说配置都是及其重要的，因为它可能影响到应用的正常启动或者正常运行。相信在之前 Spring xml 时代，很多人都会被一堆 xml 配置折腾的够呛，除此之外，还有像数据库连接配置、缓存配置、注册中心配置、消息配置等等，这些相信大家都不会陌生。 配置对于开发人员或者运维人员来说可以比喻成一把”钥匙“，可以通过这把”钥匙“让我们的程序 run 起来，可以通过这把 ”钥匙“ 开启或者关闭应用程序的某一个功能。那么为什么会需要配置，对于一个应用来说，配置的意义又是什么呢？ 配置对于框架组件和应用程序的意义配置对于框架组件和应用程序的意义是什么？我的理解是可以让框架组件和应用程序变得灵活，通过配置可以使得一个框架组件或者一个应用程序在不需要做任何自身代码变更的情况下跑在不同的环境、不同的场景下。例如 Dubbo ，用户可以通过配置使得 Dubbo 将服务注册到不同的注册中心，nacos、zookeeper、SOFARegistry 等等；再比如，我有一个应用程序，在 dev 环境和生产环境需要连接不同的数据库，但是我又不想去在代码里面去做修改来适配不同的环境，那么同样我也可以使用配置的方式来做控制。配置可以让框架组件和应用程序变得灵活、不强耦合在某一个场景或者环境下，它可以有很多种存在形态，如常见的是存在文件中、配置中心中、系统环境变量中，对于 JAVA 程序来说还可以是命令行参数或者 -D 参数。可以说任何优秀的框架或者应用，都离不开配置。 那么作为 Java 语言生态里面最优秀的框架， Spring 是如何管理和使用配置的呢？本篇将以 SpringBoot 中的配置为切入点，来进行详细的剖析。 SpringBoot 中的配置Spring Boot 官方文章中使用了单独的章节和大量的篇幅对配置进行了描述，可以见得，配置对于 SpringBoot 来说，是相当重要的。 Spring Boot 允许用户将配置外部化，以便可以在不同的环境中使用相同的应用程序代码，用户可以使用 properties 文件、YAML 文件、环境变量和命令行参数来具体化配置。属性值可以通过使用 @Value 注释直接注入 bean，可以通过 Spring 的环境抽象访问，也可以通过 @ConfigurationProperties 绑定到结构化对象。 在日常的开发中，对于 SpringBoot 中的配置，可能直接想到的就是 application.properties，实际上，从 SpringBoot 官方文档可以看到，SpringBoot 获取配置的方式有多达 17 种；同时 Spring Boot 也提供了一种非常特殊的 PropertyOrder，来允许用户可以在适当的场景下覆盖某些属性值，下面就是官方文档中描述的属性优先加载顺序: 1.在主目录（当 devtools 被激活，则为 ~/.spring-boot-devtools.properties ）中的 Devtools 全局设置属性。 2.在测试中使用到的 @TestPropertySource 注解。 3.在测试中使用到的 properties 属性，可以是 @SpringBootTest 和用于测试应用程序某部分的测试注解。 4.命令行参数。 5.来自 SPRING_APPLICATION_JSON 的属性（嵌入在环境变量或者系统属性【system propert】中的内联 JSON） 6.ServletConfig 初始化参数。 7.ServletContext 初始化参数。 8.来自 java:comp/env 的 JNDI 属性。 9.Java 系统属性（System.getProperties()）。 10.操作系统环境变量。 11.只有 random.* 属性的 RandomValuePropertySource。 12.在已打包的 fatjar 外部的指定 profile 的应用属性文件（application-{profile}.properties 和 YAML 变量）。 13.在已打包的 fatjar 内部的指定 profile 的应用属性文件（application-{profile}.properties 和 YAML 变量）。 14.在已打包的 fatjar 外部的应用属性文件（application.properties 和 YAML 变量）。 15.在已打包的 fatjar 内部的应用属性文件（application.properties 和 YAML 变量）。 16.在 @Configuration 类上的 @PropertySource 注解。 17.默认属性（使用 SpringApplication.setDefaultProperties 指定）。 相信绝大多数都是你不曾用过的，不用纠结，其实用不到也很正常，但是我们还是需要能够知道它提供的方式有哪些，以便于在适当的场景下掏出来镇楼！ Spring 中对于配置最终都是交给 Environment 对象来管理，也就是我们常说的 Spring 环境。比如可以通过以下方式从 Environment 中获取配置值： 12ConfigurableEnvironment environment = context.getEnvironment();environment.getProperty("key"); 那么 Environment 是如何被构建的呢？Environment 与配置的关系又是什么？ Enviroemnt 构建Environment 的构建发生在 prepareEnvironment 中，关于 SpringBoot 启动过程想了解更多，可以参考这篇 SpringBoot系列-启动过程分析。 12345678910111213141516private ConfigurableEnvironment getOrCreateEnvironment() &#123; if (this.environment != null) &#123; return this.environment; &#125; switch (this.webApplicationType) &#123; // 标准的 web 应用 case SERVLET: return new StandardServletEnvironment(); // webflux 应用 case REACTIVE: return new StandardReactiveWebEnvironment(); // 非web应用 default: return new StandardEnvironment(); &#125; &#125; 本篇基于非 web 应用分析，所有主要围绕 StandardEnvironment 这个类展开分析。 Environment 类继承结构体系： systemProperties &amp; systemEnvironment在构建 StandardEnvironment 对象的过程中，会初始化 systemProperties &amp; systemEnvironment 两个 PropertySource。其触发时机是在其父类 AbstractEnvironment 的构造函数中。customizePropertySources 方法在 AbstractEnvironment 中并没有具体的实现，其依赖子类完成，如下：1234567891011121314public AbstractEnvironment() &#123; customizePropertySources(this.propertySources);&#125;// 子类 StandardEnvironment 中的实现逻辑@Overrideprotected void customizePropertySources(MutablePropertySources propertySources) &#123; // 构建 systemProperties 配置 propertySources.addLast( new PropertiesPropertySource(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, getSystemProperties())); // // 构建 systemEnvironment 配置 propertySources.addLast( new SystemEnvironmentPropertySource(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, getSystemEnvironment()));&#125; 以我本机为例，来分别看下 systemProperties 和 systemEnvironment 主要是哪些东西 systemProperties systemEnvironment defaultProperties &amp; commandLineArgs在构建完默认的 Environment 完成之后就是配置 Environment ，这里主要就包括默认的 defaultProperties 和命令行参数两个部分。defaultProperties 可以通过以下方式设置： 12345Map&lt;String, Object&gt; defaultProperties = new HashMap&lt;&gt;();defaultProperties.put("defaultKey","defaultValue");SpringApplication springApplication = new SpringApplication(BootStrap.class);springApplication.setDefaultProperties(defaultProperties);springApplication.run(args); 配置 defaultProperties 和命令行参数过程的代码如下： 1234567891011121314151617181920212223protected void configurePropertySources(ConfigurableEnvironment environment, String[] args) &#123; MutablePropertySources sources = environment.getPropertySources(); // 如果 springApplication 设置了则构建 defaultProperties，没有就算了 if (this.defaultProperties != null &amp;&amp; !this.defaultProperties.isEmpty()) &#123; sources.addLast(new MapPropertySource("defaultProperties", this.defaultProperties)); &#125; // 命令行参数 if (this.addCommandLineProperties &amp;&amp; args.length &gt; 0) &#123; // PropertySource 名为 commandLineArgs String name = CommandLinePropertySource.COMMAND_LINE_PROPERTY_SOURCE_NAME; if (sources.contains(name)) &#123; PropertySource&lt;?&gt; source = sources.get(name); CompositePropertySource composite = new CompositePropertySource(name); composite.addPropertySource( new SimpleCommandLinePropertySource("springApplicationCommandLineArgs", args)); composite.addPropertySource(source); sources.replace(name, composite); &#125; else &#123; sources.addFirst(new SimpleCommandLinePropertySource(args)); &#125; &#125;&#125; SpringBoot 打成 fatjar 包后通过命令行传入的参数 包括以下 3 种实现方式 java -jar xxx.jar a b c : 通过 main 方法的参数获取，即 args java -jar xxx.jar -Dp1=a -Dp2=b -Dp3=c : -D 参数方式，会被设置到系统参数中 java -jar xxx.jar –p1=a –p2=b –p3=c : SpringBoot 规范方式，可以通过 @Value(“${p1}”） 获取 配置 Profiles为 application enviroment 配置哪些配置文件是 active 的(或者默认情况下是 active)。在配置文件处理期间，可以通过 spring.profiles.active 配置属性来激活其他配置文件。主要包括两种： 通过 spring.profiles.active 配置 1234567891011121314151617protected Set&lt;String&gt; doGetActiveProfiles() &#123; synchronized (this.activeProfiles) &#123; if (this.activeProfiles.isEmpty()) &#123; // 获取 spring.profiles.active 配置值 // 如：spring.profiles.active=local ，profiles 为 local // 如：spring.profiles.active=local,dev ，profiles 为 local,dev String profiles = getProperty(ACTIVE_PROFILES_PROPERTY_NAME); if (StringUtils.hasText(profiles)) &#123; // 按 ，分割成 String[] 数组 setActiveProfiles(StringUtils.commaDelimitedListToStringArray( StringUtils.trimAllWhitespace(profiles))); &#125; &#125; // 返回，这里还没有解析和 merge 配置 return this.activeProfiles; &#125;&#125; 通过 SpringApplication 对象 setAdditionalProfiles 配置 1234SpringApplication springApplication = new SpringApplication(BootStrap.class);// 设置 devspringApplication.setAdditionalProfiles("dev");springApplication.run(args); 以上两种方式设置的 profiles 会作为最后生效的 activeProfiles。 configurationProperties将 ConfigurationPropertySource 支持附加到指定的 Environment。将 Environment 管理的每个 PropertySource 调整为 ConfigurationPropertySource 类型，并允许 PropertySourcesPropertyResolver 使用 ConfigurationPropertyName 调用解析。附加的解析器将动态跟踪任何来自基础环境属性源的添加或删除（这个也是 SpringCloud Config 的底层支持原理）。 1234567891011121314151617public static void attach(Environment environment) &#123; // 类型检查 Assert.isInstanceOf(ConfigurableEnvironment.class, environment); MutablePropertySources sources = ((ConfigurableEnvironment) environment).getPropertySources(); // 获取名为 configurationProperties 的 PropertySource PropertySource&lt;?&gt; attached = sources.get(ATTACHED_PROPERTY_SOURCE_NAME); // 如果存在先移除，保证每次都是最新的 PropertySource if (attached != null &amp;&amp; attached.getSource() != sources) &#123; sources.remove(ATTACHED_PROPERTY_SOURCE_NAME); attached = null; &#125; if (attached == null) &#123; // 重新将名为 configurationProperties 的 PropertySource 放到属性源中 sources.addFirst(new ConfigurationPropertySourcesPropertySource(ATTACHED_PROPERTY_SOURCE_NAME, new SpringConfigurationPropertySources(sources))); &#125;&#125; 绑定 Environment 到 SpringApplication在 Spring Boot 2.0 中，用于绑定 Environment 属性的机制 @ConfigurationProperties 已经完全彻底修改; 所以相信很多人在迁移 SpringBoot 从 1.x 到 2.x 系列时，或者或少都会踩这块的坑。 新的 API 可以使得 @ConfigurationProperties 直接在你自己的代码之外使用。绑定规则可以参考：Relaxed-Binding-2.0。这里简单演示下： 123456789101112// 绑定 CustomPropList&lt;CustomProp&gt; props = Binder.get(run.getEnvironment()) .bind("glmapper.property", Bindable.listOf(CustomProp.class)) .orElseThrow(IllegalStateException::new);// 配置类@ConfigurationProperties(prefix = "glmapper.property")public class CustomProp &#123; private String name; private int age; // 省略 get&amp;set&#125; 属性配置：123456glmapper: property: - name: glmapper age: 26 - name: slg age: 26 从上面整个构建过程来看，Enviroment 对象构建实际就是 MutablePropertySources 对象填充的过程。Environment 的静态属性和存储容器都是在AbstractEnvironment 中定义的，ConfigurableWebEnvironment 接口提供的 getPropertySources() 方法可以获取到返回的 MutablePropertySources 实例，然后添加额外的 PropertySource。实际上，Environment 的存储容器就是 PropertySource 的子类集合，而 AbstractEnvironment 中使用的实例就是 MutablePropertySources。 那么到这里相比 Environment 与配置的关系就非常清楚了，一句话概括就是：Environment 是所有配置的管理器，是 Spring 对提供配置的统一接口。前面提到 Environment 管理了所有 Spring 的环境配置，这些配置最终是以 MutablePropertySources 对象的形态存在 Environment 中。下图为 MutablePropertySources 类的继承体系： 下面继续来看 PropertySources。 PropertySource &amp; PropertySources从名字就能直观看出，PropertySources 是持有一个或者多个 PropertySource 的类。PropertySources 提供了一组基本管理 PropertySource 的方法。 PropertySource下面看下 PropertySource 的源码： 123456789101112131415161718192021222324252627282930313233343536373839public abstract class PropertySource&lt;T&gt; &#123; protected final Log logger = LogFactory.getLog(getClass()); // 属性名 protected final String name; // 属性源 protected final T source; // 根据指定 name 和 source 构建 public PropertySource(String name, T source) &#123; Assert.hasText(name, "Property source name must contain at least one character"); Assert.notNull(source, "Property source must not be null"); this.name = name; this.source = source; &#125; // 根据指定 name 构建，source 默认为 Object 类型 @SuppressWarnings("unchecked") public PropertySource(String name) &#123; this(name, (T) new Object()); &#125; // 返回当前 PropertySource 的 name public String getName() &#123; return this.name; &#125; // 返回当前 PropertySource 的 source public T getSource() &#123; return this.source; &#125; public boolean containsProperty(String name) &#123; return (getProperty(name) != null); &#125; @Nullable public abstract Object getProperty(String name); // 返回用于集合比较目的的 PropertySource 实现 (ComparisonPropertySource)。 public static PropertySource&lt;?&gt; named(String name) &#123; return new ComparisonPropertySource(name); &#125; // 省略其他两个内部类实现，无实际意义&#125; 一个 PropertySource 实例对应一个 name，例如 systemProperties、enviromentProperties 等。 PropertySource 包括多种类型的实现，主要包括： 1、AnsiPropertySource：Ansi.*，包括 AnsiStyle、AnsiColor、AnsiBackground 等 2、StubPropertySource：在实际的属性源不能在 application context 创建时立即初始化的情况下用作占位符。例如，基于 ServletContext 的属性源必须等待，直到 ServletContext 对象对其封装的 ApplicationContext 可用。在这种情况下，应该使用存根来保存属性源的默认位置/顺序，然后在上下文刷新期间替换存根。 ComparisonPropertySource：继承自 StubPropertySource ，所有属性访问方法强制抛出异常，作用就是一个不可访问属性的空实现。 3、EnumerablePropertySource：可枚举的 PropertySource，在其父类的基础上扩展了 getPropertyNames 方法 CompositePropertySource：source 为组合类型的 PropertySource 实现 CommandLinePropertySource：source 为命令行参数类型的 PropertySource 实现，包括两种命令行参数和 java opts 参数两种。 MapPropertySource：source 为 Map 类型的 PropertySource 实现 PropertiesPropertySource：内部的 Map 实例由 Properties 实例转换而来 JsonPropertySource：内部的 Map 实例由 Json 实例转换而来 SystemEnvironmentPropertySource：内部的 Map 实例由 system env 获取 其他还有 ServletConfigPropertySource、ServletContextPropertySource、AnnotationsPropertySource 等，均可根据名字知晓其 source 来源。 PropertySourcesPropertySources 接口比较简单，如下所示： 1234567891011public interface PropertySources extends Iterable&lt;PropertySource&lt;?&gt;&gt; &#123; // 从 5.1 版本才提供的 default Stream&lt;PropertySource&lt;?&gt;&gt; stream() &#123; return StreamSupport.stream(spliterator(), false); &#125; // check name 为 「name」 的数据源是否存在 boolean contains(String name); // 根据 name」 获取数据源 @Nullable PropertySource&lt;?&gt; get(String name);&#125; 前面在分析 Enviroment 构建中，可以看到整个过程都是以填充 MutablePropertySources 为主线。MutablePropertySources 是 PropertySources 的默认实现，它允许对包含的属性源进行操作，并提供了一个构造函数用于复制现有的 PropertySources 实例。此外，其内部在 addFirst 和 addLast 等方法中提到了 precedence（优先顺序） ，这些将会影响 PropertyResolver 解析给定属性时搜索属性源的顺序。 MutablePropertySources 内部就是对 propertySourceList 的一系列管理操作（增删改成等），propertySourceList 其实就是整个配置系统最底层的存储容器，所以就很好理解，配置解析为什么都是在填充 MutablePropertySources 这个对象了。 12// 配置最终都被塞到这里了private final List&lt;PropertySource&lt;?&gt;&gt; propertySourceList = new CopyOnWriteArrayList&lt;&gt;(); 最后我们再来看下，Spring 中 Environment 属性是如何被访问的。 Environment 属性访问单从 Environment 代码来看，其内部并没有提供访问属性的方法，这些访问属性的方法都由其父类接口 PropertyResolver 提供。 12345678910111213141516171819public interface PropertyResolver &#123; // 判断属性是否存在 boolean containsProperty(String key); // 获取属性 @Nullable String getProperty(String key); // 获取属性，如果没有则提供默认值 String getProperty(String key, String defaultValue); @Nullable &lt;T&gt; T getProperty(String key, Class&lt;T&gt; targetType); &lt;T&gt; T getProperty(String key, Class&lt;T&gt; targetType, T defaultValue); // 获取 Required 属性 String getRequiredProperty(String key) throws IllegalStateException; &lt;T&gt; T getRequiredProperty(String key, Class&lt;T&gt; targetType) throws IllegalStateException; // 解析占位符 String resolvePlaceholders(String text); // 解析 Required占位符 String resolveRequiredPlaceholders(String text) throws IllegalArgumentException;&#125; Environment 中提供默认访问属性的对象实现是 PropertySourcesPropertyResolver，其定义在 AbstractEnvironment 这个抽象类中： 12private final ConfigurablePropertyResolver propertyResolver = new PropertySourcesPropertyResolver(this.propertySources); 那文章最后就来看下 PropertySourcesPropertyResolver 是如何访问配置属性的吧。 1234567891011121314151617181920212223protected &lt;T&gt; T getProperty(String key, Class&lt;T&gt; targetValueType, boolean resolveNestedPlaceholders) &#123; if (this.propertySources != null) &#123; // 遍历所有的 PropertySource for (PropertySource&lt;?&gt; propertySource : this.propertySources) &#123; // 省略日志 // 从 propertySource 中根据指定的 key 获取值 Object value = propertySource.getProperty(key); // 如果值不为空-&gt;选用第一个不为 null 的匹配 key 的属性值 if (value != null) &#123; // 解析占位符替换, 如$&#123;server.port&#125;，底层委托到 PropertyPlaceholderHelper 完成 if (resolveNestedPlaceholders &amp;&amp; value instanceof String) &#123; value = resolveNestedPlaceholders((String) value); &#125; logKeyFound(key, propertySource, value); // 进行一次类型转换，具体由 DefaultConversionService 处理 return convertValueIfNecessary(value, targetValueType); &#125; &#125; &#125; // 省略日志 ... // 没有的话就返回 null return null;&#125; 这里有一点需要注意，就是如果出现多个 PropertySource 中存在同名的 key，则只会返回第一个 PropertySource 对应 key 的属性值。在实际的业务开发中，如果需要自定义一些环境属性，最好要对各个 PropertySource 的顺序有足够的掌握。 小结整体看来，Spring 中对于配置的管理还是比较简单的，从 Environment 到 PropertySource 整个过程没有那么绕，就是单纯的把来自各个地方的配置统一塞到 MutablePropertySources 中，对外又通过 Environment 接口对外提供接口访问。 最后感谢大家一年来的关注和支持，**和 2019 说声再见，和 2020 说声你好！祝大家元旦快乐。]]></content>
+      <categories>
+        <category>springboot</category>
+      </categories>
+      <tags>
+        <tag>springboot</tag>
+        <tag>PropertySource</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[SpringBoot 源码解析系列 & SpringBoot 实践系列综述]]></title>
     <url>%2F2019%2F12%2F24%2Fspringboot-series-summary%2F</url>
     <content type="text"><![CDATA[源码解析系列： SpringBoot 系列-FatJar技术解析 SpringBoot 系列-启动过程解析 SpringBoot 系列-事件机制解析 SpringBoot 系列-Bean 的生命周期与扩展 SpringBoot 系列-日志框架解析 SpringBoot 系列-资源访问解析 SpringBoot 系列-内嵌Web容器解析 SpringBoot 系列-自动配置解析 SpringBoot 系列-外部化配置解析 SpringBoot 系列-Production-ready 解析 实践系列 SpringBoot 实践-集成消息中间件 SpringBoot 实践-集成 Dubbo SpringBoot 实践-集成 REDIS SpringBoot 实践-集成 NOSQL SpringBoot 实践-集成 Oauth2 SpringBoot 实践-集成 Quartz Scheduler SpringBoot 实践-集成 服务链路跟踪组件 SpringBoot 实践-镜像化部署 SpringBoot 实践-使用 K8S 部署 SpringBoot 工程]]></content>
@@ -245,8 +257,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>spring cloud</tag>
         <tag>Config</tag>
+        <tag>spring cloud</tag>
         <tag>Apollo</tag>
       </tags>
   </entry>
@@ -258,8 +270,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>Config</tag>
         <tag>zookeeper</tag>
+        <tag>Config</tag>
       </tags>
   </entry>
   <entry>
@@ -270,8 +282,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>Config</tag>
         <tag>zookeeper</tag>
+        <tag>Config</tag>
       </tags>
   </entry>
   <entry>
@@ -306,8 +318,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>spring cloud</tag>
         <tag>Config</tag>
+        <tag>spring cloud</tag>
       </tags>
   </entry>
   <entry>
@@ -426,9 +438,9 @@
         <category>SOFA</category>
       </categories>
       <tags>
+        <tag>OpenTracing</tag>
         <tag>SOFATracer</tag>
         <tag>Disruptor</tag>
-        <tag>OpenTracing</tag>
       </tags>
   </entry>
   <entry>
@@ -1119,8 +1131,8 @@
         <category>SOFA</category>
       </categories>
       <tags>
-        <tag>OpenTracing</tag>
         <tag>链路跟踪</tag>
+        <tag>OpenTracing</tag>
       </tags>
   </entry>
   <entry>
@@ -1143,9 +1155,9 @@
         <category>SOFA</category>
       </categories>
       <tags>
+        <tag>OpenTracing</tag>
         <tag>SOFATracer</tag>
         <tag>Disruptor</tag>
-        <tag>OpenTracing</tag>
       </tags>
   </entry>
   <entry>
@@ -1184,8 +1196,8 @@
       </categories>
       <tags>
         <tag>聊一聊</tag>
-        <tag>spring 扩展机制</tag>
         <tag>spring 事件机制</tag>
+        <tag>spring 扩展机制</tag>
       </tags>
   </entry>
   <entry>
