@@ -346,6 +346,43 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/seiri-mybatis/">
+            
+                <span>关于 Mybatis 中 SQL 语句的整理</span>
+        </a>
+        <div class="abstract-content">
+            
+随着业务的发展，越来越多的应用系统都从一个大的系统分拆成多个小的系统，各个系统之间通过一定的通信协议进行数据交换。这样就会导致一些小的应用系统自己不用去进行数据库的操作，只需要进行一些rpc调用或者缓存就可以拿到数据进行展示。我之前参与的一个项目就是这样的情况，而我也是将近7个多月的时间没有写过一行SQL。
+
+近期参与的一个项目的数据大多都市基于数据库来进行数据交互的，所以免不了的要写大量的SQL，所以本篇就总结一下一些SQL的基本写法，以备后用。
+建表12345CREATE TABLE IF NOT EXISTS `user_test` (  `id` int(11) NOT NUL...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="mybatis">mybatis</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="sql">sql</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="数据库">数据库</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href="/2018/11/10/nginxone/">
             
                 <span>nginx 反向代理和负载均衡策略实战案例</span>
@@ -605,9 +642,9 @@ SOFATracer Repo...
             
             <div class="abstract-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="链路跟踪">链路跟踪</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-tags="OpenTracing">OpenTracing</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="链路跟踪">链路跟踪</a>
     
 </div>
             
@@ -698,11 +735,11 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
             
             <div class="abstract-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="OpenTracing">OpenTracing</a>
-    
         <a class="post-tag" href="javascript:void(0);" data-tags="SOFATracer">SOFATracer</a>
     
         <a class="post-tag" href="javascript:void(0);" data-tags="Disruptor">Disruptor</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="OpenTracing">OpenTracing</a>
     
 </div>
             
@@ -743,41 +780,6 @@ Tracer一个 trace 代表一个潜在的，分布式的，存在并行数据或�
         <a class="post-tag" href="javascript:void(0);" data-tags="聊一聊">聊一聊</a>
     
         <a class="post-tag" href="javascript:void(0);" data-tags="restful">restful</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/11/10/spring-extention-namespacehandler/">
-            
-                <span>聊一聊 Spring 中的扩展机制(二) - NamespaceHandler</span>
-        </a>
-        <div class="abstract-content">
-            前一篇 聊一聊 Spring 中的扩展机制（一） 中聊到了ApplicationListener、ApplicationContextAware、BeanFactoryAware三种机制。本篇将介绍 NamespaceHandler 的扩展使用。
-相信很多小伙伴对于这几个类都不陌生，基本基于java实现的RPC框架都会使用，比如 Dubbo , SOFARpc 等。本文先从几个小demo入手，了解下基本的概念和编程流程，然后分析下 SOFARpc 中是如何使用的。
-NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。下面这张图中，除...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="聊一聊">聊一聊</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring 扩展机制">spring 扩展机制</a>
     
 </div>
             
@@ -2946,44 +2948,9 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 102
+        Total : 103
         </div>
         <!-- search  -->
         
@@ -2993,6 +2960,20 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
     
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span><a class="archive-post-title" href="/2020/01/03/springboot-series-externalize-prop/">SpringBoot 实践-外部化配置优先级问题</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
@@ -3079,12 +3060,12 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/springboot-series-event/">SpringBoot 系列-事件机制详解</a>
+            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/zookeeper-client-curator/">ZooKeeper 客户端之 Curator</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/zookeeper-client-curator/">ZooKeeper 客户端之 Curator</a>
+            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/springboot-series-event/">SpringBoot 系列-事件机制详解</a>
         </li>
     
     
@@ -3138,26 +3119,6 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-config-project/">SpringCloud-配置中心 Config</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
         </li>
     
@@ -3168,12 +3129,32 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-config-project/">SpringCloud-配置中心 Config</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
         </li>
     
     
@@ -3198,12 +3179,12 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring-session-req-resp/">SpringSession系列-请求与响应重写</a>
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring-session-solutions/">SpringSession系列-分布式Session实现方案</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring-session-solutions/">SpringSession系列-分布式Session实现方案</a>
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring-session-req-resp/">SpringSession系列-请求与响应重写</a>
         </li>
     
     
@@ -3218,12 +3199,22 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-annotation/">Spring源码系列：注解说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-strategy/">菜鸟成长系列-策略模式</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc2/">JUC·ThreadPoolExecutor 线程池</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc1/">SpringMVC源码系列：HandlerMapping</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-bd-loaded-2/">Spring源码系列：BeanDefinition载入（中）</a>
         </li>
     
     
@@ -3233,27 +3224,17 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-bd-loaded-3/">Spring源码系列：BeanDefinition载入(下)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-builder/">菜鸟成长系列-Builder 建造者模式</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc2/">SpringMVC源码系列：AbstractHandlerMapping</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-beanwrapper/">Spring源码系列：BeanWrapper</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-modulemethod/">菜鸟成长系列-模板方法模式</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-bd-loaded-3/">Spring源码系列：BeanDefinition载入(下)</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-inject-intro/">Spring源码系列：依赖注入-引言</a>
         </li>
     
     
@@ -3268,37 +3249,7 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc4/">SpringMVC源码系列：AbstractUrlHandlerMapping</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-inject-summary/">Spring源码系列：依赖注入（四）-总结</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-beanfactory/">Spring源码系列：BeanFactory的创建</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-inject-intro/">Spring源码系列：依赖注入-引言</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-bd-loaded-2/">Spring源码系列：BeanDefinition载入（中）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-annotation/">Spring源码系列：注解说明</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc1/">JUC·Executor 框架</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-obs/">菜鸟成长系列-观察者模式</a>
         </li>
     
     
@@ -3308,12 +3259,17 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-beandefinition/">Spring源码系列：BeanDefinition 源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-version-change/">Spring源码系列：Spring的版本变更</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-createbean/">Spring源码系列：依赖注入（二）createBean</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-beanwrapper/">Spring源码系列：BeanWrapper</a>
         </li>
     
     
@@ -3323,37 +3279,47 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc1/">SpringMVC源码系列：HandlerMapping</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-inject-summary/">Spring源码系列：依赖注入（四）-总结</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-beandefinition/">Spring源码系列：BeanDefinition 源码解析</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc2/">SpringMVC源码系列：AbstractHandlerMapping</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-obs/">菜鸟成长系列-观察者模式</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc2/">JUC·ThreadPoolExecutor 线程池</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-one/">面向对象的四大基础特性</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-createbean/">Spring源码系列：依赖注入（二）createBean</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodetwo/">每天一道算法题：Z字形转换</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-modulemethod/">菜鸟成长系列-模板方法模式</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-starting/">Spring源码系列：Spring的启动过程</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-base-webmvc4/">SpringMVC源码系列：AbstractUrlHandlerMapping</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode3/">每天一道算法题：最长回文子串</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-beanfactory/">Spring源码系列：BeanFactory的创建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc1/">JUC·Executor 框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/seiri-mybatis/">关于 Mybatis 中 SQL 语句的整理</a>
         </li>
     
     
@@ -3363,12 +3329,12 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode4/">每天一道算法题：求两个排序数组的中位数</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/guavacacheone/">Google Guava 在实际场景中的应用封装</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/alg-one/">算法-排序算法思想及实现</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-overall/">菜鸟成长系列-概述</a>
         </li>
     
     
@@ -3383,27 +3349,42 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-session-cookie/">聊一聊 session和cookie</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/alg-one/">算法-排序算法思想及实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-one/">面向对象的四大基础特性</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-singleton/">菜鸟成长系列-单例模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx 反向代理和负载均衡策略实战案例</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-aop-base/">聊一聊 AOP ：表现形式与基础概念</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-hashmap/">从源码来聊一聊hashmap</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcodetwo/">每天一道算法题：Z字形转换</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-one/">一个朋友圈泛型问题引发的“案子”</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-thread-base/">JAVA基础知识系列---进程、线程安全</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-ssm/">项目开发框架-SSM</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-factory/">菜鸟成长系列-工厂模式</a>
         </li>
     
     
@@ -3413,17 +3394,22 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-thread-deadlock/">怎么写一个死锁？</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-one/">一个朋友圈泛型问题引发的“案子”</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-overall/">菜鸟成长系列-概述</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode3/">每天一道算法题：最长回文子串</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-singleton/">菜鸟成长系列-单例模式</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-bird-three/">菜鸟成长系列-面向对象的6种设计原则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-ssm/">项目开发框架-SSM</a>
         </li>
     
     
@@ -3438,7 +3424,7 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/guavacacheone/">Google Guava 在实际场景中的应用封装</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-thread-deadlock/">怎么写一个死锁？</a>
         </li>
     
     
@@ -3448,27 +3434,12 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-factory/">菜鸟成长系列-工厂模式</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-hashmap/">从源码来聊一聊hashmap</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-bird-three/">菜鸟成长系列-面向对象的6种设计原则</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-session-cookie/">聊一聊 session和cookie</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode5/">每天一道算法题：无重复字符的最长子串</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx 反向代理和负载均衡策略实战案例</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-series-starting/">Spring源码系列：Spring的启动过程</a>
         </li>
     
     
@@ -3478,12 +3449,17 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/seiri-mybatis/">关于 Mybatis 中 SQL 语句的整理</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-thread-base/">JAVA基础知识系列---进程、线程安全</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-extention-one/">聊一聊 Spring 中的扩展机制（一）</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode4/">每天一道算法题：求两个排序数组的中位数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode5/">每天一道算法题：无重复字符的最长子串</a>
         </li>
     
     
@@ -3493,12 +3469,17 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofa-tracer-disruptor/">SOFATracer 中 Disruptor 实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/logone/">看完这个不会配置 logback ，请你吃瓜！</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-resttemplate/">聊一聊 RestTemplate</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring-extention-one/">聊一聊 Spring 中的扩展机制（一）</a>
         </li>
     
     
@@ -3508,7 +3489,7 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofa-tracer-disruptor/">SOFATracer 中 Disruptor 实践</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-resttemplate/">聊一聊 RestTemplate</a>
         </li>
     
     
@@ -3523,33 +3504,39 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
         <span class="sidebar-tag-name" data-tags="java"><span class="iconfont-archer">&#xe606;</span>java</span>
     
+        <span class="sidebar-tag-name" data-tags="泛型"><span class="iconfont-archer">&#xe606;</span>泛型</span>
+    
         <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
     
         <span class="sidebar-tag-name" data-tags="规划"><span class="iconfont-archer">&#xe606;</span>规划</span>
-    
-        <span class="sidebar-tag-name" data-tags="Reactor"><span class="iconfont-archer">&#xe606;</span>Reactor</span>
-    
-        <span class="sidebar-tag-name" data-tags="cas"><span class="iconfont-archer">&#xe606;</span>cas</span>
-    
-        <span class="sidebar-tag-name" data-tags="泛型"><span class="iconfont-archer">&#xe606;</span>泛型</span>
-    
-        <span class="sidebar-tag-name" data-tags="hash"><span class="iconfont-archer">&#xe606;</span>hash</span>
-    
-        <span class="sidebar-tag-name" data-tags="map"><span class="iconfont-archer">&#xe606;</span>map</span>
     
         <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
         <span class="sidebar-tag-name" data-tags="guava"><span class="iconfont-archer">&#xe606;</span>guava</span>
     
-        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
-    
         <span class="sidebar-tag-name" data-tags="线程"><span class="iconfont-archer">&#xe606;</span>线程</span>
     
         <span class="sidebar-tag-name" data-tags="thread"><span class="iconfont-archer">&#xe606;</span>thread</span>
     
+        <span class="sidebar-tag-name" data-tags="Reactor"><span class="iconfont-archer">&#xe606;</span>Reactor</span>
+    
+        <span class="sidebar-tag-name" data-tags="hash"><span class="iconfont-archer">&#xe606;</span>hash</span>
+    
+        <span class="sidebar-tag-name" data-tags="map"><span class="iconfont-archer">&#xe606;</span>map</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="cas"><span class="iconfont-archer">&#xe606;</span>cas</span>
+    
         <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
     
         <span class="sidebar-tag-name" data-tags="leetcode"><span class="iconfont-archer">&#xe606;</span>leetcode</span>
+    
+        <span class="sidebar-tag-name" data-tags="nginx"><span class="iconfont-archer">&#xe606;</span>nginx</span>
+    
+        <span class="sidebar-tag-name" data-tags="代理模式"><span class="iconfont-archer">&#xe606;</span>代理模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="负载均衡"><span class="iconfont-archer">&#xe606;</span>负载均衡</span>
     
         <span class="sidebar-tag-name" data-tags="ssm"><span class="iconfont-archer">&#xe606;</span>ssm</span>
     
@@ -3561,15 +3548,9 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
         <span class="sidebar-tag-name" data-tags="maven"><span class="iconfont-archer">&#xe606;</span>maven</span>
     
-        <span class="sidebar-tag-name" data-tags="nginx"><span class="iconfont-archer">&#xe606;</span>nginx</span>
+        <span class="sidebar-tag-name" data-tags="sql"><span class="iconfont-archer">&#xe606;</span>sql</span>
     
-        <span class="sidebar-tag-name" data-tags="代理模式"><span class="iconfont-archer">&#xe606;</span>代理模式</span>
-    
-        <span class="sidebar-tag-name" data-tags="负载均衡"><span class="iconfont-archer">&#xe606;</span>负载均衡</span>
-    
-        <span class="sidebar-tag-name" data-tags="logback"><span class="iconfont-archer">&#xe606;</span>logback</span>
-    
-        <span class="sidebar-tag-name" data-tags="slf4j"><span class="iconfont-archer">&#xe606;</span>slf4j</span>
+        <span class="sidebar-tag-name" data-tags="数据库"><span class="iconfont-archer">&#xe606;</span>数据库</span>
     
         <span class="sidebar-tag-name" data-tags="rpc"><span class="iconfont-archer">&#xe606;</span>rpc</span>
     
@@ -3577,39 +3558,39 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
         <span class="sidebar-tag-name" data-tags="微服务"><span class="iconfont-archer">&#xe606;</span>微服务</span>
     
-        <span class="sidebar-tag-name" data-tags="sql"><span class="iconfont-archer">&#xe606;</span>sql</span>
-    
-        <span class="sidebar-tag-name" data-tags="数据库"><span class="iconfont-archer">&#xe606;</span>数据库</span>
-    
         <span class="sidebar-tag-name" data-tags="mysql"><span class="iconfont-archer">&#xe606;</span>mysql</span>
     
         <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
     
-        <span class="sidebar-tag-name" data-tags="shell"><span class="iconfont-archer">&#xe606;</span>shell</span>
+        <span class="sidebar-tag-name" data-tags="logback"><span class="iconfont-archer">&#xe606;</span>logback</span>
+    
+        <span class="sidebar-tag-name" data-tags="slf4j"><span class="iconfont-archer">&#xe606;</span>slf4j</span>
     
         <span class="sidebar-tag-name" data-tags="书法"><span class="iconfont-archer">&#xe606;</span>书法</span>
     
-        <span class="sidebar-tag-name" data-tags="链路跟踪"><span class="iconfont-archer">&#xe606;</span>链路跟踪</span>
-    
-        <span class="sidebar-tag-name" data-tags="OpenTracing"><span class="iconfont-archer">&#xe606;</span>OpenTracing</span>
+        <span class="sidebar-tag-name" data-tags="shell"><span class="iconfont-archer">&#xe606;</span>shell</span>
     
         <span class="sidebar-tag-name" data-tags="sofa-ark"><span class="iconfont-archer">&#xe606;</span>sofa-ark</span>
-    
-        <span class="sidebar-tag-name" data-tags="SOFATracer"><span class="iconfont-archer">&#xe606;</span>SOFATracer</span>
-    
-        <span class="sidebar-tag-name" data-tags="Disruptor"><span class="iconfont-archer">&#xe606;</span>Disruptor</span>
-    
-        <span class="sidebar-tag-name" data-tags="SOFABoot"><span class="iconfont-archer">&#xe606;</span>SOFABoot</span>
     
         <span class="sidebar-tag-name" data-tags="aop"><span class="iconfont-archer">&#xe606;</span>aop</span>
     
         <span class="sidebar-tag-name" data-tags="聊一聊"><span class="iconfont-archer">&#xe606;</span>聊一聊</span>
     
+        <span class="sidebar-tag-name" data-tags="SOFATracer"><span class="iconfont-archer">&#xe606;</span>SOFATracer</span>
+    
+        <span class="sidebar-tag-name" data-tags="Disruptor"><span class="iconfont-archer">&#xe606;</span>Disruptor</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenTracing"><span class="iconfont-archer">&#xe606;</span>OpenTracing</span>
+    
         <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
     
-        <span class="sidebar-tag-name" data-tags="spring 事件机制"><span class="iconfont-archer">&#xe606;</span>spring 事件机制</span>
+        <span class="sidebar-tag-name" data-tags="SOFABoot"><span class="iconfont-archer">&#xe606;</span>SOFABoot</span>
+    
+        <span class="sidebar-tag-name" data-tags="链路跟踪"><span class="iconfont-archer">&#xe606;</span>链路跟踪</span>
     
         <span class="sidebar-tag-name" data-tags="spring 扩展机制"><span class="iconfont-archer">&#xe606;</span>spring 扩展机制</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring 事件机制"><span class="iconfont-archer">&#xe606;</span>spring 事件机制</span>
     
         <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
     
@@ -3617,43 +3598,43 @@ NamespaceHandlerNamespaceHandler 是 Spring 提供的 命名空间处理器。�
     
         <span class="sidebar-tag-name" data-tags="log"><span class="iconfont-archer">&#xe606;</span>log</span>
     
-        <span class="sidebar-tag-name" data-tags="zookeeper"><span class="iconfont-archer">&#xe606;</span>zookeeper</span>
-    
-        <span class="sidebar-tag-name" data-tags="Config"><span class="iconfont-archer">&#xe606;</span>Config</span>
-    
         <span class="sidebar-tag-name" data-tags="PropertySource"><span class="iconfont-archer">&#xe606;</span>PropertySource</span>
     
         <span class="sidebar-tag-name" data-tags="kafka"><span class="iconfont-archer">&#xe606;</span>kafka</span>
-    
-        <span class="sidebar-tag-name" data-tags="Gateway"><span class="iconfont-archer">&#xe606;</span>Gateway</span>
-    
-        <span class="sidebar-tag-name" data-tags="网关"><span class="iconfont-archer">&#xe606;</span>网关</span>
     
         <span class="sidebar-tag-name" data-tags="Tomcat"><span class="iconfont-archer">&#xe606;</span>Tomcat</span>
     
         <span class="sidebar-tag-name" data-tags="spring cloud"><span class="iconfont-archer">&#xe606;</span>spring cloud</span>
     
+        <span class="sidebar-tag-name" data-tags="Config"><span class="iconfont-archer">&#xe606;</span>Config</span>
+    
         <span class="sidebar-tag-name" data-tags="Apollo"><span class="iconfont-archer">&#xe606;</span>Apollo</span>
     
-        <span class="sidebar-tag-name" data-tags="commons"><span class="iconfont-archer">&#xe606;</span>commons</span>
+        <span class="sidebar-tag-name" data-tags="Gateway"><span class="iconfont-archer">&#xe606;</span>Gateway</span>
+    
+        <span class="sidebar-tag-name" data-tags="网关"><span class="iconfont-archer">&#xe606;</span>网关</span>
+    
+        <span class="sidebar-tag-name" data-tags="zookeeper"><span class="iconfont-archer">&#xe606;</span>zookeeper</span>
     
         <span class="sidebar-tag-name" data-tags="Hystrix"><span class="iconfont-archer">&#xe606;</span>Hystrix</span>
     
-        <span class="sidebar-tag-name" data-tags="Eureka"><span class="iconfont-archer">&#xe606;</span>Eureka</span>
+        <span class="sidebar-tag-name" data-tags="commons"><span class="iconfont-archer">&#xe606;</span>commons</span>
     
-        <span class="sidebar-tag-name" data-tags="Ribbon"><span class="iconfont-archer">&#xe606;</span>Ribbon</span>
+        <span class="sidebar-tag-name" data-tags="Eureka"><span class="iconfont-archer">&#xe606;</span>Eureka</span>
     
         <span class="sidebar-tag-name" data-tags="servlet"><span class="iconfont-archer">&#xe606;</span>servlet</span>
     
         <span class="sidebar-tag-name" data-tags="Feign"><span class="iconfont-archer">&#xe606;</span>Feign</span>
+    
+        <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ribbon"><span class="iconfont-archer">&#xe606;</span>Ribbon</span>
     
         <span class="sidebar-tag-name" data-tags="git"><span class="iconfont-archer">&#xe606;</span>git</span>
     
         <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
     
         <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
-    
-        <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -3688,13 +3669,13 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="java-基础"><span class="iconfont-archer">&#xe60a;</span>java-基础</span>
+        <span class="sidebar-category-name" data-categories="java"><span class="iconfont-archer">&#xe60a;</span>java</span>
     
         <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
     
-        <span class="sidebar-category-name" data-categories="架构之路"><span class="iconfont-archer">&#xe60a;</span>架构之路</span>
+        <span class="sidebar-category-name" data-categories="java-基础"><span class="iconfont-archer">&#xe60a;</span>java-基础</span>
     
-        <span class="sidebar-category-name" data-categories="java"><span class="iconfont-archer">&#xe60a;</span>java</span>
+        <span class="sidebar-category-name" data-categories="架构之路"><span class="iconfont-archer">&#xe60a;</span>架构之路</span>
     
         <span class="sidebar-category-name" data-categories="缓存"><span class="iconfont-archer">&#xe60a;</span>缓存</span>
     
@@ -3702,25 +3683,25 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="leetcode"><span class="iconfont-archer">&#xe60a;</span>leetcode</span>
     
-        <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
-    
         <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
     
-        <span class="sidebar-category-name" data-categories="日志"><span class="iconfont-archer">&#xe60a;</span>日志</span>
-    
-        <span class="sidebar-category-name" data-categories="rpc"><span class="iconfont-archer">&#xe60a;</span>rpc</span>
-    
-        <span class="sidebar-category-name" data-categories="maven"><span class="iconfont-archer">&#xe60a;</span>maven</span>
+        <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
     
         <span class="sidebar-category-name" data-categories="mybatis"><span class="iconfont-archer">&#xe60a;</span>mybatis</span>
     
+        <span class="sidebar-category-name" data-categories="rpc"><span class="iconfont-archer">&#xe60a;</span>rpc</span>
+    
         <span class="sidebar-category-name" data-categories="运维"><span class="iconfont-archer">&#xe60a;</span>运维</span>
+    
+        <span class="sidebar-category-name" data-categories="日志"><span class="iconfont-archer">&#xe60a;</span>日志</span>
     
         <span class="sidebar-category-name" data-categories="书法"><span class="iconfont-archer">&#xe60a;</span>书法</span>
     
-        <span class="sidebar-category-name" data-categories="SOFA"><span class="iconfont-archer">&#xe60a;</span>SOFA</span>
+        <span class="sidebar-category-name" data-categories="maven"><span class="iconfont-archer">&#xe60a;</span>maven</span>
     
         <span class="sidebar-category-name" data-categories="spring"><span class="iconfont-archer">&#xe60a;</span>spring</span>
+    
+        <span class="sidebar-category-name" data-categories="SOFA"><span class="iconfont-archer">&#xe60a;</span>SOFA</span>
     
         <span class="sidebar-category-name" data-categories="spring-mvc"><span class="iconfont-archer">&#xe60a;</span>spring-mvc</span>
     
