@@ -274,7 +274,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">378</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.6k</span>阅读时长: <span class="post-count reading-time">6 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -428,8 +428,39 @@ height:50vh;
 <blockquote>
 <p>大多数能力提供在 3.x 版本，2.x 版本从官方 issue 中可以看到后续将不在继续提供新的功能更新；这也是和 SpringBoot 宣布不在继续维护 1.x 版本有关系。</p>
 </blockquote>
-<p>本文将从插件的角度来分析，SOFATracer 是如何实现对上述组件进行埋点的；通过本文，除了了解 SOFATracer 的埋点机制之外，也可以对上述组件的基本扩展机制以及基本原理有一点学习。篇幅较长，可以先码再看。</p>
-
+<p>本文将从插件的角度来分析，SOFATracer 是如何实现对上述组件进行埋点的；通过本文，除了了解 SOFATracer 的埋点机制之外，也可以对上述组件的基本扩展机制以及基本原理有一点学习。</p>
+<h2 id="标准-Servlet-规范埋点原理"><a href="#标准-Servlet-规范埋点原理" class="headerlink" title="标准 Servlet 规范埋点原理"></a>标准 Servlet 规范埋点原理</h2><p>SOFATracer 支持对标准 Servlet 规范的 web mvc 埋点，包括普通的 servlet 和 Springmvc 等；基本原理就是基于 Servelt 规范所提供的 <code>javax.servlet.Filter</code> 过滤器接口扩展实现。</p>
+<blockquote>
+<p>过滤器位于 client 和 web 应用程序之间，用于检查和修改两者之间流过的请求和响应信息。在请求到达 Servlet 之前，过滤器截获请求。在响应送给客户端之前，过滤器截获响应。多个过滤器形成一个 FilterChain，FilterChain 中不同过滤器的先后顺序由部署文件 web.xml 中过滤器映射<filter-mapping>的顺序决定。最先截获客户端请求的过滤器将最后截获 Servlet 的响应信息。</filter-mapping></p>
+</blockquote>
+<p>web 应用程序一般作为请求的接收方，在 Tracer 中应用是作为 server 存在的，其在解析 SpanContext 时所对应的事件为 sr (server receive)。</p>
+<p>SOFATracer 在 sofa-tracer-springmvc-plugin 插件中解析及产生 span 的过程大致如下：</p>
+<ul>
+<li>Servlet Filter 拦截到 request 请求</li>
+<li>从请求中解析 SpanContext </li>
+<li>通过 SpanContext 构建当前 MVC 的 span </li>
+<li>给当前 span 设置 tag、log。</li>
+<li>在 filter 处理的最后，结束 span。</li>
+</ul>
+<p>当然这里面还会设计到其他很多细节，比如给 span 设置哪些 tag 属性、如果处理异步线程透传等等。本篇不展开细节探讨，有兴趣的同学可以自行阅读代码或者和我交流。</p>
+<h2 id="Dubbo-埋点原理"><a href="#Dubbo-埋点原理" class="headerlink" title="Dubbo 埋点原理"></a>Dubbo 埋点原理</h2><p>Dubbo 埋点在 SOFATracer 中实际上提供了两个插件，分别用于支持 Dubbo 2.6.x 和 Dubbo 2.7.x；Duddo 埋点也是基于 Filter ，此Filter 是 Dubbo 提供的 SPI 扩展-<a href="http://dubbo.apache.org/zh-cn/docs/dev/impls/filter.html" target="_blank" rel="noopener">调用拦截扩展</a> 机制实现。</p>
+<p>像 Dubbo 或者 SOFARpc 等 rpc 框架的埋点，通常需要考虑的点比较多，首先是 rpc 框架分客户端和服务端，所以在埋点时 rpc 的客户端和服务端必须要有所区分；再者就是 rpc 的调用方式包括很多种，如常见的同步调用、异步调用、oneway 等等，调用方式不同，所对应的 span 的结束时机也不同，重要是的基本所有的 rpc 框架都会使用线程池用来发起和处理请求，那么如何保证 tracer 在多线程环境下不串也很重要。</p>
+<p>另外 Dubbo 2.6.x 和 Dubbo 2.7.x 在异步回调处理上差异比较大，Dubbo 2.7.x 中提供了 onResponse 方法（后面又升级为 Listener，包括 onResponse 和 onError 两个方法）；而 Dubbo 2.6.x 中则并未提供相应的机制，只能通过对 future 的硬编码处理来完成埋点和上报。</p>
+<blockquote>
+<p>这个问题 zipkin brave 对 Dubbo 2.6.x 的埋点时其实也没有考虑到，在做 SOFATracer 支持 Dubbo 2.6.x 时发现了这个 bug，并做了修复。</p>
+</blockquote>
+<p>SOFATracer 中提供的 DubboSofaTracerFilter 类： </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Activate</span>(group = &#123; CommonConstants.PROVIDER, CommonConstants.CONSUMER &#125;, value = <span class="string">"dubboSofaTracerFilter"</span>, order = <span class="number">1</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DubboSofaTracerFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span> </span>&#123;</span><br><span class="line">    <span class="comment">// todo trace</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SOFATracer 中用于处理 Dubbo 2.6.x 版本中异步回调处理的核心代码：</p>
+<blockquote>
+<p>Dubbo 异步处理依赖 ResponseFuture 接口，但是 ResponseFuture 在核心链路上并非是以数据或者 list 的形式存在，所以在链路上只会存在一个 ResponseFuture，因此如果我自定义一个类来实现 ResponseFuture 接口是没法达到预期目的的，因为运行期会存在覆盖 ResponseFuture 的问题。所以在设计上，SOFATracer 会通过 ResponseFuture 构建一个新的 FutureAdapter出来用于传递。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">ensureSpanFinishes</span><span class="params">(Future&lt;Object&gt; future, Invocation invocation, Invoker&lt;?&gt; invoker)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">boolean</span> deferFinish = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (future <span class="keyword">instanceof</span> FutureAdapter) &#123;</span><br><span class="line">        deferFinish = <span class="keyword">true</span>;</span><br><span class="line">        ResponseFuture original = ((FutureAdapter&lt;Object&gt;) future).getFuture();</span><br><span class="line">        ResponseFuture wrapped = <span class="keyword">new</span> AsyncResponseFutureDelegate(invocation, invoker, original);</span><br><span class="line">        <span class="comment">// Ensures even if no callback added later, for example when a consumer, we finish the span</span></span><br><span class="line">        wrapped.setCallback(<span class="keyword">null</span>);</span><br><span class="line">        RpcContext.getContext().setFuture(<span class="keyword">new</span> FutureAdapter&lt;&gt;(wrapped));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> deferFinish;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="http-客户端埋点原理"><a href="#http-客户端埋点原理" class="headerlink" title="http 客户端埋点原理"></a>http 客户端埋点原理</h2><p>http 客户端埋点包括 HttpClient、OkHttp、RestTemplate 等，此类埋点一般都是基于拦截器机制来实现的，如 HttpClient 使用的 HttpRequestInterceptor、HttpResponseInterceptor；OkHttp 使用的 okhttp3.Interceptor；RestTemplate 使用的 ClientHttpRequestInterceptor。</p>
+<p>以 OkHttp 为例，简单分析下 http 客户端埋点的实现原理：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Response <span class="title">intercept</span><span class="params">(Chain chain)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="comment">// 获取请求</span></span><br><span class="line">    Request request = chain.request();</span><br><span class="line">    <span class="comment">// 解析出 SpanContext ，然后构建 Span</span></span><br><span class="line">    SofaTracerSpan sofaTracerSpan = okHttpTracer.clientSend(request.method());</span><br><span class="line">    <span class="comment">// 发起具体的调用</span></span><br><span class="line">    Response response = chain.proceed(appendOkHttpRequestSpanTags(request, sofaTracerSpan));</span><br><span class="line">    <span class="comment">// 结束 span</span></span><br><span class="line">    okHttpTracer.clientReceive(String.valueOf(response.code()));</span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Datasource-埋点原理"><a href="#Datasource-埋点原理" class="headerlink" title="Datasource 埋点原理"></a>Datasource 埋点原理</h2><h2 id="消息埋点"><a href="#消息埋点" class="headerlink" title="消息埋点"></a>消息埋点</h2><p>消息框架组件包括很多，像常见的 RocketMQ、Kafka 等；处理各个组件自己提供的客户端之外，像 Spring 就提供了很多消息组件的封装，包括Spring Cloud Stream、Spring Integration、Spring Message 等等。SOFATracer 基于 Spring Message 标准实现了对常见消息组件和 Spring Cloud Stream 的埋点支持，同时也提供了基于 RocketMQ 客户端模式的埋点实现。</p>
+<h2 id="Spring-meaasge-埋点实现原理"><a href="#Spring-meaasge-埋点实现原理" class="headerlink" title="Spring meaasge 埋点实现原理"></a>Spring meaasge 埋点实现原理</h2><h2 id="RocketMQ-埋点实现原理"><a href="#RocketMQ-埋点实现原理" class="headerlink" title="RocketMQ 埋点实现原理"></a>RocketMQ 埋点实现原理</h2>
     </article>
     <!-- license  -->
     
@@ -437,7 +468,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2020/01/20/sofa-tracer-integration-analysis/">http://www.glmapper.com/2020/01/20/sofa-tracer-integration-analysis/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2020/01/20/sofa-tracer-integration-analysis/">January 20th 2020, 11:43:56 am</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2020/01/20/sofa-tracer-integration-analysis/">January 20th 2020, 12:04:01 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2020/01/20/sofa-tracer-integration-analysis/">January 31st 2020, 5:04:47 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -586,7 +617,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#标准-Servlet-规范埋点原理"><span class="toc-number">1.</span> <span class="toc-text">标准 Servlet 规范埋点原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dubbo-埋点原理"><span class="toc-number">2.</span> <span class="toc-text">Dubbo 埋点原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#http-客户端埋点原理"><span class="toc-number">3.</span> <span class="toc-text">http 客户端埋点原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Datasource-埋点原理"><span class="toc-number">4.</span> <span class="toc-text">Datasource 埋点原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息埋点"><span class="toc-number">5.</span> <span class="toc-text">消息埋点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-meaasge-埋点实现原理"><span class="toc-number">6.</span> <span class="toc-text">Spring meaasge 埋点实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RocketMQ-埋点实现原理"><span class="toc-number">7.</span> <span class="toc-text">RocketMQ 埋点实现原理</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
