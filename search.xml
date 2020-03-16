@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[聊一聊 CopyOnWriteArraySet 的迭代删除]]></title>
+    <url>%2F2020%2F03%2F16%2Fjava-base-iterator-of-set%2F</url>
+    <content type="text"><![CDATA[上周在工程中涉及到一个清理 Set 集合的操作，将满足设定条件的项从 Set 中删除掉。简化版本代码如下： 123456789101112public static void main(String[] args) &#123; Set&lt;String&gt; sets = new CopyOnWriteArraySet&lt;&gt;(); sets.add("1"); sets.add("3"); sets.add("3"); sets.add("4"); Iterator&lt;String&gt; iterator = sets.iterator(); while (iterator.hasNext())&#123; iterator.remove(); &#125; System.out.println(sets); &#125; 这个看起来是个很常规的问题，没有验证就直接发了线下环境，然后就收到了业务方反馈的服务无法正常使用的问题了。 问题现象先来看下上述代码所抛出的异常： 123Exception in thread "main" java.lang.UnsupportedOperationException at java.util.concurrent.CopyOnWriteArrayList$COWIterator.remove(CopyOnWriteArrayList.java:1178) at com.glmapper.bridge.boot.TestMain.main(TestMain.java:21) 关于 UnsupportedOperationException 这个异常没有什么好说的，在集合操作中经常出现，网上也有很多关于这个异常的说明，这里不再赘述。这里我比较关注的是，我使用的是 CopyOnWriteArraySet，迭代器也是 sets 的，但是异常中居然出现了 CopyOnWriteArrayList，查看了 CopyOnWriteArraySet 的类继承关系，和 CopyOnWriteArrayList 也没啥关系。 排查&amp;结果通过查看了 CopyOnWriteArraySet 的代码，发现 CopyOnWriteArraySet 内部其实是持有了一个 CopyOnWriteArrayList 的对象实例，其内部的所有操作都是基于 CopyOnWriteArrayList 这个对象来进行的。 123456789101112public class CopyOnWriteArraySet&lt;E&gt; extends AbstractSet&lt;E&gt; implements java.io.Serializable &#123; // 省略其他代码 private final CopyOnWriteArrayList&lt;E&gt; al; /** * Creates an empty set. */ public CopyOnWriteArraySet() &#123; al = new CopyOnWriteArrayList&lt;E&gt;(); &#125; // 省略其他代码&#125; 关于 CopyOnWriteArrayList 的操作写操作 在 CopyOnWriteArrayList 里处理写操作（包括 add、remove、set 等）是先将原始的数据通过 JDK1.6 的 Arrays.copyof() 来生成一份新的数组。add 的代码如下： 123456789101112131415public boolean add(E e) &#123; final ReentrantLock lock = this.lock; lock.lock(); try &#123; Object[] elements = getArray(); int len = elements.length; // 这里是生产新的数组 Object[] newElements = Arrays.copyOf(elements, len + 1); newElements[len] = e; setArray(newElements); return true; &#125; finally &#123; lock.unlock(); &#125;&#125; 后续的操作都是在新的数据对象上进行写，写完后再将原来的引用指向到当前这个数据对象，这样保证了每次写都是在新的对象上（因为要保证写的一致性，这里要对各种写操作要加一把锁，JDK1.6 在这里用了重入锁）， 读操作 读的时候就是在引用的当前对象上进行读（包括 get，iterator 等），不存在加锁和阻塞，针对 iterator 使用了一个叫 COWIterator 的简化版迭代器，因为不支持写操作，当获取 CopyOnWriteArrayList 的迭代器时，是将迭代器里的数据引用指向当前引用指向的数据对象，无论未来发生什么写操作，都不会再更改迭代器里的数据对象引用，所以迭代器也很安全。 结论因为 CopyOnWriteArraySet 的内部操作都是基于 CopyOnWriteArrayList 的，从异常来看：1java.util.concurrent.CopyOnWriteArrayList$COWIterator.remove(CopyOnWriteArrayList.java:1178) COWIterator 是 CopyOnWriteArrayList 内部提供的一个简化版的迭代器。所以异常里面出现这个就理所应当了。在来看下 COWIterator 这里简化版的迭代器的 remove 方法： 12345678/*** Not supported. Always throws UnsupportedOperationException.* @throws UnsupportedOperationException always; &#123;@code remove&#125;* is not supported by this iterator.*/public void remove() &#123; throw new UnsupportedOperationException();&#125; 这里实际上是直接就会抛出异常的，另外这里在多补充一个关于 HashSet 的迭代器移除，HashSet 其实内部是持有的 HashMap 实例，因此它的迭代器是 HashMap 内部提供的 HashIterator：1234567891011public final void remove() &#123; Node&lt;K,V&gt; p = current; if (p == null) throw new IllegalStateException(); if (modCount != expectedModCount) throw new ConcurrentModificationException(); current = null; K key = p.key; removeNode(hash(key), key, null, false, false); expectedModCount = modCount;&#125; 这里其实也可以看到，在对非安全的集合做 remove 操作时会经常遇到的 ConcurrentModificationException 这个异常。]]></content>
+      <categories>
+        <category>java 基础</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>set</tag>
+        <tag>CopyOnWriteArraySet</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[SpringBoot 实践-Filter 中的异常处理和 Controller 中的异常处理]]></title>
     <url>%2F2020%2F02%2F12%2Fspringboot-series-filter-exception%2F</url>
     <content type="text"><![CDATA[本篇主要是记录如何使用 SpringBoot 所提供的 ErrorController 这个接口能力；其内置了一个 BasicErrorController 对异常进行统一的处理，当在 Controller 发生异常的时候会自动把请求 forward 到 /error 这个请求 path 下(/error 是 SpringBoot 提供的一个默认的mapping)。BasicErrorController 提供两种返回错误：1、页面返回；2、json 返回。 背景开发中遇到的一个问题：项目中所有的 rest 请求均是通过 json 形式返回，且自定义了一个统一的数据结构对象，如下： 123456789public class Response&lt;T&gt; &#123; // 数据 private T data; // success 标记 private boolean success; // 异常信息 private String error; // 省略 get set&#125; 这个结构非常常见，相信很多开发者都这么玩过。项目中 rest 请求返回的所有结果都是以 Response 对象形式返回，如下： 1234567@RequestMapping("test")public Response&lt;String&gt; testApi()&#123; Response&lt;String&gt; result = new Response&lt;&gt;(); result.setData("this is glmapper blog"); result.setSuccess(true); return result;&#125; 这基本是最简化版的一个模型；出于安全考虑，现在有个需求是需要对每个请求做校验，比如校验请求中是否携带 token 这种。思路很简单就是通过拦截器或者过滤器的方式来对请求做拦截检验。 其实不管是拦截器还是过滤器，需要考虑的一个问题是，在校验不通过或者校验时产生异常的情况下，怎么把异常信息以项目中规定的统一数据格式返回，即返回 Response。 直接将 Response 写回去利用 ServletResponse 中提供的 PrintWriter，将 Response 以 json 格式直接 print 回去。大概代码如下： 12345678910111213141516171819202122232425262728293031@Overridepublic void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException &#123; HttpServletRequest request = (HttpServletRequest) servletRequest; String requestURI = request.getRequestURI(); // mock 测试异常请求 if (requestURI.contains("testTokenError")) &#123; Response&lt;String&gt; response = new Response&lt;&gt;(); response.setError("token validation fails"); // 回写异常信息 returnResponse((HttpServletResponse)servletResponse,JSONObject.toJSONString(response)); // 返回 return; &#125; chain.doFilter(servletRequest, servletResponse);&#125;private void returnResponse(HttpServletResponse response, String data) &#123; PrintWriter writer = null; response.setCharacterEncoding("UTF-8"); response.setContentType("text/html; charset=utf-8"); try &#123; writer = response.getWriter(); // 通过 PrintWriter 将 data 数据直接 print 回去 writer.print(data); &#125; catch (IOException e) &#123; &#125; finally &#123; if (writer != null) writer.close(); &#125;&#125; 这种方式比较简单和直接，print 异常数据之后直接 return，不在继续过滤器链。 抛出异常，通过 BasicErrorController 方式处理这种方式是利用了 SpringBoot 本身提供的能力，可以更优雅的处理错误信息。代码大致如下： 1、是在 Filter 中就直接抛出一个异常 123456789101112@Overridepublic void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException &#123; HttpServletRequest request = (HttpServletRequest) servletRequest; String requestURI = request.getRequestURI(); // mock 测试异常请求 if (requestURI.contains("testTokenError")) &#123; // 直接返回一个自定义的异常 throw new ValidationException("token validation fails"); &#125; chain.doFilter(servletRequest, servletResponse);&#125; 2、定义一个异常处理的 Controller 这里定义一个 TokenErrorController ，继承自 SpringBoot 提供的 BasicErrorController 这个类，然后重写 error 这个方法（如果是页面的话，重写 errorHtml 这个方法），用于返回自定义的 Response 数据。代码如下： 1234567891011121314151617181920@RestControllerpublic class TokenErrorController extends BasicErrorController &#123; // 重写 error 方法 @Override @RequestMapping(produces = &#123; MediaType.APPLICATION_JSON_VALUE &#125;) public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; error(HttpServletRequest request) &#123; Map&lt;String, Object&gt; body = getErrorAttributes(request, isIncludeStackTrace(request, MediaType.ALL)); HttpStatus status = getStatus(request); // 拿到 body 中的异常 message String message = body.get("message").toString(); // 构建 Response 对象 Response response = new Response(); // 将 message 的 设置到 response response.setError(message); // 返回 return new ResponseEntity(response, status); &#125; // 省略其他无关代码&#125; 这样就可以实现在不改动之前工程任何代码的情况下只处理额外 Filter 中抛出的异常了。需要注意的是，上述是通过 BasicErrorController 来接受了 Filter 抛出的异常信息，然后再通过 BasicErrorController 将异常信息进行包装并且返回。为什么要提一下这个呢？主要是为了和 SpringBoot 中基于 REST 请求层所提供的两个用于处理全局异常的注解区分，这两个注解分别是 @ControllerAdvice 和 @RestControllerAdvice，通过注解的名字其实就能看出，SpringBoot 中，可以通过这两个注解来实现对 @Controller 和 @RestController 标注的类进行全局拦截，因为是 Controller 层面的 AOP 拦截，所以对于 Filter 中抛出的异常，通过 @ControllerAdvice 和 @RestControllerAdvice 两个注解定义的全局异常处理器是没法处理的。 下面就简单介绍下 @ControllerAdvice 和 @RestControllerAdvice 这两个注解的使用。 全局异常处理自定义一个 OtherExcepetion ，然后再使用基于 @RestControllerAdvice 注解编写一个全局异常处理器。 1234567891011@RestControllerAdvicepublic class OtherExceptionHandler &#123; // 这里只处理 OtherException 异常类型 @ExceptionHandler(value = OtherException.class) public Response&lt;String&gt; otherExceptionHandler(HttpServletRequest req, OtherException e)&#123; Response response = new Response(); response.setError(e.getMessage()); return response; &#125; // 当然你也可以定义处理其他异常的 @ExceptionHandler&#125; 这种方式是没法处理 Filter 中异常的，只能处理 Controller 里面抛出的异常。 小结本篇主要记录了在 SpringBoot 中如何保证 Filter 中抛出的异常能和业务一样以指定类型的对象返回，并对 SpringBoot 中提供的基于 Controller 层异常捕获处理进行简单介绍。两者处理异常的思路是不同的： BasicErrorController：接受来自 /error 的异常请求处理，Filter 中抛出的异常先 forward 到 /error，然后处理。 @RestControllerAdvice：通过对于所有 @Controller 注解所标注的类进行 AOP 拦截，能够根据异常类型匹配具体的 ExceptionHandler 进行处理。]]></content>
@@ -201,8 +214,8 @@
         <category>运维</category>
       </categories>
       <tags>
-        <tag>linux</tag>
         <tag>shell</tag>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -315,8 +328,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>Config</tag>
         <tag>spring cloud</tag>
+        <tag>Config</tag>
         <tag>Apollo</tag>
       </tags>
   </entry>
@@ -328,8 +341,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>zookeeper</tag>
         <tag>Config</tag>
+        <tag>zookeeper</tag>
       </tags>
   </entry>
   <entry>
@@ -340,8 +353,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>zookeeper</tag>
         <tag>Config</tag>
+        <tag>zookeeper</tag>
       </tags>
   </entry>
   <entry>
@@ -352,8 +365,8 @@
         <category>运维</category>
       </categories>
       <tags>
-        <tag>mysql</tag>
         <tag>linux</tag>
+        <tag>mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -376,8 +389,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>Config</tag>
         <tag>spring cloud</tag>
+        <tag>Config</tag>
       </tags>
   </entry>
   <entry>
