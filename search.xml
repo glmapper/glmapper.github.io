@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[解决方案系列-基于 SOFAArk 实现应用的动态装载和卸载]]></title>
+    <url>%2F2020%2F04%2F03%2Fsolution-series-dynamic-module%2F</url>
+    <content type="text"><![CDATA[本篇主要来看下蚂蚁金服开源的 SOFAArk 这个产品。SOFAArk 是一款基于 Java 实现的轻量级类隔离容器，主要提供类隔离和应用(模块)合并部署能力；本文主要基于 telnet 指令的方式进行应用 Biz 的装载和卸载操作。去年在上海 KubeCon 大会上有分享过 《SOFABoot 动态模块实践》，主要是通过 SOFADashboard 来下发指令的，基于 SOFABoot 3.1.4 和 SOFAArk 0.6.0 版本；目前 SOFABoot 已经发布到 3.3.x+ ，SOFAARK 1.1.1 版本，其中 ，SOFAARK 提供了很多新的特性，包括全生命周期的事件机制、卸载优化等。 由于 SOFABoot 3.3.0 版本中部分代码的重构，导致无法兼容 runtime plugin，所以本文是基于修复版的 SOFABoot 3.3.0-poc-ark-SNAPSHOT 来完成，案例工程kc-sofastack-dynamic-demo 分支 support-3.3.0 。 案例描述先看下官方文档里面对于动态部署的描述，是通过变更/监听 zk 节点数据来实现运维命令的下发和接收： 本篇精简一下，使用 telnet 指令直接进行运维操作；案例描述如下：对于一个运行期的一个应用 A，将另外一个应用 B 动态的装载到 A 上（实际是 A 所在的 Ark 容器上），大体描述如下图所示： 下面两张图是具体的运行结果图： 默认 master 运行、无动态 biz 运行时的运行结果https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/dynamic/dynamic-default.jpg 动态安装 biz 之后运行结果https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/dynamic/dynamic-biz.jpg 操作步骤1、构建 SOFABoot 3.3.0-poc-ark-SNAPSHOT 版本，安装到本地仓库 123git clone https://github.com/glmapper/sofa-boot.gitgit checkout 3.3.0-poc-ark-SNAPSHOTmvn clean install -DskipTest 2、下载 kc-sofastack-dynamic-demo 案例工程，打包 123git clone https://github.com/sofastack-guides/kc-sofastack-dynamic-demo.gitgit checkout support-3.3.0mvn clean package -DskipTest 3、完成打包之后，案例工程根目录 target 目录下有两个包，dynamic-stock-mng-1.0.0-ark-biz.jar 和 dynamic-provider-1.0.0-ark-biz.jar。dynamic-stock-mng-1.0.0-ark-biz.jar 是 master biz + ark 容器，dynamic-provider-1.0.0-ark-biz.jar 是动态 biz 4、执行 java -jar dynamic-stock-mng-1.0.0-ark-biz.jar，浏览器输入 http://localhost:8080/，运行结果 这里看到的 SUPPORT BY: DEFAULT BIZ 是默认的 BIZ ，也就是 master BIZ 5、通过 telnet 指令安装 动态 biz 12telnet localhost 1234sofa-ark&gt; biz -i file://xxxxx/dynamic-provider-1.0.0-ark-biz.jar #这里的文件路径根据你自己本地实际的包路径修改 通过 biz -a 查看安装结果： 1234sofa-ark&gt;biz -aprovide:1.0.0:activatedstock-mng:1.0.0:activatedbiz count = 2 在次通过浏览器输入 http://localhost:8080/，运行结果https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/dynamic/dynamic-biz.jpg这里 SUPPORT BY 是刚刚安装的 动态 BIZ 所提供的。 原理 来自官网 SOFAArk 包含三个概念，Ark Container, Ark Plugin 和 Ark Biz; 运行时逻辑结构图如下: 概念解释： Ark Container: SOFAArk 容器，负责 Ark 包启动运行时的管理；Ark Plugin 和 Ark Biz 运行在 SOFAArk 容器之上；容器具备管理插件和应用的功能；容器启动成功后，会自动解析 classpath 包含的 Ark Plugin 和 Ark Biz 依赖，完成隔离加载并按优先级依次启动之； Ark Plugin: Ark 插件，满足特定目录格式要求的 Fat Jar，使用官方提供的 Maven 插件 sofa-ark-plugin-maven-plugin 可以将一个或多个普通的 Java jar 打包成一个标准格式的 Ark Plugin；Ark Plugin 会包含一份配置文件，通常包括插件类导入导出配置、资源导入导出配置、插件启动优先级等；运行时，SOFAArk 容器会使用独立的 PluginClassLoader加载插件，并根据插件配置构建类加载索引表、资源加载索引表，使插件和插件之间、插件和应用之间相互隔离； Ark Biz: Ark 应用模块，满足特定目录格式要求的 Fat Jar，使用官方提供的 Maven 插件 sofa-ark-maven-plugin 可以将工程应用打包成一个标准格式的 Ark Biz；Ark Biz 是工程应用以及其依赖包的组织单元，包含应用启动所需的所有依赖和配置；一个 Ark 包中可以包含多个 Ark Biz 包，按优先级依次启动，Biz 之间通过 JVM 服务交互； 运行 Ark 包，Ark Container 优先启动，容器自动解析 Ark 包中含有的 Ark Plugin 和 Ark Biz，并读取他们的配置信息，构建类和资源的加载索引表；然后使用独立的 ClassLoader 加载并按优先级配置依次启动。]]></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>解决方案</tag>
+        <tag>SOFA</tag>
+        <tag>SOFAArk</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[解决方案系列-集群选主]]></title>
+    <url>%2F2020%2F03%2F29%2Fsolution-series-cluster-selector%2F</url>
+    <content type="text"></content>
+      <categories>
+        <category>解决方案</category>
+      </categories>
+      <tags>
+        <tag>解决方案</tag>
+        <tag>集群选主</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[聊一聊 CopyOnWriteArraySet 的迭代删除]]></title>
     <url>%2F2020%2F03%2F16%2Fjava-base-iterator-of-set%2F</url>
     <content type="text"><![CDATA[上周在工程中涉及到一个清理 Set 集合的操作，将满足设定条件的项从 Set 中删除掉。简化版本代码如下： 123456789101112public static void main(String[] args) &#123; Set&lt;String&gt; sets = new CopyOnWriteArraySet&lt;&gt;(); sets.add("1"); sets.add("3"); sets.add("3"); sets.add("4"); Iterator&lt;String&gt; iterator = sets.iterator(); while (iterator.hasNext())&#123; iterator.remove(); &#125; System.out.println(sets); &#125; 这个看起来是个很常规的问题，没有验证就直接发了线下环境，然后就收到了业务方反馈的服务无法正常使用的问题了。 问题现象先来看下上述代码所抛出的异常： 123Exception in thread "main" java.lang.UnsupportedOperationException at java.util.concurrent.CopyOnWriteArrayList$COWIterator.remove(CopyOnWriteArrayList.java:1178) at com.glmapper.bridge.boot.TestMain.main(TestMain.java:21) 关于 UnsupportedOperationException 这个异常没有什么好说的，在集合操作中经常出现，网上也有很多关于这个异常的说明，这里不再赘述。这里我比较关注的是，我使用的是 CopyOnWriteArraySet，迭代器也是 sets 的，但是异常中居然出现了 CopyOnWriteArrayList，查看了 CopyOnWriteArraySet 的类继承关系，和 CopyOnWriteArrayList 也没啥关系。 排查&amp;结果通过查看了 CopyOnWriteArraySet 的代码，发现 CopyOnWriteArraySet 内部其实是持有了一个 CopyOnWriteArrayList 的对象实例，其内部的所有操作都是基于 CopyOnWriteArrayList 这个对象来进行的。 123456789101112public class CopyOnWriteArraySet&lt;E&gt; extends AbstractSet&lt;E&gt; implements java.io.Serializable &#123; // 省略其他代码 private final CopyOnWriteArrayList&lt;E&gt; al; /** * Creates an empty set. */ public CopyOnWriteArraySet() &#123; al = new CopyOnWriteArrayList&lt;E&gt;(); &#125; // 省略其他代码&#125; 关于 CopyOnWriteArrayList 的操作写操作 在 CopyOnWriteArrayList 里处理写操作（包括 add、remove、set 等）是先将原始的数据通过 JDK1.6 的 Arrays.copyof() 来生成一份新的数组。add 的代码如下： 123456789101112131415public boolean add(E e) &#123; final ReentrantLock lock = this.lock; lock.lock(); try &#123; Object[] elements = getArray(); int len = elements.length; // 这里是生产新的数组 Object[] newElements = Arrays.copyOf(elements, len + 1); newElements[len] = e; setArray(newElements); return true; &#125; finally &#123; lock.unlock(); &#125;&#125; 后续的操作都是在新的数据对象上进行写，写完后再将原来的引用指向到当前这个数据对象，这样保证了每次写都是在新的对象上（因为要保证写的一致性，这里要对各种写操作要加一把锁，JDK1.6 在这里用了重入锁）， 读操作 读的时候就是在引用的当前对象上进行读（包括 get，iterator 等），不存在加锁和阻塞，针对 iterator 使用了一个叫 COWIterator 的简化版迭代器，因为不支持写操作，当获取 CopyOnWriteArrayList 的迭代器时，是将迭代器里的数据引用指向当前引用指向的数据对象，无论未来发生什么写操作，都不会再更改迭代器里的数据对象引用，所以迭代器也很安全。 结论因为 CopyOnWriteArraySet 的内部操作都是基于 CopyOnWriteArrayList 的，从异常来看：1java.util.concurrent.CopyOnWriteArrayList$COWIterator.remove(CopyOnWriteArrayList.java:1178) COWIterator 是 CopyOnWriteArrayList 内部提供的一个简化版的迭代器。所以异常里面出现这个就理所应当了。在来看下 COWIterator 这里简化版的迭代器的 remove 方法： 12345678/*** Not supported. Always throws UnsupportedOperationException.* @throws UnsupportedOperationException always; &#123;@code remove&#125;* is not supported by this iterator.*/public void remove() &#123; throw new UnsupportedOperationException();&#125; 这里实际上是直接就会抛出异常的，另外这里在多补充一个关于 HashSet 的迭代器移除，HashSet 其实内部是持有的 HashMap 实例，因此它的迭代器是 HashMap 内部提供的 HashIterator：1234567891011public final void remove() &#123; Node&lt;K,V&gt; p = current; if (p == null) throw new IllegalStateException(); if (modCount != expectedModCount) throw new ConcurrentModificationException(); current = null; K key = p.key; removeNode(hash(key), key, null, false, false); expectedModCount = modCount;&#125; 这里其实也可以看到，在对非安全的集合做 remove 操作时会经常遇到的 ConcurrentModificationException 这个异常。]]></content>
@@ -214,8 +239,8 @@
         <category>运维</category>
       </categories>
       <tags>
-        <tag>shell</tag>
         <tag>linux</tag>
+        <tag>shell</tag>
       </tags>
   </entry>
   <entry>
@@ -328,8 +353,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>spring cloud</tag>
         <tag>Config</tag>
+        <tag>spring cloud</tag>
         <tag>Apollo</tag>
       </tags>
   </entry>
@@ -341,8 +366,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>Config</tag>
         <tag>zookeeper</tag>
+        <tag>Config</tag>
       </tags>
   </entry>
   <entry>
@@ -353,8 +378,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>Config</tag>
         <tag>zookeeper</tag>
+        <tag>Config</tag>
       </tags>
   </entry>
   <entry>
@@ -365,8 +390,8 @@
         <category>运维</category>
       </categories>
       <tags>
-        <tag>linux</tag>
         <tag>mysql</tag>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -389,8 +414,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>spring cloud</tag>
         <tag>Config</tag>
+        <tag>spring cloud</tag>
       </tags>
   </entry>
   <entry>
@@ -1267,8 +1292,8 @@
       </categories>
       <tags>
         <tag>聊一聊</tag>
-        <tag>spring 扩展机制</tag>
         <tag>spring 事件机制</tag>
+        <tag>spring 扩展机制</tag>
       </tags>
   </entry>
   <entry>
