@@ -22,7 +22,7 @@
     <meta name="description" content="从平凡的世界中全身而退">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>解决方案系列-集群选主 · glmapper</title>
+    <title>解决方案系列-集群选主(基于DB) · glmapper</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/">glmapper</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">解决方案系列-集群选主</a>
+                <a href="#" class="post-name">解决方案系列-集群选主(基于DB)</a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            解决方案系列-集群选主
+            解决方案系列-集群选主(基于DB)
             <!-- 404 -->
             
         </h1>
@@ -274,7 +274,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">0</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.5k</span>阅读时长: <span class="post-count reading-time">5 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -403,7 +403,41 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        
+        <p>一个业务量很小的系统，所有的代码都放在一个项目中，部署在一台服务器上。所有的服务都由这台服务器提供，这就是常说的单机模式；我们知道单机模式的缺点是：1、处理能力有限，2、存在单点问题。单机模式大致如下图所示：</p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/blogs/clusters/cluster-single.jpg" alt=""></p>
+<p>为了解决这些问题，出现了集群模式。</p>
+<h2 id="常见的集群模式方案"><a href="#常见的集群模式方案" class="headerlink" title="常见的集群模式方案"></a>常见的集群模式方案</h2><p>集群主要的使用场景就是为了分担请求的压力，也就是在几个服务器上部署相同的应用程序，来分担客户端请求。集群主要是通过加机器来解决问题，对于问题本身是不会做任何分解的。（PS：分解了就是分布式）。那么常见的集群模式有哪几种呢？</p>
+<h3 id="主备，冷备模式，主写主读"><a href="#主备，冷备模式，主写主读" class="headerlink" title="主备，冷备模式，主写主读"></a>主备，冷备模式，主写主读</h3><p>所有的写请求都由 master 负责处理，如果写请求打在 slave 上，则 slave 会将请求转发给 master 处理，架构图如下图所示：</p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/blogs/clusters/cluster-m-s-cold.jpg" alt=""></p>
+<p>冷备模式主要是在请求量不大，且对于数据状态有要求的情况（比如所有的数据其实都是 master 内存存储），提供一个从机用于备用，在 master 出现问题的时候能够及时顶上去。</p>
+<h3 id="主备，主写从读"><a href="#主备，主写从读" class="headerlink" title="主备，主写从读"></a>主备，主写从读</h3><p>基于冷备模式，衍生出主写从读，也就是 master 会将数据同步给各个 slave，然后就可以分担掉读请求的处理压力，架构图如下图所示：</p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/blogs/clusters/cluster-mw-sr.jpg" alt=""></p>
+<p>这种模式算是比较常见的，像数据库的主从模式。</p>
+<h3 id="对等，广播"><a href="#对等，广播" class="headerlink" title="对等，广播"></a>对等，广播</h3><p>这种场景是客户端的请求可能需要指定的集群中的某个 server 来处理，常见的比如配置中心，配置中心客户端会选择与集群中的某个 server 建立连接，当通过管控端推送配置指令下来时，因为没法指定到具体的 server 去推送，所以当请求推到集群的某台机器时，该机器会向集群中的其他机器广播此次请求，谁持有这个客户端的连接，谁去处理。架构图如下图所示：</p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/blogs/clusters/cluster-m-s-broadcast.jpg" alt=""></p>
+<h3 id="纯对等（无状态）"><a href="#纯对等（无状态）" class="headerlink" title="纯对等（无状态）"></a>纯对等（无状态）</h3><p>最后一种就是纯对等的，集群中的机器谁处理都行；这种就是广义说的集群模式，通过扩机器解决高并发。</p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/blogs/clusters/cluster-equality.jpg" alt=""></p>
+<h2 id="集群选主"><a href="#集群选主" class="headerlink" title="集群选主"></a>集群选主</h2><p>集群选主指是上述提到的主备模式下进行的，也就是有状态的情况，无状态场景不需要进行选主操作。集群选主很容易，困难的是选主之后的操作（比如如何协调和感知集群中的机器状态），还有集群内机器发生变更之后的操作（如如何分配客户端连接，这里就会涉及到一个非常常见的问题：一致性 hash）。本篇主要介绍集群选主，所以对于这两个问题不做过多的探讨。</p>
+<p>集群选主的方式有很多种，本篇只介绍通过 ”争抢锁“ 的选主方式，即在集群中机器启动时会通过争抢某个”非共享“资源，谁抢到谁来当 master。那么基于此，我们可以罗列以下几种常见的”非共享“资源：</p>
+<ul>
+<li>DB 的唯一键插入</li>
+<li>zk 的节点创建</li>
+<li>redis 的原子写</li>
+<li>…</li>
+</ul>
+<h2 id="基于-DB-的唯一键插入实现选主"><a href="#基于-DB-的唯一键插入实现选主" class="headerlink" title="基于 DB 的唯一键插入实现选主"></a>基于 DB 的唯一键插入实现选主</h2><p>下面以 DB 的唯一键插入 为例来简单介绍下选主的逻辑。</p>
+<blockquote>
+<p>数据库唯一键：unique key，用来保证对应的字段中的数据唯一。</p>
+</blockquote>
+<h3 id="机器表设计-amp-唯一键设置"><a href="#机器表设计-amp-唯一键设置" class="headerlink" title="机器表设计&amp;唯一键设置"></a>机器表设计&amp;唯一键设置</h3><p>所有集群中的机器启动时都需要将自己的机器信息写到 DB 中。这里创建一个唯一键：<code>uk_master</code>，包括两个字段，分别是 机器状态和一个 master_lock（master 锁）。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- ----------------------------</span></span><br><span class="line"><span class="comment">-- Table structure for cluster_servers</span></span><br><span class="line"><span class="comment">-- ----------------------------</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> <span class="string">`cluster_servers`</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`cluster_servers`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT <span class="keyword">COMMENT</span> <span class="string">'主键'</span>,</span><br><span class="line">  <span class="string">`host_name`</span> <span class="built_in">varchar</span>(<span class="number">128</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'主机名'</span>,</span><br><span class="line">  <span class="string">`ip`</span> <span class="built_in">varchar</span>(<span class="number">16</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'ip 地址'</span>,</span><br><span class="line">  <span class="string">`is_master`</span> <span class="built_in">int</span>(<span class="number">4</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'是否是 master'</span>,</span><br><span class="line">  <span class="string">`status`</span> <span class="built_in">varchar</span>(<span class="number">32</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'机器状态'</span>,</span><br><span class="line">  <span class="string">`master_lock`</span> <span class="built_in">varchar</span>(<span class="number">128</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'master 锁'</span>,</span><br><span class="line">  <span class="string">`heartbeat`</span> <span class="built_in">timestamp</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="keyword">CURRENT_TIMESTAMP</span> <span class="keyword">ON</span> <span class="keyword">UPDATE</span> <span class="keyword">CURRENT_TIMESTAMP</span> <span class="keyword">COMMENT</span> <span class="string">'心跳时间'</span>,</span><br><span class="line">  <span class="string">`gmt_sql_server_time`</span> <span class="built_in">timestamp</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="keyword">CURRENT_TIMESTAMP</span> <span class="keyword">COMMENT</span> <span class="string">'sql 执行时间'</span>,</span><br><span class="line">  <span class="string">`gmt_modify`</span> <span class="built_in">timestamp</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="keyword">CURRENT_TIMESTAMP</span> <span class="keyword">COMMENT</span> <span class="string">'修改时间'</span>,</span><br><span class="line">  <span class="string">`gmt_create`</span> <span class="built_in">timestamp</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="keyword">CURRENT_TIMESTAMP</span> <span class="keyword">COMMENT</span> <span class="string">'创建时间'</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>),</span><br><span class="line">  <span class="keyword">UNIQUE</span> <span class="keyword">KEY</span> <span class="string">`uk_master`</span> (<span class="string">`status`</span>,<span class="string">`master_lock`</span>) <span class="keyword">USING</span> BTREE</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br></pre></td></tr></table></figure>
+<h3 id="争抢唯一键"><a href="#争抢唯一键" class="headerlink" title="争抢唯一键"></a>争抢唯一键</h3><p>这里就是谁更新数据状态成功，谁就是 master，没有争抢成功则是 slave。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">update</span> <span class="attr">id</span>=<span class="string">"setMaster"</span> &gt;</span></span><br><span class="line">    update cluster_servers set is_master = #&#123;isMaster&#125;, master_lock = #&#123;masterLock&#125;, status = #&#123;status&#125;, heartbeat = CURRENT_TIMESTAMP, gmt_modify = CURRENT_TIMESTAMP where host_name = #&#123;hostName&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">update</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="集群选主的过程"><a href="#集群选主的过程" class="headerlink" title="集群选主的过程"></a>集群选主的过程</h3><p>基于此，集群选主的大致过程可以通过下图描述：</p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/blogs/clusters/cluster-select.jpg" alt=""></p>
+<p>这里的像 slave 的后置任务，比如开启监听 master 状态，这样在 master 出现问题时就会触发新的选举。master 的后置任务一个是开始监听各个 slave 的状态，如果 slave 出现问题，则可以及时的将此 slave 踢出集群，其他则需要根据具体的业务情况来看。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本篇主要介绍了集群的几种基本形态，然后基于需要选主的场景进行了简单分析；最后提供了基于 DB 进行集群选主的一种可行性方案，并介绍了大体的选主流程。需要补充一点，基于 DB 选主和维持心跳本身是比较重的，强依赖 DB 的状态，如果 DB 有问题则集群状态可能会出现一些非预期的情况或者导致集群直接不可用，所以大家在选择具体的方式时，还是要结合业务的具体场景来选择。</p>
+
     </article>
     <!-- license  -->
     
@@ -411,7 +445,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2020/03/29/solution-series-cluster-selector/">http://www.glmapper.com/2020/03/29/solution-series-cluster-selector/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2020/03/29/solution-series-cluster-selector/">March 29th 2020, 6:12:42 pm</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2020/03/29/solution-series-cluster-selector/">March 29th 2020, 6:13:55 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2020/03/29/solution-series-cluster-selector/">April 4th 2020, 11:20:55 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -560,7 +594,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的集群模式方案"><span class="toc-number">1.</span> <span class="toc-text">常见的集群模式方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#主备，冷备模式，主写主读"><span class="toc-number">1.1.</span> <span class="toc-text">主备，冷备模式，主写主读</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主备，主写从读"><span class="toc-number">1.2.</span> <span class="toc-text">主备，主写从读</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对等，广播"><span class="toc-number">1.3.</span> <span class="toc-text">对等，广播</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#纯对等（无状态）"><span class="toc-number">1.4.</span> <span class="toc-text">纯对等（无状态）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集群选主"><span class="toc-number">2.</span> <span class="toc-text">集群选主</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于-DB-的唯一键插入实现选主"><span class="toc-number">3.</span> <span class="toc-text">基于 DB 的唯一键插入实现选主</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#机器表设计-amp-唯一键设置"><span class="toc-number">3.1.</span> <span class="toc-text">机器表设计&amp;唯一键设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#争抢唯一键"><span class="toc-number">3.2.</span> <span class="toc-text">争抢唯一键</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#集群选主的过程"><span class="toc-number">3.3.</span> <span class="toc-text">集群选主的过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -2816,7 +2850,7 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/29</span><a class="archive-post-title" href="/2020/03/29/solution-series-cluster-selector/">解决方案系列-集群选主</a>
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href="/2020/03/29/solution-series-cluster-selector/">解决方案系列-集群选主(基于DB)</a>
         </li>
     
     

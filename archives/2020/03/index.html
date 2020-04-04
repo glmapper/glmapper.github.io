@@ -348,10 +348,14 @@
     <article class="index-post">
         <a class="abstract-title" href="/2020/03/29/solution-series-cluster-selector/">
             
-                <span>解决方案系列-集群选主</span>
+                <span>解决方案系列-集群选主(基于DB)</span>
         </a>
         <div class="abstract-content">
-            
+            一个业务量很小的系统，所有的代码都放在一个项目中，部署在一台服务器上。所有的服务都由这台服务器提供，这就是常说的单机模式；我们知道单机模式的缺点是：1、处理能力有限，2、存在单点问题。单机模式大致如下图所示：
+
+为了解决这些问题，出现了集群模式。
+常见的集群模式方案集群主要的使用场景就是为了分担请求的压力，也就是在几个服务器上部署相同的应用程序，来分担客户端请求。集群主要是通过加机器来解决问题，对于问题本身是不会做任何分解的。（PS：分解了就是分布式）。那么常见的集群模式有哪几种呢？
+主备，冷备模式，主写主读所有的写请求都由 master 负责处理，如果写请求打在 slave 上，则 s...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -2757,7 +2761,7 @@
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/29</span><a class="archive-post-title" href="/2020/03/29/solution-series-cluster-selector/">解决方案系列-集群选主</a>
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href="/2020/03/29/solution-series-cluster-selector/">解决方案系列-集群选主(基于DB)</a>
         </li>
     
     
