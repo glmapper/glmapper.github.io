@@ -407,7 +407,7 @@ height:50vh;
 <p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/blogs/clusters/cluster-single.jpg" alt=""></p>
 <p>为了解决这些问题，出现了集群模式。</p>
 <h2 id="常见的集群模式方案"><a href="#常见的集群模式方案" class="headerlink" title="常见的集群模式方案"></a>常见的集群模式方案</h2><p>集群主要的使用场景就是为了分担请求的压力，也就是在几个服务器上部署相同的应用程序，来分担客户端请求。集群主要是通过加机器来解决问题，对于问题本身是不会做任何分解的。（PS：分解了就是分布式）。那么常见的集群模式有哪几种呢？</p>
-<h3 id="主备，冷备模式，主写主读"><a href="#主备，冷备模式，主写主读" class="headerlink" title="主备，冷备模式，主写主读"></a>主备，冷备模式，主写主读</h3><p>所有的写请求都由 master 负责处理，如果写请求打在 slave 上，则 slave 会将请求转发给 master 处理，架构图如下图所示：</p>
+<h3 id="主备，冷备模式，主写主读"><a href="#主备，冷备模式，主写主读" class="headerlink" title="主备，冷备模式，主写主读"></a>主备，冷备模式，主写主读</h3><p>所有的写请求都由 master 负责处理，如果请求打在 slave 上，则 slave 会将请求转发给 master 处理，架构图如下图所示：</p>
 <p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/blogs/clusters/cluster-m-s-cold.jpg" alt=""></p>
 <p>冷备模式主要是在请求量不大，且对于数据状态有要求的情况（比如所有的数据其实都是 master 内存存储），提供一个从机用于备用，在 master 出现问题的时候能够及时顶上去。</p>
 <h3 id="主备，主写从读"><a href="#主备，主写从读" class="headerlink" title="主备，主写从读"></a>主备，主写从读</h3><p>基于冷备模式，衍生出主写从读，也就是 master 会将数据同步给各个 slave，然后就可以分担掉读请求的处理压力，架构图如下图所示：</p>
@@ -445,7 +445,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2020/03/29/solution-series-cluster-selector/">http://www.glmapper.com/2020/03/29/solution-series-cluster-selector/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2020/03/29/solution-series-cluster-selector/">March 29th 2020, 6:12:42 pm</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2020/03/29/solution-series-cluster-selector/">April 4th 2020, 11:20:55 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2020/03/29/solution-series-cluster-selector/">April 4th 2020, 11:23:17 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
