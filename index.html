@@ -364,19 +364,16 @@ height:50vh;
                 <span>SpringBoot 实践系列-集成 RocketMQ</span>
         </a>
         <div class="abstract-content">
-             RocketMQ 简介：Apache RocketMQ是一个分布式消息传递和流媒体平台，具有低延迟、高性能和可靠性、万亿级容量和灵活的可伸缩性。它提供了多种功能:
+             RocketMQ 简介：Apache RocketMQ是一个分布式消息传递和流媒体平台，具有低延迟、高性能和可靠性、万亿级容量和灵活的可伸缩性。它提供了多种功能，具体参考: https://github.com/apache/rocketmq 。
+RocketMQ 快速开始 官方指导手册快速开始中提到，RocketMQ 安装需要具体以下条件：
 
-消息处理模式包括发布/订阅、请求/应答和流
-金融级事务性信息
-基于 DLedger 内置容错和高可用性配置选项
-多种跨语言客户端，如 Java、C/ c++、Python、Go等
-可插拔的传输协议，如 TCP、SSL、AIO
-内置的消息跟踪功能，也支持 opentracing
-大数据与流生态系统的全面融合
-消息按时间或偏移量回溯
-可靠的 FIFO 和严格有序的消息在同一队列
-高效的推拉式消费模式
-单个队列中的百万级消息累积...
+64bit OS, 推荐使用 Linux/Unix/Mac 
+64bit JDK 1.8+
+Maven 3.2.x
+4g+ free disk for Broker server （这个需要特别关注下）
+下载安装和编译
+
+12345wget h...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->

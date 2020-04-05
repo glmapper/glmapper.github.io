@@ -274,7 +274,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">2.5k</span>阅读时长: <span class="post-count reading-time">11 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">2.3k</span>阅读时长: <span class="post-count reading-time">11 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -403,34 +403,13 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p> RocketMQ 简介：Apache RocketMQ是一个分布式消息传递和流媒体平台，具有低延迟、高性能和可靠性、万亿级容量和灵活的可伸缩性。它提供了多种功能:</p>
-<ul>
-<li>消息处理模式包括发布/订阅、请求/应答和流</li>
-<li>金融级事务性信息</li>
-<li>基于 DLedger 内置容错和高可用性配置选项</li>
-<li>多种跨语言客户端，如 Java、C/ c++、Python、Go等</li>
-<li>可插拔的传输协议，如 TCP、SSL、AIO</li>
-<li>内置的消息跟踪功能，也支持 opentracing</li>
-<li>大数据与流生态系统的全面融合</li>
-<li>消息按时间或偏移量回溯</li>
-<li>可靠的 FIFO 和严格有序的消息在同一队列</li>
-<li>高效的推拉式消费模式</li>
-<li>单个队列中的百万级消息累积容量</li>
-<li>多个消息传递协议，如 JMS 和 OpenMessaging</li>
-<li>灵活的分布式扩展部署体系结构</li>
-<li>闪电般的批处理消息交换系统</li>
-<li>各种消息筛选机制，如 SQL 和 Tag</li>
-<li>Docker 映像用于隔离测试和云隔离集群</li>
-<li>功能丰富的管理仪表板的配置，指标和监测</li>
-<li>身份验证和授权</li>
-<li><p>为源和接收器提供免费的开源连接器</p>
-<h2 id="RocketMQ-快速开始"><a href="#RocketMQ-快速开始" class="headerlink" title="RocketMQ 快速开始"></a>RocketMQ 快速开始</h2><p>官方指导手册快速开始中提到，RocketMQ 安装需要具体以下条件：</p>
+        <p> RocketMQ 简介：Apache RocketMQ是一个分布式消息传递和流媒体平台，具有低延迟、高性能和可靠性、万亿级容量和灵活的可伸缩性。它提供了多种功能，具体参考: <a href="https://github.com/apache/rocketmq" target="_blank" rel="noopener">https://github.com/apache/rocketmq</a> 。</p>
+<h2 id="RocketMQ-快速开始"><a href="#RocketMQ-快速开始" class="headerlink" title="RocketMQ 快速开始"></a>RocketMQ 快速开始</h2><p> 官方指导手册快速开始中提到，RocketMQ 安装需要具体以下条件：</p>
 <ul>
 <li>64bit OS, 推荐使用 Linux/Unix/Mac </li>
 <li>64bit JDK 1.8+</li>
 <li>Maven 3.2.x</li>
-<li>4g+ free disk for Broker server （这个需要特别关注下）</li>
-</ul>
+<li><p>4g+ free disk for Broker server （这个需要特别关注下）</p>
 <h3 id="下载安装和编译"><a href="#下载安装和编译" class="headerlink" title="下载安装和编译"></a>下载安装和编译</h3></li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https://archive.apache.org/dist/rocketmq/4.7.0/rocketmq-all-4.7.0-source-release.zip</span><br><span class="line">unzip rocketmq-all-4.7.0-source-release.zip</span><br><span class="line"><span class="built_in">cd</span> rocketmq-all-4.7.0/</span><br><span class="line">mvn -Prelease-all -DskipTests clean install -U</span><br><span class="line"><span class="built_in">cd</span> distribution/target/rocketmq-4.7.0/rocketmq-4.7.0</span><br></pre></td></tr></table></figure>
@@ -495,7 +474,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2020/04/05/springboot-series-rocketmq/">http://www.glmapper.com/2020/04/05/springboot-series-rocketmq/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2020/04/05/springboot-series-rocketmq/">April 5th 2020, 7:39:17 pm</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2020/04/05/springboot-series-rocketmq/">April 5th 2020, 11:19:35 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2020/04/05/springboot-series-rocketmq/">April 5th 2020, 11:22:44 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
