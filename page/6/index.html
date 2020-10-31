@@ -359,39 +359,6 @@ height:50vh;
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2018/12/31/springboot/springcoud-eureka-client-analysis/">
-            
-                <span>Spring Cloud-Eureka Client 原理解析</span>
-        </a>
-        <div class="abstract-content">
-            前面一些 demo 中已经介绍了如何使用 SOFABoot 来集成 Spring Cloud Netflix Eureka 组件。本篇将来先解析下 Eureka Client 的工作原理。
-Netflix 和 SpringCloudspring-cloud-commons 模块是 spring 在分布式领域上(服务发现，服务注册，断路器，负载均衡)的规范定义。spring-cloud-netflix 是基于此规范的具体实现，Netflix OSS 里的各种组件也都实现了这个 commons 规范。关系如下：
-Spring Cloud Netflix Eureka 服务发现实现原理基于上图...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring cloud">spring cloud</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="Eureka">Eureka</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
         <a class="abstract-title" href="/2018/12/31/springboot/springcoud-eureka-discovery/">
             
                 <span>SpringCloud-Eureka 服务发现</span>
@@ -692,6 +659,36 @@ Session作为服务器端使用的一种记录客户端状态的机制，其对�
         <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
     
         <a class="post-tag" href="javascript:void(0);" data-tags="session">session</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/11/16/sofa-boot-health-analizy/">
+            
+                <span>SOFABoot 健康检查能力分析</span>
+        </a>
+        <div class="abstract-content">
+            Liveness Check &amp;  Readiness CheckSpring Boot 提供了一个基础的健康检查的能力，中间件和应用都可以扩展来实现自己的健康检查逻辑。但是 Spring Boot 的健康检查只有 Liveness Check 的能力，缺少 Readiness Check 的能力，这样会有比较致命的问题。当一个微服务应用启动的时候，必须要先保证启动后应用是健康的，才可以将上游的流量放进来（来自于 RPC，网关，定时任务等等流量），否则就可能会导致一定时间内大量的错误发生。
+针对 Spring Boot 缺少 Readiness Check 能力的情况，SOFAB...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/16</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="SOFABoot">SOFABoot</a>
     
 </div>
             
@@ -2813,32 +2810,9 @@ Session作为服务器端使用的一种记录客户端状态的机制，其对�
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 122
+        Total : 121
         </div>
         <!-- search  -->
         
@@ -2870,11 +2844,6 @@ Session作为服务器端使用的一种记录客户端状态的机制，其对�
     
         <li class="archive-post-item">
             <span class="archive-post-date">10/24</span><a class="archive-post-title" href="/2020/10/24/photograph/photograph-serise-one/">摄影-1</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href="/2020/08/11/spring-beanutils-analisys/">Spring BeanUtis 属性复制导致线程 block</a>
         </li>
     
     

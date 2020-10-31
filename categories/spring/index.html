@@ -346,37 +346,6 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2020/08/11/spring-beanutils-analisys/">
-            
-                <span>Spring BeanUtis 属性复制导致线程 block</span>
-        </a>
-        <div class="abstract-content">
-            
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/08/11</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="类加载">类加载</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
         <a class="abstract-title" href="/2020/06/21/spring-series-factory-bean-and-post-processor/">
             
                 <span>聊一聊 BeanPostProcessor 不生效</span>
@@ -666,6 +635,39 @@ doGetBean 从容器中查找Bean（BeanFactory链，当前容器-&gt;双亲容�
             前面文章中对依赖注入的触发和bean的创建做了学习记录，本文将来记录一下bean的属性注入过程。Bean的属性注入发生在BeanDefinitionValueResolver这个类中，BeanDefinitionValueResolver这类是用于bean工厂实现的Helper类，职责就是将bean定义对象中包含的值解析为应用于目标bean实例的实际值。
 BeanDefinitionValueResolver类中的resolveValueIfNecessary()方法包含了对所有注入类型的处理。所以本文主要围绕这个方法展开来说。
 resolveValueIfNecessary方法reso...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/spring-series-createbean/">
+            
+                <span>Spring源码系列：依赖注入（二）createBean</span>
+        </a>
+        <div class="abstract-content">
+            在Spring源码系列：依赖注入（一）（AbstractBeanFactory-getBean）最后说道getBean是依赖注入的起点，bean的创建都是通过createBean来完成具体的创建的。createBean的具体实现是在AbstractAutowireCapableBeanFactory中的。本篇就捋一捋这个方法看下bean的创建过程。
+这个方法是AbstractAutowireCapableBeanFactory这个类的中心方法，其作用就是创建一个bean实例，填充bean实例，后置处理等。
+在createBean中主要做了三件事：
+
+判断需要创建的Bean是否可以实例化，...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -2691,32 +2693,9 @@ resolveValueIfNecessary方法reso...
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 122
+        Total : 121
         </div>
         <!-- search  -->
         
@@ -2748,11 +2727,6 @@ resolveValueIfNecessary方法reso...
     
         <li class="archive-post-item">
             <span class="archive-post-date">10/24</span><a class="archive-post-title" href="/2020/10/24/photograph/photograph-serise-one/">摄影-1</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href="/2020/08/11/spring-beanutils-analisys/">Spring BeanUtis 属性复制导致线程 block</a>
         </li>
     
     

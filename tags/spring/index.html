@@ -346,37 +346,6 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2020/08/11/spring-beanutils-analisys/">
-            
-                <span>Spring BeanUtis 属性复制导致线程 block</span>
-        </a>
-        <div class="abstract-content">
-            
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/08/11</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="类加载">类加载</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
         <a class="abstract-title" href="/2020/06/21/spring-series-factory-bean-and-post-processor/">
             
                 <span>聊一聊 BeanPostProcessor 不生效</span>
@@ -663,6 +632,47 @@ Spring中BeanWrapper 的主要功能在于：
 1.支持设置嵌套属性
 2.支持属性值的类型转换（设置ConversionService）
 3.提供分析和操作标准JavaBean的操作：获取和设置属性值（单独或批量），获取属性描述符以及查询属性的...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/spring-series-inject-summary/">
+            
+                <span>Spring源码系列：依赖注入（四）-总结</span>
+        </a>
+        <div class="abstract-content">
+            
+Spring源码系列：依赖注入（一）getBean
+Spring源码系列：依赖注入（二）createBean
+Spring源码系列：依赖注入（三）-属性注入
+
+在上面三篇文章中对依赖注入做了一个大致的梳理；里面都是大量代码的分析，本文在此基础上进行一个总结归纳。
+依赖注入调用过程
+如前几篇文章所述，依赖注入是由getBean来触发的；然后涉及到bean实例的创建、依赖关系的建立、属性注入等子过程。
+
+getBean 方法触发依赖注入
+doGetBean 从容器中查找Bean（BeanFactory链，当前容器-&gt;双亲容器-双亲容器…）
+
+当然，在获取到某个Bean的时候也会通过递...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -2688,32 +2698,9 @@ Spring中BeanWrapper 的主要功能在于：
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 122
+        Total : 121
         </div>
         <!-- search  -->
         
@@ -2745,11 +2732,6 @@ Spring中BeanWrapper 的主要功能在于：
     
         <li class="archive-post-item">
             <span class="archive-post-date">10/24</span><a class="archive-post-title" href="/2020/10/24/photograph/photograph-serise-one/">摄影-1</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href="/2020/08/11/spring-beanutils-analisys/">Spring BeanUtis 属性复制导致线程 block</a>
         </li>
     
     

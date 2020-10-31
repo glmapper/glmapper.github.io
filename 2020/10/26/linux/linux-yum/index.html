@@ -274,7 +274,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">0</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.4k</span>阅读时长: <span class="post-count reading-time">5 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -403,7 +403,69 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        
+        <blockquote>
+<p><a href="http://yum.baseurl.org/" target="_blank" rel="noopener">yum(Yellowdog Updater Modified)</a>：是一个基于 RPM 的软件包管理器，能够从指定服务器自动下载RPM包并且安装，可以处理软件之间的依赖关系，一次性安装所有依赖的软件包，无需一个个下载安装。</p>
+</blockquote>
+<h2 id="工作原理示意图"><a href="#工作原理示意图" class="headerlink" title="工作原理示意图"></a>工作原理示意图</h2><p><code>yum</code> 客户端及服务器的工作原理如下图所示</p>
+<p><img src="https://glmapper-blog.oss-cn-hangzhou.aliyuncs.com/linux/yum.jpg" alt=""></p>
+<h2 id="yum-的配置文件"><a href="#yum-的配置文件" class="headerlink" title="yum 的配置文件"></a>yum 的配置文件</h2><p>配置文件所在目录：<code>/etc/yum.repos.d</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/yum.repos.d/alios.repo</span><br><span class="line">----------------------------------------</span><br><span class="line">[alios.7u2.base.$basearch]</span><br><span class="line">name=alios</span><br><span class="line">baseurl=http://yum.tbsite.net/alios/7u2/os/$basearch/  # $basearch：系统基础架构，如 x86_64</span><br><span class="line">gpgcheck=0</span><br><span class="line">----------------------------------------</span><br></pre></td></tr></table></figure></p>
+<p><code>x.repo</code> 文件相关配置 <code>key</code> 简介：</p>
+<blockquote>
+<ul>
+<li>1、[alios.7u2.base.$basearch]: 仓库的ID，可以取任意名字，只要不和其他的ID冲突即可</li>
+<li>2、name=xxx: 用于描述容器含义</li>
+<li>3、enabled={1|0}: 是否启用这个仓库，0表示不启用，1表示启用，默认是启用的</li>
+<li>4、mirrorlist: 列出这个容器可以使用的镜像站点（如果不想使用，可以注释，本案例中没有体现）</li>
+<li>5、baseurl=url: 容器地址，mirrorlist 是由 yum 程序自行找镜像站点，baseurl 则是指定一个固定容器地址</li>
+<li>6、gpgcheck={1|0}: 是否进行签名合法性检测，0 表示不启用，1表示启用，如果选择启用 gpg 检查，则需要告知其 key 是什么</li>
+<li>7、gpgkey=url: 如果启用 gpg 检测，则需要指定 gpgkey 的路径，即使导入过 gpgkey，这里仍然需要手动为其指定路径，这个路径可以是远程服务器上的，也可以是本地的，只要让本地客户端访问到即可</li>
+</ul>
+</blockquote>
+<p>如果两个仓库里的 RPM 包是一样的，一个在远程服务器上，另一个在本地光盘上，那么本地光盘的访问速度通常会快于远程服务器上。在配置文件中，我们可以定义这样的两个仓库，为其中一个设定优先级</p>
+<blockquote>
+<p>注: gpgme.GpgmeError: (7, 32870, u’\ufffd\ufffd\ufffd\u8c78\ufffd\ufffd\ufffd\u02b5\ufffd\ufffd\ufffd ioctl \ufffd\ufffd\ufffd\ufffd’)   #如果执行报这个错，表示当前系统字符编码不支持 Unicode，改一下就好**</p>
+</blockquote>
+<h2 id="配置-yum-数据源"><a href="#配置-yum-数据源" class="headerlink" title="配置 yum 数据源"></a>配置 yum 数据源</h2><p>默认情况下 <code>yum</code> 使用的源都是国外的地址，那我们如果期望下载速度更快一些时，就可以考虑使用国内的一些源，比如 <code>aliyun</code> 提供的, 以配置 <code>docker</code> <code>yum</code> 数据源为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br><span class="line">已加载插件：bestyumcache, fastestmirror, langpacks</span><br><span class="line">adding repo from: http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br><span class="line">grabbing file http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo to /etc/yum.repos.d/docker-ce.repo</span><br><span class="line">repo saved to /etc/yum.repos.d/docker-ce.repo</span><br></pre></td></tr></table></figure>
+<p>然后就可以在 <code>/etc/yum.repos.d/</code> 下看到 <code>docker-ce.repo</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ sudo cat docker-ce.repo</span><br><span class="line">[docker-ce-stable]</span><br><span class="line">name=Docker CE Stable - $basearch</span><br><span class="line">baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/$basearch/stable</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg</span><br><span class="line"></span><br><span class="line">[docker-ce-stable-debuginfo]</span><br><span class="line">name=Docker CE Stable - Debuginfo $basearch</span><br><span class="line">baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/debug-$basearch/stable</span><br><span class="line">enabled=0</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg</span><br><span class="line"></span><br><span class="line">[docker-ce-stable-source]</span><br><span class="line">name=Docker CE Stable - Sources</span><br><span class="line">baseurl=https://mirrors.aliyun.com/docker-ce/linux/centos/7/source/stable</span><br><span class="line">enabled=0</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=https://mirrors.aliyun.com/docker-ce/linux/centos/gpg</span><br><span class="line"></span><br><span class="line"># ...省略其他</span><br></pre></td></tr></table></figure>
+<h2 id="yum-的一些基本功能"><a href="#yum-的一些基本功能" class="headerlink" title="yum 的一些基本功能"></a>yum 的一些基本功能</h2><p>yum 基本功能主要包括：查询、删除、更新/升级以及软件组等</p>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>yum 查询有以下几种姿势，这里挨个举例。</p>
+<h4 id="yum-search-xxx"><a href="#yum-search-xxx" class="headerlink" title="yum search xxx"></a>yum search xxx</h4><p>搜索某个软件名称或者描述的重要关键字</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ yum search java</span><br><span class="line">已加载插件：bestyumcache, branch, fastestmirror, langpacks</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">kubernetes                                                                                                                                                                  579/579</span><br><span class="line">================================================================================ N/S matched: java =================================================================================</span><br><span class="line">abrt-java-connector.x86_64 : JNI Agent library converting Java exceptions to ABRT problems</span><br><span class="line">aether-javadoc.noarch : Java API documentation for Aether</span><br><span class="line">alicpp-gcc492-netlib-java.x86_64 : alicpp-gcc492-netlib-java-1.1.2.odps</span><br><span class="line">ant-antunit-javadoc.noarch : Javadoc for ant-antunit</span><br><span class="line">ant-contrib-javadoc.noarch : Javadoc for ant-contrib</span><br><span class="line">ant-javadoc.noarch : Javadoc for ant</span><br></pre></td></tr></table></figure>
+<h4 id="yum-info-xxx"><a href="#yum-info-xxx" class="headerlink" title="yum info xxx"></a>yum info xxx</h4><p>列出软件功能（不太方便透露的信息，以 xxxx 代替了）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ yum info docker</span><br><span class="line">已加载插件：bestyumcache, branch, fastestmirror, langpacks</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">可安装的软件包</span><br><span class="line">名称    ：docker</span><br><span class="line">架构    ：x86_64</span><br><span class="line">版本    ：xxxx</span><br><span class="line">发布    ：xxxx  </span><br><span class="line">大小    ：103 M</span><br><span class="line">源      ：xxxx</span><br><span class="line">简介    ：xxxx</span><br><span class="line">网址    ：xxxx</span><br><span class="line">协议    ： Commercial</span><br><span class="line">描述    ： CodeUrl:git@xxxx</span><br><span class="line">         : CodeRev:e3xx79d</span><br><span class="line">         : AoneLog: xxxx</span><br><span class="line">         : AoneUrl:xxxx</span><br><span class="line">         : xxx container service docker-xxx; branch: vxxx</span><br></pre></td></tr></table></figure>
+<h4 id="yum-list"><a href="#yum-list" class="headerlink" title="yum list"></a>yum list</h4><p>列出 yum 服务器上面所有的软件名称，这里就不列了（下面一个是按规则搜的）</p>
+<h4 id="yum-list-xxxx"><a href="#yum-list-xxxx" class="headerlink" title="yum list xxxx*"></a>yum list xxxx*</h4><p>找出以 xxx 开头的软件名称</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ yum list docker</span><br><span class="line">已加载插件：bestyumcache, branch, fastestmirror, langpacks</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">可安装的软件包</span><br><span class="line">docker.x86_64    version-xxx   xxxx</span><br></pre></td></tr></table></figure>
+<h4 id="yum-list-updates"><a href="#yum-list-updates" class="headerlink" title="yum list updates"></a>yum list updates</h4><p>列出 yum 服务器上可提供本机进行升级的软件（返回的信息是 yum list 的子集，这里也不举例了）</p>
+<h3 id="安装-or-升级"><a href="#安装-or-升级" class="headerlink" title="安装 or 升级"></a>安装 or 升级</h3><ul>
+<li>yum install/update 软件名称 </li>
+<li>yum install 软件名称 -y         #安装过程中免输入y确认</li>
+</ul>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><ul>
+<li>yum remove 软件名称</li>
+</ul>
+<h3 id="软件组"><a href="#软件组" class="headerlink" title="软件组"></a>软件组</h3><ul>
+<li>yum grouplist                         //查看容器和本机上可用与安装过的软件组</li>
+<li>yum groupinfo group_name             //查看group内所有组名称</li>
+<li>yum install/remove group_name        //安装与删除</li>
+</ul>
+<p>除此之外，如果我们想升级所有的软件包，可以通过如下方式搞定</p>
+<ul>
+<li>yum -y update  升级所有包，改变软件设置和系统设置,系统版本内核都升级</li>
+<li>yum -y upgrade 升级所有包，不改变软件设置和系统设置，系统版本升级，内核不改变</li>
+</ul>
+<blockquote>
+<p>已经上线的用yum -y upgrade 比较稳，全新的用yum -y update 会更好</p>
+</blockquote>
+<p>editing….</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://yum.baseurl.org/" target="_blank" rel="noopener">http://yum.baseurl.org/</a></li>
+<li><a href="https://blog.csdn.net/guohaosun/article/details/81481848" target="_blank" rel="noopener">https://blog.csdn.net/guohaosun/article/details/81481848</a></li>
+<li><a href="https://blog.51cto.com/wuyelan/1546674" target="_blank" rel="noopener">https://blog.51cto.com/wuyelan/1546674</a></li>
+</ul>
+
     </article>
     <!-- license  -->
     
@@ -411,7 +473,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2020/10/26/linux/linux-yum/">http://www.glmapper.com/2020/10/26/linux/linux-yum/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2020/10/26/linux/linux-yum/">October 26th 2020, 9:57:28 am</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2020/10/26/linux/linux-yum/">October 26th 2020, 9:58:54 am</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2020/10/26/linux/linux-yum/">October 31st 2020, 8:27:30 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -560,7 +622,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#工作原理示意图"><span class="toc-number">1.</span> <span class="toc-text">工作原理示意图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#yum-的配置文件"><span class="toc-number">2.</span> <span class="toc-text">yum 的配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置-yum-数据源"><span class="toc-number">3.</span> <span class="toc-text">配置 yum 数据源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#yum-的一些基本功能"><span class="toc-number">4.</span> <span class="toc-text">yum 的一些基本功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#查询"><span class="toc-number">4.1.</span> <span class="toc-text">查询</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#yum-search-xxx"><span class="toc-number">4.1.1.</span> <span class="toc-text">yum search xxx</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#yum-info-xxx"><span class="toc-number">4.1.2.</span> <span class="toc-text">yum info xxx</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#yum-list"><span class="toc-number">4.1.3.</span> <span class="toc-text">yum list</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#yum-list-xxxx"><span class="toc-number">4.1.4.</span> <span class="toc-text">yum list xxxx*</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#yum-list-updates"><span class="toc-number">4.1.5.</span> <span class="toc-text">yum list updates</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-or-升级"><span class="toc-number">4.2.</span> <span class="toc-text">安装 or 升级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除"><span class="toc-number">4.3.</span> <span class="toc-text">删除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#软件组"><span class="toc-number">4.4.</span> <span class="toc-text">软件组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -2468,32 +2530,9 @@ top:50vh;
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 122
+        Total : 121
         </div>
         <!-- search  -->
         
@@ -2525,11 +2564,6 @@ top:50vh;
     
         <li class="archive-post-item">
             <span class="archive-post-date">10/24</span><a class="archive-post-title" href="/2020/10/24/photograph/photograph-serise-one/">摄影-1</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href="/2020/08/11/spring-beanutils-analisys/">Spring BeanUtis 属性复制导致线程 block</a>
         </li>
     
     

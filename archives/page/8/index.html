@@ -346,46 +346,6 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2018/11/10/spring-series-beanwrapper/">
-            
-                <span>Spring源码系列：BeanWrapper</span>
-        </a>
-        <div class="abstract-content">
-            BeanWrapper 是Spring提供的一个用来操作javaBean属性的工具，使用它可以直接修改一个对象的属性。
-对于bean属性的操作，大家熟知的主要有下面这些工具类：
-
-1.Apache的BeanUtils和PropertyUtils
-2.cglib的BeanMap和BeanCopier
-3.spring的BeanUtils
-
-Spring中BeanWrapper 的主要功能在于：
-
-1.支持设置嵌套属性
-2.支持属性值的类型转换（设置ConversionService）
-3.提供分析和操作标准JavaBean的操作：获取和设置属性值（单独或批量），获取属性描述符以及查询属性的...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
         <a class="abstract-title" href="/2018/11/10/spring-series-inject-summary/">
             
                 <span>Spring源码系列：依赖注入（四）-总结</span>
@@ -671,6 +631,43 @@ BeanDefinitionParserDelegate.parseBeanDefinitionElement
         </a>
         <div class="abstract-content">
             继上一篇BeanFactory的创建之后，其实就是BeanDefinition载入了。同样也是在AbstractRefreshableApplicationContext类的refreshBeanFactory方法中完成：//创建默认的DefaultListableBeanFactory工厂DefaultListableBeanFactory beanFactory = createBeanFactory();//设置IdbeanFactory.setSerializationId(getId());//这个方法其实就是设置了allowBeanDefinitionOverriding和a...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/spring-series-beanfactory/">
+            
+                <span>Spring源码系列：BeanFactory的创建</span>
+        </a>
+        <div class="abstract-content">
+            Spring的Ioc容器其实就是一个bean的关系网，依赖于core，bean，context三个组件来构建的。在spring中最核心的就是对于bean的管理。而bean又依托于我们的容器。本文将从顶层分析一下spring中beanFactory的具体创建过程，为后续的bean的生命周期提供一个基础。
+BeanFactory的继承体系
+从上图可以看到，BeanFactory有三个子类：
+
+ListableBeanFactory
+HierarchicalBeanFactory
+AutowireCapableBeanFactory
+
+（上述三个类的子类体系小伙伴们可以自己对着源码看下，实在太...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -2696,32 +2693,9 @@ BeanDefinitionParserDelegate.parseBeanDefinitionElement
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 122
+        Total : 121
         </div>
         <!-- search  -->
         
@@ -2753,11 +2727,6 @@ BeanDefinitionParserDelegate.parseBeanDefinitionElement
     
         <li class="archive-post-item">
             <span class="archive-post-date">10/24</span><a class="archive-post-title" href="/2020/10/24/photograph/photograph-serise-one/">摄影-1</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/11</span><a class="archive-post-title" href="/2020/08/11/spring-beanutils-analisys/">Spring BeanUtis 属性复制导致线程 block</a>
         </li>
     
     
