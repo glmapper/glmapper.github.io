@@ -272,7 +272,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">689</span>阅读时长: <span class="post-count reading-time">2 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.1k</span>阅读时长: <span class="post-count reading-time">4 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -404,7 +404,16 @@ height:50vh;
         <h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p>namespace 是 Linux 内核用来隔离内核资源的方式。通过 namespace 可以让一些进程只能看到与自己相关的一部分资源，而另外一些进程也只能看到与它们自己相关的资源，这两拨进程根本就感觉不到对方的存在。具体的实现方式是把一个或多个进程的相关资源指定在同一个 namespace 中。</p>
 <p>Linux namespaces 是对全局系统资源的一种封装隔离，使得处于不同 namespace 的进程拥有独立的全局系统资源，改变一个 namespace 中的系统资源只会影响当前 namespace 里的进程，对其他 namespace 中的进程没有影响。</p>
 <h2 id="namespace-的作用"><a href="#namespace-的作用" class="headerlink" title="namespace 的作用"></a>namespace 的作用</h2><p>从前面介绍我们基本明确了 namespace 的作用，那就是“隔离”。Linux 内核实现 namespace 的一个主要目的就是实现轻量级虚拟化(容器)服务；在同一个 namespace 下的进程可以感知彼此的变化，而对外界的进程一无所知。这样就可以让容器中的进程产生错觉，认为自己置身于一个独立的系统中，从而达到隔离的目的。也就是说 linux 内核提供的 namespace 技术为 docker 等容器技术的出现和发展提供了基础条件。</p>
-<p>从 docker 实现者的角度考虑该如何实现一个资源隔离的容器。比如是不是可以通过 chroot 命令切换根目录的挂载点，从而隔离文件系统。为了在分布式的环境下进行通信和定位，容器必须要有独立的 IP、端口和路由等，这就需要对网络进行隔离。同时容器还需要一个独立的主机名以便在网络中标识自己。接下来还需要进程间的通信、用户权限等的隔离。最后，运行在容器中的应用需要有进程号(PID)，自然也需要与宿主机中的 PID 进行隔离。也就是说这六种隔离能力是实现一个容器的基础，让我们看看 linux 内核的 namespace 特性为我们提供了什么样的隔离能力：</p>
+<p>从 docker 实现者的角度考虑该如何实现一个资源隔离的容器。比如是不是可以</p>
+<ul>
+<li>通过 chroot 命令切换根目录的挂载点，从而隔离文件系统。</li>
+<li>为了在分布式的环境下进行通信和定位，容器必须要有独立的 IP、端口和路由等，这就需要对网络进行隔离。</li>
+<li>容器需要一个独立的主机名以便在网络中标识自己</li>
+<li>进程间的通信隔离。</li>
+<li>用户权限隔离</li>
+<li>运行在容器中的应用需要有进程号(PID)，需要与宿主机中的 PID 进行隔离。</li>
+</ul>
+<p>也就是说这六种隔离能力是实现一个容器的基础，下面就看下 linux 内核的 namespace 特性提供了什么样的隔离能力：</p>
 <table>
 <thead>
 <tr>
@@ -456,9 +465,24 @@ height:50vh;
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>Cgroup namespace 是后面才增加的，本篇不做过多介绍，将另起篇幅。</p>
+</blockquote>
+<h2 id="namespace-的基本操作"><a href="#namespace-的基本操作" class="headerlink" title="namespace 的基本操作"></a>namespace 的基本操作</h2><h3 id="查看进程所属的-namespace"><a href="#查看进程所属的-namespace" class="headerlink" title="查看进程所属的 namespace"></a>查看进程所属的 namespace</h3><p>/proc/[pid]/ns 目录下会包含进程所属的 namespace 信息，使用下面的命令可以查看当前进程所属的 namespace 信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ ll /proc/$$/ns</span><br><span class="line">总用量 0</span><br><span class="line">dr-x--x--x 2 admin admin 0 12月 12 11:19 ./</span><br><span class="line">dr-xr-xr-x 9 admin admin 0 12月 12 11:18 ../</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:19 cgroup -&gt; cgroup:[4026537386]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:19 ipc -&gt; ipc:[4026536810]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:19 mnt -&gt; mnt:[4026537383]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:19 net -&gt; net:[4026536400]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:19 pid -&gt; pid:[4026537385]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:19 user -&gt; user:[4026531837]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:19 uts -&gt; uts:[4026537384]</span><br></pre></td></tr></table></figure>
+<p>或者 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ ll /proc/7370/ns</span><br><span class="line">总用量 0</span><br><span class="line">dr-x--x--x 2 admin admin 0 12月 12 11:20 ./</span><br><span class="line">dr-xr-xr-x 9 admin admin 0 12月  9 18:43 ../</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:20 cgroup -&gt; cgroup:[4026537386]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:20 ipc -&gt; ipc:[4026536810]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:20 mnt -&gt; mnt:[4026537383]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:20 net -&gt; net:[4026536400]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:20 pid -&gt; pid:[4026537385]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:20 user -&gt; user:[4026531837]</span><br><span class="line">lrwxrwxrwx 1 admin admin 0 12月 12 11:20 uts -&gt; uts:[4026537384]</span><br></pre></td></tr></table></figure>
+<p>从输出的 namespace 信息可以看到，namespace 文件都是<a href="https://segmentfault.com/a/1190000011821634" target="_blank" rel="noopener">链接文件</a>; 以 cgroup:[4026537386] 为例：</p>
+<ul>
+<li>cgroup 是 namespace 的类型</li>
+<li>数字（inode number ）标识一个 namespace，可以理解为 namespace 的 ID</li>
+</ul>
+<p>如果两个进程的某个 namespace 文件指向同一个链接文件，说明其相关资源在同一个 namespace 中。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li><a href="https://man7.org/linux/man-pages/man7/namespaces.7.html" target="_blank" rel="noopener">https://man7.org/linux/man-pages/man7/namespaces.7.html</a></li>
 <li><a href="https://www.cnblogs.com/sparkdev/p/9365405.html" target="_blank" rel="noopener">https://www.cnblogs.com/sparkdev/p/9365405.html</a></li>
+<li><a href="https://segmentfault.com/a/1190000011821634" target="_blank" rel="noopener">https://segmentfault.com/a/1190000011821634</a></li>
+<li><a href="https://segmentfault.com/a/1190000017474527?utm_source=sf-related" target="_blank" rel="noopener">https://segmentfault.com/a/1190000017474527?utm_source=sf-related</a></li>
 </ul>
 
     </article>
@@ -468,7 +492,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2020/12/12/linux/concept-linux-namespace/">http://www.glmapper.com/2020/12/12/linux/concept-linux-namespace/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2020/12/12/linux/concept-linux-namespace/">December 12th 2020, 10:54:43 am</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2020/12/12/linux/concept-linux-namespace/">December 12th 2020, 11:15:12 am</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2020/12/12/linux/concept-linux-namespace/">December 12th 2020, 11:38:30 am</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -612,7 +636,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本介绍"><span class="toc-number">1.</span> <span class="toc-text">基本介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#namespace-的作用"><span class="toc-number">2.</span> <span class="toc-text">namespace 的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">3.</span> <span class="toc-text">参考</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本介绍"><span class="toc-number">1.</span> <span class="toc-text">基本介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#namespace-的作用"><span class="toc-number">2.</span> <span class="toc-text">namespace 的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#namespace-的基本操作"><span class="toc-number">3.</span> <span class="toc-text">namespace 的基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#查看进程所属的-namespace"><span class="toc-number">3.1.</span> <span class="toc-text">查看进程所属的 namespace</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
