@@ -1,0 +1,3589 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="GuoLei Song">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="GuoLei Song">
+    
+    <meta name="keywords" content="glmapper,spring,spring cloud,宋国磊">
+    
+    <meta name="description" content="从平凡的世界中全身而退">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Spring源码系列：依赖注入（二）createBean · glmapper</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin="">
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin="">
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">glmapper</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Spring源码系列：依赖注入（二）createBean</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">glmapper</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Spring源码系列：依赖注入（二）createBean
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3.4k</span>阅读时长: <span class="post-count reading-time">15 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/11/10</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>在<a href="https://juejin.im/post/5a7532746fb9a0633a70d57f" target="_blank" rel="noopener">Spring源码系列：依赖注入（一）（AbstractBeanFactory-getBean）</a>最后说道getBean是依赖注入的起点，bean的创建都是通过createBean来完成具体的创建的。createBean的具体实现是在AbstractAutowireCapableBeanFactory中的。本篇就捋一捋这个方法看下bean的创建过程。</p>
+<p>这个方法是AbstractAutowireCapableBeanFactory这个类的中心方法，其作用就是创建一个bean实例，填充bean实例，后置处理等。</p>
+<p>在createBean中主要做了三件事：</p>
+<ul>
+<li>判断需要创建的Bean是否可以实例化，这个类是否可以通过类装载器来载入</li>
+<li>是否配置了后置处理器相关处理（如果配置了则返回一个代理）</li>
+<li>创建Bean</li>
+</ul>
+<p>具体来看方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">createBean</span><span class="params">(String beanName, RootBeanDefinition mbd, Object[] args)</span> <span class="keyword">throws</span> BeanCreationException </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">		logger.debug(<span class="string">"Creating instance of bean '"</span> + beanName + <span class="string">"'"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	RootBeanDefinition mbdToUse = mbd;</span><br><span class="line">	<span class="comment">// Make sure bean class is actually resolved at this point, and</span></span><br><span class="line">	<span class="comment">// clone the bean definition in case of a dynamically resolved Class</span></span><br><span class="line">	<span class="comment">// which cannot be stored in the shared merged bean definition.</span></span><br><span class="line">	<span class="comment">//判断需要创建的Bean是否可以实例化，这个类是否可以通过类装载器来载入</span></span><br><span class="line">	Class&lt;?&gt; resolvedClass = resolveBeanClass(mbd, beanName);</span><br><span class="line">	<span class="keyword">if</span> (resolvedClass != <span class="keyword">null</span> &amp;&amp; !mbd.hasBeanClass() &amp;&amp; mbd.getBeanClassName() != <span class="keyword">null</span>) &#123;</span><br><span class="line">		mbdToUse = <span class="keyword">new</span> RootBeanDefinition(mbd);</span><br><span class="line">		mbdToUse.setBeanClass(resolvedClass);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Prepare method overrides.</span></span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		mbdToUse.prepareMethodOverrides();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">catch</span> (BeanDefinitionValidationException ex) &#123;</span><br><span class="line">		<span class="comment">//异常：Validation of method overrides failed</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		<span class="comment">// Give BeanPostProcessors a chance to return a proxy instead of the target </span></span><br><span class="line">		<span class="comment">//bean instance.</span></span><br><span class="line">		<span class="comment">//是否配置了后置处理器相关处理（如果配置了则返回一个代理）</span></span><br><span class="line">		Object bean = resolveBeforeInstantiation(beanName, mbdToUse);</span><br><span class="line">		<span class="keyword">if</span> (bean != <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> bean;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">	    <span class="comment">//异常:BeanPostProcessor before instantiation of bean failed</span></span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//创建Bean</span></span><br><span class="line">	Object beanInstance = doCreateBean(beanName, mbdToUse, args);</span><br><span class="line">	<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">		logger.debug(<span class="string">"Finished creating instance of bean '"</span> + beanName + <span class="string">"'"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> beanInstance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的代码中可以看到，创建bean是交给doCreateBean方法来创建的。继续看doCreateBean这个方法：<br>（这里面涉及到一个BeanWrapper这个接口，小伙伴可以移步了解一下《<a href="https://juejin.im/post/5a77f3eb6fb9a06361085451" target="_blank" rel="noopener">Spring源码系列：BeanWrapper</a>》）</p>
+<p><strong>代码 1：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用BeanWrapper来持有创建出来的Bean对象</span></span><br><span class="line">BeanWrapper instanceWrapper = <span class="keyword">null</span>;</span><br><span class="line"><span class="comment">//如果是单例的话，则先把缓存中的同名bean清除</span></span><br><span class="line"><span class="keyword">if</span> (mbd.isSingleton()) &#123;</span><br><span class="line">	instanceWrapper = <span class="keyword">this</span>.factoryBeanInstanceCache.remove(beanName);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实际创建的交给createBeanInstance来完成，</span></span><br><span class="line"><span class="comment">//bean的生成，这里会使用默认的类生成器，包装成BeanWrapperImpl类，</span></span><br><span class="line"><span class="comment">//为了下面的populateBean方法的属性注入做准备  </span></span><br><span class="line"><span class="keyword">if</span> (instanceWrapper == <span class="keyword">null</span>) &#123;</span><br><span class="line">	instanceWrapper = createBeanInstance(beanName, mbd, args);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">final</span> Object bean = (instanceWrapper != <span class="keyword">null</span> ? instanceWrapper.getWrappedInstance() : <span class="keyword">null</span>);</span><br><span class="line">Class&lt;?&gt; beanType = (instanceWrapper != <span class="keyword">null</span> ? instanceWrapper.getWrappedClass() : <span class="keyword">null</span>);</span><br><span class="line">mbd.resolvedTargetType = beanType;</span><br></pre></td></tr></table></figure></p>
+<p><strong>代码 2：</strong> </p>
+<p>允许后处理器修改合并的bean定义。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (mbd.postProcessingLock) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mbd.postProcessed) &#123;</span><br><span class="line">    	<span class="keyword">try</span> &#123;</span><br><span class="line">    		applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">    	<span class="comment">//异常：Post-processing of merged bean definition failed</span></span><br><span class="line">    	&#125;</span><br><span class="line">    	mbd.postProcessed = <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>代码 3 ：</strong></p>
+<p>即使被BeanFactoryAware等生命周期接口触发，也要尽快地缓存singletons 以便能够解析循环引用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">boolean earlySingletonExposure = (mbd.isSingleton() &amp;&amp; this.allowCircularReferences &amp;&amp;</span><br><span class="line">		isSingletonCurrentlyInCreation(beanName));</span><br><span class="line">if (earlySingletonExposure) &#123;</span><br><span class="line">	if (logger.isDebugEnabled()) &#123;</span><br><span class="line">		logger.debug(&quot;Eagerly caching bean &apos;&quot; + beanName +</span><br><span class="line">				&quot;&apos; to allow for resolving potential circular references&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	addSingletonFactory(beanName, new ObjectFactory&lt;Object&gt;() &#123;</span><br><span class="line">		@Override</span><br><span class="line">		public Object getObject() throws BeansException &#123;</span><br><span class="line">			return getEarlyBeanReference(beanName, mbd, bean);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>代码 4:</strong></p>
+<p>这里是对bean的初始化的地方，一般情况下依赖注入就在这里发生；这个exposedObject变量保存的是在初始化处理完以后返回的作为依赖注入完成之后的bean。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Initialize the bean instance.</span></span><br><span class="line">Object exposedObject = bean;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	populateBean(beanName, mbd, instanceWrapper);</span><br><span class="line">	<span class="keyword">if</span> (exposedObject != <span class="keyword">null</span>) &#123;</span><br><span class="line">		exposedObject = initializeBean(beanName, exposedObject, mbd);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">    <span class="comment">//抛出</span></span><br><span class="line">	<span class="keyword">if</span> (ex <span class="keyword">instanceof</span> BeanCreationException &amp;&amp; beanName.equals(((BeanCreationException)</span><br><span class="line">	    ex).getBeanName())) &#123;</span><br><span class="line">		<span class="keyword">throw</span> (BeanCreationException) ex;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">	<span class="comment">//异常:Initialization of bean failed</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>代码 5:</strong></p>
+<p>这里是注册bean<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">	registerDisposableBeanIfNecessary(beanName, bean, mbd);</span><br><span class="line">&#125;</span><br><span class="line">catch (BeanDefinitionValidationException ex) &#123;</span><br><span class="line">    //异常处理</span><br><span class="line">&#125;</span><br><span class="line">//返回结果</span><br><span class="line">return exposedObject;</span><br></pre></td></tr></table></figure></p>
+<p>上面的5个代码段均是doCreateBean中的处理逻辑，有兴趣的小伙伴可以自行查阅源码。从上面的代码中我们依然没有得到具体创建的过程，因为在doCreateBean中又依赖：<code>createBeanInstance</code>和<code>populateBean</code>两个方法。</p>
+<p>在<code>createBeanInstance</code>中生成了Bean所包含的java对象。来看是怎么生成的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> BeanWrapper <span class="title">createBeanInstance</span><span class="params">(String beanName, RootBeanDefinition mbd, Object[] args)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 确保bean类实际上已经解析过了，可以实例化</span></span><br><span class="line">	Class&lt;?&gt; beanClass = resolveBeanClass(mbd, beanName);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (beanClass != <span class="keyword">null</span> &amp;&amp; !Modifier.isPublic(beanClass.getModifiers()) &amp;&amp; !mbd.isNonPublicAccessAllowed()) &#123;</span><br><span class="line">		<span class="comment">//异常：Bean class isn't public, and non-public access not allowed:beanName</span></span><br><span class="line">	&#125;</span><br><span class="line">     <span class="comment">//1. 使用工厂方法来进行bean的实例化</span></span><br><span class="line">	<span class="keyword">if</span> (mbd.getFactoryMethodName() != <span class="keyword">null</span>)  &#123;</span><br><span class="line">		<span class="keyword">return</span> instantiateUsingFactoryMethod(beanName, mbd, args);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 重新创建相同的bean时快捷方式...</span></span><br><span class="line">	<span class="keyword">boolean</span> resolved = <span class="keyword">false</span>;</span><br><span class="line">	<span class="keyword">boolean</span> autowireNecessary = <span class="keyword">false</span>;</span><br><span class="line">	<span class="keyword">if</span> (args == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">synchronized</span> (mbd.constructorArgumentLock) &#123;</span><br><span class="line">			<span class="keyword">if</span> (mbd.resolvedConstructorOrFactoryMethod != <span class="keyword">null</span>) &#123;</span><br><span class="line">				resolved = <span class="keyword">true</span>;</span><br><span class="line">				autowireNecessary = mbd.constructorArgumentsResolved;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (resolved) &#123;</span><br><span class="line">		<span class="keyword">if</span> (autowireNecessary) &#123;</span><br><span class="line">			<span class="keyword">return</span> autowireConstructor(beanName, mbd, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> instantiateBean(beanName, mbd);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 2.需要确定构造函数...,使用构造函数进行bean实例化</span></span><br><span class="line">	Constructor&lt;?&gt;[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);</span><br><span class="line">	<span class="keyword">if</span> (ctors != <span class="keyword">null</span> ||</span><br><span class="line">			mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_CONSTRUCTOR ||</span><br><span class="line">			mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args))  &#123;</span><br><span class="line">		<span class="keyword">return</span> autowireConstructor(beanName, mbd, ctors, args);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//3.没有特殊的处理：只需使用无参数构造函数。（默认构造函数）</span></span><br><span class="line">	<span class="keyword">return</span> instantiateBean(beanName, mbd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面这段代码可以看出，对象的生成有许多不同的方式，有通过工厂的，也有通过容器的autowire特性生成的。当然这些生成方式都是由相关的BeanDefinition来指定的。</p>
+<p><strong>Spring中配置Bean的方式我们常用的一种是通过xml文件来配置，还有就是通过注解的方式来配置</strong>。</p>
+<ul>
+<li><strong>demo1</strong></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"user"</span> <span class="attr">class</span>=<span class="string">"com.glmapper.test.User"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"glmapper"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span>       </span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这种方式，通过class提供的权限定名，spring就可以利用反射机制创建这个bean。</p>
+<ul>
+<li><strong>demo2</strong></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"user"</span> <span class="attr">class</span>=<span class="string">"com.glmapper.test.UserFactory"</span> <span class="attr">factory-method</span>=<span class="string">"getUser"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">"glmapper"</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span>           </span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这种是利用静态工厂方法来创建的，提供的class并非是类的权限定名， 而是静态工厂的全类名；除此之外还需要指定获取bean的方法（此处是getUser）和参数（参数是glmapper）。</p>
+<ul>
+<li><strong>demo3</strong></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id=&quot;userFactory&quot; class=&quot;com.glmapper.test.UserInstanceFactory&quot;&gt;</span><br><span class="line">    &lt;!--用一个集合来保存我当前的对象实例--&gt;</span><br><span class="line">    &lt;property name=&quot;map&quot;&gt;</span><br><span class="line">        &lt;map&gt;</span><br><span class="line">            &lt;entry key=&quot;user1&quot;&gt;</span><br><span class="line">                &lt;bean class=&quot;com.glmapper.test.User&quot;&gt;</span><br><span class="line">                    &lt;property name=&quot;name&quot; value=&quot;glmapper1&quot;&gt;&lt;/property&gt;        </span><br><span class="line">                &lt;/bean&gt;</span><br><span class="line">            &lt;/entry&gt;    </span><br><span class="line"></span><br><span class="line">            &lt;entry key=&quot;user2&quot;&gt;</span><br><span class="line">                &lt;bean class=&quot;com.glmapper.test.User&quot;&gt;</span><br><span class="line">                    &lt;property name=&quot;name&quot; value=&quot;glmapper2&quot;&gt;&lt;/property&gt;   </span><br><span class="line">                &lt;/bean&gt;</span><br><span class="line">            &lt;/entry&gt;</span><br><span class="line">        &lt;/map&gt;  </span><br><span class="line">    &lt;/property&gt;</span><br><span class="line"> &lt;/bean&gt;</span><br><span class="line"> </span><br><span class="line"> //实例1</span><br><span class="line"> &lt;bean id=&quot;user1&quot; factory-bean=&quot;userFactory&quot; factory-method=&quot;getUserInstance&quot;&gt;</span><br><span class="line">    &lt;constructor-arg value=&quot;user1&quot;&gt;&lt;/constructor-arg&gt;           </span><br><span class="line"> &lt;/bean&gt;</span><br><span class="line">//实例2</span><br><span class="line"> &lt;bean id=&quot;user2&quot; factory-bean=&quot;userFactory&quot; factory-method=&quot;getUserInstance&quot;&gt;</span><br><span class="line">    &lt;constructor-arg value=&quot;user2&quot;&gt;&lt;/constructor-arg&gt;           </span><br><span class="line"> &lt;/bean</span><br></pre></td></tr></table></figure>
+<p>这种方式和静态工厂的区别在于我们需要先实例化一个工厂对象，然后才能使用这个工厂对象来创建我们的bean。getUserInstance通过key值来获取我们已经实例化好的对象（当然方式有很多，此处以map来举个例子）。<code>关于注解的和使用FactoryBean接口的这里就暂时不说，后期再聊</code></p>
+<p>OK，继续来分钟，上面说到的是以工厂方法创建bean，具体的源码有点长，这里就不放了，大概思路就如上面所提到的那几种方式。接下来看下常见的使用instantiateBean方式（使用它的默认构造函数）来构建bean的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> BeanWrapper <span class="title">instantiateBean</span><span class="params">(<span class="keyword">final</span> String beanName, <span class="keyword">final</span> RootBeanDefinition mbd)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		Object beanInstance;</span><br><span class="line">		<span class="keyword">final</span> BeanFactory parent = <span class="keyword">this</span>;</span><br><span class="line">	    <span class="comment">//获取系统安全接口。</span></span><br><span class="line">	    <span class="comment">//如果已经为当前应用程序建立了安全管理器，则返回该安全管理器; </span></span><br><span class="line">	    <span class="comment">//否则，返回null。</span></span><br><span class="line">		<span class="keyword">if</span> (System.getSecurityManager() != <span class="keyword">null</span>) &#123;</span><br><span class="line">			beanInstance = AccessController.doPrivileged(<span class="keyword">new</span> PrivilegedAction&lt;Object&gt;() &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> Object <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					<span class="keyword">return</span> getInstantiationStrategy().instantiate(mbd, beanName, parent);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;, getAccessControlContext());</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);</span><br><span class="line">		&#125;</span><br><span class="line">		BeanWrapper bw = <span class="keyword">new</span> BeanWrapperImpl(beanInstance);</span><br><span class="line">		initBeanWrapper(bw);</span><br><span class="line">		<span class="keyword">return</span> bw;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">		<span class="comment">//异常：Instantiation of bean failed</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出，上面的创建都是通过：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getInstantiationStrategy().instantiate(mbd, beanName, parent);</span><br></pre></td></tr></table></figure>
+<p>这样一段代码来完成的，是的，这里已经快接近真相了。从语义上来分析，先是获取了一种策略，然后利用当前获取的策略再去执行实例化。OK，我们看下getInstantiationStrategy()拿到的是什么：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回实例化策略用于创建bean实例。</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> InstantiationStrategy <span class="title">getInstantiationStrategy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">this</span>.instantiationStrategy;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//默认的实例化测试是使用CGLIB代理</span></span><br><span class="line"><span class="keyword">private</span> InstantiationStrategy instantiationStrategy = <span class="keyword">new</span> CglibSubclassingInstantiationStrategy();</span><br></pre></td></tr></table></figure>
+<p>看到这里我们清楚了，默认构造函数的情况下，在spring中会使用Cglib来进行bean的实例化（关于cglib此处不再赘述）。我们看下CglibSubclassingInstantiationStrategy这个类的申明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CglibSubclassingInstantiationStrategy</span> <span class="keyword">extends</span> <span class="title">SimpleInstantiationStrategy</span></span></span><br></pre></td></tr></table></figure>
+<p>它继承自SimpleInstantiationStrategy ，这个又是什么鬼呢？</p>
+<p><code>SimpleInstantiationStrategy是Spring用来生成Bean对象的默认类，在这个类中提供了两种实例化java对象的方法，一种是基于java自身反射机制的BeanUtils，还有一种就是基于Cglib</code>。</p>
+<p>如何创建的就不说了；到这里createBeanInstance就说完了（Bean已经创建了）；但是仅仅是创建，spring还没有处理它们，比如说bean对象的属性，依赖关系等等。这些就是上面提到的另外一个方法populateBean；</p>
+<p>这个方法其实就做了一件事：<strong>使用bean定义中的属性值在给定的BeanWrapper中填充bean实例。</strong>分段来看：<br>下面这段代码是先将BeanDefinition中设置的property值封装成PropertyValues，然后检测我们的BeanWrapper是否为Null，如果为null则抛出异常或者跳过当前空实例赋值阶段<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取到BeanDefinition中设置的property值，封装成PropertyValues</span></span><br><span class="line">PropertyValues pvs = mbd.getPropertyValues();</span><br><span class="line"><span class="keyword">if</span> (bw == <span class="keyword">null</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> (!pvs.isEmpty()) &#123;</span><br><span class="line">	<span class="comment">//异常：Cannot apply property values to null instance</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">	<span class="comment">// Skip property population phase for null instance.</span></span><br><span class="line">	    <span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下面这段代码的意思是给任何InstantiationAwareBeanPostProcessors提供在设置属性之前修改bean状态的机会。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">boolean</span> continueWithPropertyPopulation = <span class="keyword">true</span>;</span><br><span class="line"><span class="keyword">if</span> (!mbd.isSynthetic() &amp;&amp; hasInstantiationAwareBeanPostProcessors()) &#123;</span><br><span class="line">    <span class="keyword">for</span> (BeanPostProcessor bp : getBeanPostProcessors()) &#123;</span><br><span class="line">    	<span class="keyword">if</span> (bp <span class="keyword">instanceof</span> InstantiationAwareBeanPostProcessor) &#123;</span><br><span class="line">    		InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;</span><br><span class="line">    		<span class="keyword">if</span> (!ibp.postProcessAfterInstantiation(bw.getWrappedInstance(), beanName)) &#123;</span><br><span class="line">    			continueWithPropertyPopulation = <span class="keyword">false</span>;</span><br><span class="line">    			<span class="keyword">break</span>;</span><br><span class="line">    		&#125;</span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!continueWithPropertyPopulation) &#123;</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下面就是对具体注入方式的处理：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//处理autowire的注入；可以根据bean的名称和类型来注入</span></span><br><span class="line"><span class="keyword">if</span> (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME ||</span><br><span class="line">	mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) &#123;</span><br><span class="line">    MutablePropertyValues newPvs = <span class="keyword">new</span> MutablePropertyValues(pvs);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 则根据名称添加基于自动装配的属性值。</span></span><br><span class="line">    <span class="keyword">if</span> (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME) &#123;</span><br><span class="line">    	autowireByName(beanName, mbd, bw, newPvs);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 根据类型添加基于自动装配的属性值。</span></span><br><span class="line">    <span class="keyword">if</span> (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) &#123;</span><br><span class="line">    	autowireByType(beanName, mbd, bw, newPvs);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    pvs = newPvs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>两个判断条件，在满足的情况下做的处理分别是：</p>
+<ul>
+<li>在工厂将给定属性值应用到给定的bean后，对其进行后处理。 允许检查所有的依赖关系是否被满足，例如基于bean属性设置器上的“Required”注解。还允许替换要应用的属性值，通常通过创建基于原始PropertyValues的新MutablePropertyValues实例，添加或删除特定值。</li>
+<li>执行依赖性检查    </li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回这个工厂是否拥有一个InstantiationAwareBeanPostProcessor</span></span><br><span class="line"><span class="keyword">boolean</span> hasInstAwareBpps = hasInstantiationAwareBeanPostProcessors();</span><br><span class="line"><span class="comment">//返回依赖检查代码。</span></span><br><span class="line"><span class="keyword">boolean</span> needsDepCheck = (mbd.getDependencyCheck() != RootBeanDefinition.DEPENDENCY_CHECK_NONE);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (hasInstAwareBpps || needsDepCheck) &#123;</span><br><span class="line"><span class="comment">//从给定的BeanWrapper中提取一组已过滤的PropertyDescriptors，</span></span><br><span class="line"><span class="comment">//不包括在被忽略的依赖性接口上定义的被忽略的依赖类型或属性（译注）。</span></span><br><span class="line">	PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);</span><br><span class="line">	<span class="keyword">if</span> (hasInstAwareBpps) &#123;</span><br><span class="line">    	<span class="keyword">for</span> (BeanPostProcessor bp : getBeanPostProcessors()) &#123;</span><br><span class="line">        	<span class="keyword">if</span> (bp <span class="keyword">instanceof</span> InstantiationAwareBeanPostProcessor) &#123;</span><br><span class="line">        		InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;</span><br><span class="line">        		pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);</span><br><span class="line">        		<span class="keyword">if</span> (pvs == <span class="keyword">null</span>) &#123;</span><br><span class="line">        			<span class="keyword">return</span>;</span><br><span class="line">        		&#125;</span><br><span class="line">        	&#125;</span><br><span class="line">    	&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (needsDepCheck) &#123;</span><br><span class="line">		checkDependencies(beanName, mbd, filteredPds, pvs);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后是对属性进行注入：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">applyPropertyValues(beanName, mbd, bw, pvs);</span><br></pre></td></tr></table></figure>
+<p>这个方法描述的是对属性进行解析然后注入的过程；先来分析下applyPropertyValues的申明：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">applyPropertyValues</span><span class="params">(String beanName</span></span></span><br><span class="line"><span class="function"><span class="params">, BeanDefinition mbd, BeanWrapper bw, PropertyValues pvs)</span></span></span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>beanName bean名称</li>
+<li>mbd 合并的bean definition</li>
+<li>bw 包装目标对象的BeanWrapper</li>
+<li>pvs 新的属性值</li>
+</ul>
+<p>代码分段来看：</p>
+<ul>
+<li><p>参数验证</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (pvs == <span class="keyword">null</span> || pvs.isEmpty()) &#123;</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>pvs参数处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (pvs <span class="keyword">instanceof</span> MutablePropertyValues) &#123;</span><br><span class="line">    mpvs = (MutablePropertyValues) pvs;</span><br><span class="line">    <span class="keyword">if</span> (mpvs.isConverted()) &#123;</span><br><span class="line">    	<span class="comment">// 使用预先转换后的值。</span></span><br><span class="line">    	<span class="keyword">try</span> &#123;</span><br><span class="line">    		bw.setPropertyValues(mpvs);</span><br><span class="line">    		<span class="keyword">return</span>;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">catch</span> (BeansException ex) &#123;</span><br><span class="line">    		<span class="comment">//异常：Error setting property values</span></span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    original = mpvs.getPropertyValueList();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">    original = Arrays.asList(pvs.getPropertyValues());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>valueResolver来解析BeanDefinition</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BeanDefinitionValueResolver valueResolver = </span><br><span class="line"><span class="keyword">new</span> BeanDefinitionValueResolver(<span class="keyword">this</span>, beanName, mbd, converter);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为解析值创建一个副本，注入到bean中的是副本的数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create a deep copy, resolving any references for values.</span></span><br><span class="line">List&lt;PropertyValue&gt; deepCopy = <span class="keyword">new</span> ArrayList&lt;PropertyValue&gt;(original.size());</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>遍历处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">boolean</span> resolveNecessary = <span class="keyword">false</span>;</span><br><span class="line"><span class="keyword">for</span> (PropertyValue pv : original) &#123;</span><br><span class="line">    <span class="comment">//返回此持有者是否已经包含转换后的值（true），还是需要转换值（false）。</span></span><br><span class="line">    <span class="keyword">if</span> (pv.isConverted()) &#123;</span><br><span class="line">    	deepCopy.add(pv);</span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">    	String propertyName = pv.getName();</span><br><span class="line">    	Object originalValue = pv.getValue();</span><br><span class="line">    	<span class="comment">//看下面的注释resolveValueIfNecessary</span></span><br><span class="line">    	Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);</span><br><span class="line">    	Object convertedValue = resolvedValue;</span><br><span class="line">    	<span class="keyword">boolean</span> convertible = bw.isWritableProperty(propertyName) &amp;&amp;</span><br><span class="line">    			!PropertyAccessorUtils.isNestedOrIndexedProperty(propertyName);</span><br><span class="line">    	<span class="keyword">if</span> (convertible) &#123;</span><br><span class="line">    		convertedValue = convertForProperty(resolvedValue, propertyName, bw, converter);</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="comment">// 可能将转换的值存储在合并的bean定义中，以避免为每个创建的bean实例重新转换。</span></span><br><span class="line">    	<span class="keyword">if</span> (resolvedValue == originalValue) &#123;</span><br><span class="line">    		<span class="keyword">if</span> (convertible) &#123;</span><br><span class="line">    			pv.setConvertedValue(convertedValue);</span><br><span class="line">    		&#125;</span><br><span class="line">    		deepCopy.add(pv);</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">else</span> <span class="keyword">if</span> (convertible &amp;&amp; originalValue <span class="keyword">instanceof</span> TypedStringValue &amp;&amp;</span><br><span class="line">    			!((TypedStringValue) originalValue).isDynamic() &amp;&amp;</span><br><span class="line">    			!(convertedValue <span class="keyword">instanceof</span> Collection || ObjectUtils.isArray(convertedValue))) &#123;</span><br><span class="line">    		pv.setConvertedValue(convertedValue);</span><br><span class="line">    		deepCopy.add(pv);</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">else</span> &#123;</span><br><span class="line">    		resolveNecessary = <span class="keyword">true</span>;</span><br><span class="line">    		deepCopy.add(<span class="keyword">new</span> PropertyValue(pv, convertedValue));</span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>resolveValueIfNecessary</p>
+<p>  给定一个PropertyValue，返回一个value，必要时解析对工厂中其他bean的引用。value可以是：</p>
+<ul>
+<li>一个BeanDefinition，它导致创建一个相应的新的bean实例。 Singleton标志和这样的”inner beans”的名字被忽略：内部beans是匿名原型。</li>
+<li>RuntimeBeanReference(必须解析)</li>
+<li>ManagedList</li>
+<li>ManagedSet</li>
+<li>ManagedMap</li>
+<li>一个普通的对象或null，在这种情况下，它是孤立的。</li>
+</ul>
+</li>
+</ul>
+<p>下面这段代码时依赖注入发生的地方，其实际上是在BeanWrapperImpl中来完成。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    bw.setPropertyValues(<span class="keyword">new</span> MutablePropertyValues(deepCopy));</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (BeansException ex) &#123;</span><br><span class="line">    <span class="comment">//异常：Error setting property values</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面说到spring是通过BeanDefinitionValueResolver来解析BeanDefinition的，然后再注入到property中，关于这个过程在下一篇中来说。</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
+            </p><p>原文链接：<a href="http://www.glmapper.com/2018/11/10/spring/spring-series-createbean/">http://www.glmapper.com/2018/11/10/spring/spring-series-createbean/</a>
+            </p><p>发表日期：<a href="http://www.glmapper.com/2018/11/10/spring/spring-series-createbean/">November 10th 2018, 2:13:30 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2018/11/10/spring/spring-series-createbean/">December 16th 2020, 1:17:18 pm</a>
+            </p><p>版权声明：转载请注明出处</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/11/10/spring/spring-series-inject-props/" title="Spring源码系列：依赖注入（三）-属性注入">
+                    <div class="nextTitle">Spring源码系列：依赖注入（三）-属性注入</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/11/10/spring/spring-series-getbean/" title="Spring源码系列：依赖注入（一）getBean">
+                    <div class="prevTitle">Spring源码系列：依赖注入（一）getBean</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:glmapper_2018@163.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/glmapper" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechart.png">
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://weibo.com/u/2412872703" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://juejin.im/user/58fcc0768d6d810058965a06" class="iconfont-archer juejin" target="_blank" title="juejin"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title="rss"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span></span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 123
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2020/12/16/maven/maven-repository/">maven-repository</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/12</span><a class="archive-post-title" href="/2020/12/12/linux/concept-linux-namespace/">概念基础-Linux 中的 namespace</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href="/2020/10/26/linux/linux-yum/">yum 指令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href="/2020/10/26/jvm/jvm-self-command/">JVM 性能调优监控工具</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href="/2020/10/26/photograph/photograph-serise-two/">摄影-2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/24</span><a class="archive-post-title" href="/2020/10/24/photograph/photograph-serise-one/">摄影-1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/10</span><a class="archive-post-title" href="/2020/08/10/linux/base-operations-top-command/">Linux Top 命令指南</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/15</span><a class="archive-post-title" href="/2020/07/15/sofa-ark-container-mode/">SOFAArk 解析系列-容器模型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/21</span><a class="archive-post-title" href="/2020/06/21/spring/spring-series-factory-bean-and-post-processor/">聊一聊 BeanPostProcessor 不生效</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/19</span><a class="archive-post-title" href="/2020/05/19/solution-series-zhongtai/">什么是中台？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href="/2020/05/01/java-base-classloader-typecheck/">ClassLoader 类加载-type checking 对类加载的影响</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href="/2020/04/12/solution-series-microservices/">【译】微服务（microservices）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/05</span><a class="archive-post-title" href="/2020/04/05/springboot/springboot-series-rocketmq/">SpringBoot 实践系列-集成 RocketMQ</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/03</span><a class="archive-post-title" href="/2020/04/03/solution-series-dynamic-module/">解决方案系列-基于 SOFAArk 实现应用的动态装载和卸载</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href="/2020/03/29/solution-series-cluster-selector/">解决方案系列-集群选主(基于DB)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/16</span><a class="archive-post-title" href="/2020/03/16/java-base-iterator-of-set/">聊一聊 CopyOnWriteArraySet 的迭代删除</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/12</span><a class="archive-post-title" href="/2020/02/12/springboot/springboot-series-filter-exception/">SpringBoot 实践系列-Filter 中的异常处理和 Controller 中的异常处理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/28</span><a class="archive-post-title" href="/2020/01/28/java-design-model-adapter/">菜鸟成长系列-适配器模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/20</span><a class="archive-post-title" href="/2020/01/20/sofa-tracer-integration-analysis/">一文详解蚂蚁金服分布式链路组件 SOFATracer 的埋点机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2020/01/05/springboot/springboot-series-auto-configure/">SpringBoot 源码系列-自动配置及 starter 机制解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span><a class="archive-post-title" href="/2020/01/03/springboot/springboot-series-externalize-prop/">SpringBoot 实践系列-外部化配置优先级问题</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/29</span><a class="archive-post-title" href="/2019/12/29/springboot/springboot-series-propertysource/">SpringBoot 源码系列-配置解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/24</span><a class="archive-post-title" href="/2019/12/24/springboot/springboot-series-summary/">SpringBoot 源码解析系列 & SpringBoot 实践系列综述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/20</span><a class="archive-post-title" href="/2019/12/20/tool-config-git-ssh/">git ssh 配置及使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href="/2019/12/14/springboot/springboot-series-log/">SpringBoot 源码系列-日志详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href="/2019/12/14/springboot/springboot-series-bean-life/">SpringBoot 源码系列-Bean 的生命周期与扩展</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/09</span><a class="archive-post-title" href="/2019/12/09/springboot/springboot-series-access-resource/">SpringBoot 实践系列-资源访问</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2019/12/07/springboot/springboot-series-started/">SpringBoot 源码系列-启动过程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/13</span><a class="archive-post-title" href="/2019/10/13/springboot/springboot-series-fatjar/">SpringBoot 源码系列-FatJar 启动原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/06</span><a class="archive-post-title" href="/2019/10/06/springboot/springboot-series-server-tomcat/">SpringBoot 源码系列-内嵌 Tomcat 的实现原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/28</span><a class="archive-post-title" href="/2019/08/28/sofa-ark-plugin-rule/">ARK 插件基本规则及注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/24</span><a class="archive-post-title" href="/2019/08/24/base-java-reacotr/">响应式编程 Reactor 小记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href="/2019/08/19/base-java-generics/">聊一聊-JAVA 泛型中的通配符 T，E，K，V，？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/01</span><a class="archive-post-title" href="/2019/08/01/seiri-shell-record/">shell 脚本简单归纳和实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/23</span><a class="archive-post-title" href="/2019/07/23/maven/maven-debug/">一个 maven 插件打包问题的排查</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/30</span><a class="archive-post-title" href="/2019/06/30/topic-jar-manifest-intro/">聊一聊 JAR 文件和 MANIFEST.MF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/29</span><a class="archive-post-title" href="/2019/04/29/cas-several-qa/">并发编程-关于 CAS 的几个问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/zookeeper-client-curator/">ZooKeeper 客户端之 Curator</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/springboot/springboot-series-event/">SpringBoot 源码系列-事件机制详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/07</span><a class="archive-post-title" href="/2019/03/07/springboot/springboot-series-kafka-introduction/">SpringBoot 实践系列-Kafka简介&集成SpringBoot</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/04</span><a class="archive-post-title" href="/2019/03/04/zookeeper-on-linux/">Linux 下安装 Zookeeper</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/19</span><a class="archive-post-title" href="/2019/01/19/springboot/springcloud-gateway-predicate-project/">SpringCloud-网关 Gateway 入门体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/09</span><a class="archive-post-title" href="/2019/01/09/springboot/springcloud-hystrix-project/">SpringCloud-断路器 Hystrix</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/09</span><a class="archive-post-title" href="/2019/01/09/springboot/springcloud-config-apollo/">SpringCloud-配置中心 Apollo</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springboot/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springboot/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcloud-overview/">SpringCloud 总览</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-config-project/">SpringCloud-配置中心 Config</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/23</span><a class="archive-post-title" href="/2018/12/23/spring/spring-session-idresolver/">SpringSession系列-sessionId解析和Cookie读写策略</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/shufa/shufa-20181216/">20181216-书法练习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/spring/spring-session-redis-map/">SpringSession系列-存储机制之Redis&Map</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2018/12/07/sofa-tracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring/spring-session-solutions/">SpringSession系列-分布式Session实现方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring/spring-session-req-resp/">SpringSession系列-请求与响应重写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/16</span><a class="archive-post-title" href="/2018/11/16/sofa-boot-health-analizy/">SOFABoot 健康检查能力分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/shufa/shufa-20181111/">20181111-书法练习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-builder/">菜鸟成长系列-Builder 建造者模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-obs/">菜鸟成长系列-观察者模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-modulemethod/">菜鸟成长系列-模板方法模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-strategy/">菜鸟成长系列-策略模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc2/">JUC·ThreadPoolExecutor 线程池</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc1/">JUC·Executor 框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-base-webmvc3/">SpringMVC系列源码：DispatcherServlet</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-base-webmvc2/">SpringMVC源码系列：AbstractHandlerMapping</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-base-webmvc4/">SpringMVC源码系列：AbstractUrlHandlerMapping</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-base-webmvc1/">SpringMVC源码系列：HandlerMapping</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-annotation/">Spring源码系列：注解说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-2/">Spring源码系列：BeanDefinition载入（中）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-base-webmvc5/">SpringMVC源码系列：九大组件小记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-3/">Spring源码系列：BeanDefinition载入(下)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-beandefinition/">Spring源码系列：BeanDefinition 源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-createbean/">Spring源码系列：依赖注入（二）createBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-beanwrapper/">Spring源码系列：BeanWrapper</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-beanfactory/">Spring源码系列：BeanFactory的创建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-getbean/">Spring源码系列：依赖注入（一）getBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-props/">Spring源码系列：依赖注入（三）-属性注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-intro/">Spring源码系列：依赖注入-引言</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-version-change/">Spring源码系列：Spring的版本变更</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-summary/">Spring源码系列：依赖注入（四）-总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-1/">Spring源码系列：BeanDefinition载入(上)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-one/">面向对象的四大基础特性</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-overall/">菜鸟成长系列-概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-two/">多态、接口和抽象类</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-hashmap/">从源码来聊一聊hashmap</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/guavacacheone/">Google Guava 在实际场景中的应用封装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-thread-deadlock/">怎么写一个死锁？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-bird-three/">菜鸟成长系列-面向对象的6种设计原则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-one/">一个朋友圈泛型问题引发的“案子”</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-factory/">菜鸟成长系列-工厂模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-key-word/">JAVA中的关键字</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-thread-base/">JAVA基础知识系列---进程、线程安全</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx 反向代理和负载均衡策略实战案例</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-singleton/">菜鸟成长系列-单例模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-maven-ssm/">基于maven构建多模块化的SSM框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-ssm/">项目开发框架-SSM</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/seiri-mybatis/">关于 Mybatis 中 SQL 语句的整理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/seiri-rpc/">关于 rpc 的整理和理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-servlet/">聊一聊 Web 核心 - Servlet</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-session-cookie/">聊一聊 session和cookie</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/alg-one/">算法-排序算法思想及实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode5/">每天一道算法题：无重复字符的最长子串</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode4/">每天一道算法题：求两个排序数组的中位数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode3/">每天一道算法题：最长回文子串</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcodeone/">每天一道算法题：颠倒整数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcodetwo/">每天一道算法题：Z字形转换</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-aop-advice/">聊一聊 AOP：Advice 源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-aop-base/">聊一聊 AOP ：表现形式与基础概念</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-context-refresh/">Spring源码系列-容器刷新</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-starting/">Spring源码系列：Spring的启动过程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofa-tracer-disruptor/">SOFATracer 中 Disruptor 实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/logone/">看完这个不会配置 logback ，请你吃瓜！</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofa-tracer-zipkin/">分布式链路跟踪组件 SOFATracer 和 Zipkin 模型转换原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-resttemplate/">聊一聊 RestTemplate</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-extention-one/">聊一聊 Spring 中的扩展机制（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-extention-namespacehandler/">聊一聊 Spring 中的扩展机制(二) - NamespaceHandler</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-session-integration-springboot/">：SpringSession系列-集成SpringBoot</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="java"><span class="iconfont-archer">&#xe606;</span>java</span>
+    
+        <span class="sidebar-tag-name" data-tags="泛型"><span class="iconfont-archer">&#xe606;</span>泛型</span>
+    
+        <span class="sidebar-tag-name" data-tags="Reactor"><span class="iconfont-archer">&#xe606;</span>Reactor</span>
+    
+        <span class="sidebar-tag-name" data-tags="规划"><span class="iconfont-archer">&#xe606;</span>规划</span>
+    
+        <span class="sidebar-tag-name" data-tags="hash"><span class="iconfont-archer">&#xe606;</span>hash</span>
+    
+        <span class="sidebar-tag-name" data-tags="map"><span class="iconfont-archer">&#xe606;</span>map</span>
+    
+        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
+    
+        <span class="sidebar-tag-name" data-tags="guava"><span class="iconfont-archer">&#xe606;</span>guava</span>
+    
+        <span class="sidebar-tag-name" data-tags="线程"><span class="iconfont-archer">&#xe606;</span>线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="thread"><span class="iconfont-archer">&#xe606;</span>thread</span>
+    
+        <span class="sidebar-tag-name" data-tags="set"><span class="iconfont-archer">&#xe606;</span>set</span>
+    
+        <span class="sidebar-tag-name" data-tags="CopyOnWriteArraySet"><span class="iconfont-archer">&#xe606;</span>CopyOnWriteArraySet</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="classloader"><span class="iconfont-archer">&#xe606;</span>classloader</span>
+    
+        <span class="sidebar-tag-name" data-tags="cas"><span class="iconfont-archer">&#xe606;</span>cas</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
+    
+        <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
+    
+        <span class="sidebar-tag-name" data-tags="nginx"><span class="iconfont-archer">&#xe606;</span>nginx</span>
+    
+        <span class="sidebar-tag-name" data-tags="代理模式"><span class="iconfont-archer">&#xe606;</span>代理模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="负载均衡"><span class="iconfont-archer">&#xe606;</span>负载均衡</span>
+    
+        <span class="sidebar-tag-name" data-tags="ssm"><span class="iconfont-archer">&#xe606;</span>ssm</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
+    
+        <span class="sidebar-tag-name" data-tags="mybatis"><span class="iconfont-archer">&#xe606;</span>mybatis</span>
+    
+        <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
+    
+        <span class="sidebar-tag-name" data-tags="maven"><span class="iconfont-archer">&#xe606;</span>maven</span>
+    
+        <span class="sidebar-tag-name" data-tags="mysql"><span class="iconfont-archer">&#xe606;</span>mysql</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="shell"><span class="iconfont-archer">&#xe606;</span>shell</span>
+    
+        <span class="sidebar-tag-name" data-tags="sofa-ark"><span class="iconfont-archer">&#xe606;</span>sofa-ark</span>
+    
+        <span class="sidebar-tag-name" data-tags="sql"><span class="iconfont-archer">&#xe606;</span>sql</span>
+    
+        <span class="sidebar-tag-name" data-tags="数据库"><span class="iconfont-archer">&#xe606;</span>数据库</span>
+    
+        <span class="sidebar-tag-name" data-tags="rpc"><span class="iconfont-archer">&#xe606;</span>rpc</span>
+    
+        <span class="sidebar-tag-name" data-tags="dubbo"><span class="iconfont-archer">&#xe606;</span>dubbo</span>
+    
+        <span class="sidebar-tag-name" data-tags="微服务"><span class="iconfont-archer">&#xe606;</span>微服务</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFATracer"><span class="iconfont-archer">&#xe606;</span>SOFATracer</span>
+    
+        <span class="sidebar-tag-name" data-tags="Disruptor"><span class="iconfont-archer">&#xe606;</span>Disruptor</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenTracing"><span class="iconfont-archer">&#xe606;</span>OpenTracing</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFABoot"><span class="iconfont-archer">&#xe606;</span>SOFABoot</span>
+    
+        <span class="sidebar-tag-name" data-tags="logback"><span class="iconfont-archer">&#xe606;</span>logback</span>
+    
+        <span class="sidebar-tag-name" data-tags="slf4j"><span class="iconfont-archer">&#xe606;</span>slf4j</span>
+    
+        <span class="sidebar-tag-name" data-tags="链路跟踪"><span class="iconfont-archer">&#xe606;</span>链路跟踪</span>
+    
+        <span class="sidebar-tag-name" data-tags="解决方案"><span class="iconfont-archer">&#xe606;</span>解决方案</span>
+    
+        <span class="sidebar-tag-name" data-tags="集群选主"><span class="iconfont-archer">&#xe606;</span>集群选主</span>
+    
+        <span class="sidebar-tag-name" data-tags="中台"><span class="iconfont-archer">&#xe606;</span>中台</span>
+    
+        <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
+    
+        <span class="sidebar-tag-name" data-tags="聊一聊"><span class="iconfont-archer">&#xe606;</span>聊一聊</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFA"><span class="iconfont-archer">&#xe606;</span>SOFA</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFAArk"><span class="iconfont-archer">&#xe606;</span>SOFAArk</span>
+    
+        <span class="sidebar-tag-name" data-tags="git"><span class="iconfont-archer">&#xe606;</span>git</span>
+    
+        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
+    
+        <span class="sidebar-tag-name" data-tags="servlet"><span class="iconfont-archer">&#xe606;</span>servlet</span>
+    
+        <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
+    
+        <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
+    
+        <span class="sidebar-tag-name" data-tags="zookeeper"><span class="iconfont-archer">&#xe606;</span>zookeeper</span>
+    
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+    
+        <span class="sidebar-tag-name" data-tags="leetcode"><span class="iconfont-archer">&#xe606;</span>leetcode</span>
+    
+        <span class="sidebar-tag-name" data-tags="草原"><span class="iconfont-archer">&#xe606;</span>草原</span>
+    
+        <span class="sidebar-tag-name" data-tags="夕阳"><span class="iconfont-archer">&#xe606;</span>夕阳</span>
+    
+        <span class="sidebar-tag-name" data-tags="yum"><span class="iconfont-archer">&#xe606;</span>yum</span>
+    
+        <span class="sidebar-tag-name" data-tags="书法"><span class="iconfont-archer">&#xe606;</span>书法</span>
+    
+        <span class="sidebar-tag-name" data-tags="性能调优"><span class="iconfont-archer">&#xe606;</span>性能调优</span>
+    
+        <span class="sidebar-tag-name" data-tags="aop"><span class="iconfont-archer">&#xe606;</span>aop</span>
+    
+        <span class="sidebar-tag-name" data-tags="namestapce"><span class="iconfont-archer">&#xe606;</span>namestapce</span>
+    
+        <span class="sidebar-tag-name" data-tags="top"><span class="iconfont-archer">&#xe606;</span>top</span>
+    
+        <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring 事件机制"><span class="iconfont-archer">&#xe606;</span>spring 事件机制</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring 扩展机制"><span class="iconfont-archer">&#xe606;</span>spring 扩展机制</span>
+    
+        <span class="sidebar-tag-name" data-tags="西湖"><span class="iconfont-archer">&#xe606;</span>西湖</span>
+    
+        <span class="sidebar-tag-name" data-tags="springboot"><span class="iconfont-archer">&#xe606;</span>springboot</span>
+    
+        <span class="sidebar-tag-name" data-tags="log"><span class="iconfont-archer">&#xe606;</span>log</span>
+    
+        <span class="sidebar-tag-name" data-tags="springmvc"><span class="iconfont-archer">&#xe606;</span>springmvc</span>
+    
+        <span class="sidebar-tag-name" data-tags="kafka"><span class="iconfont-archer">&#xe606;</span>kafka</span>
+    
+        <span class="sidebar-tag-name" data-tags="PropertySource"><span class="iconfont-archer">&#xe606;</span>PropertySource</span>
+    
+        <span class="sidebar-tag-name" data-tags="rocketmq"><span class="iconfont-archer">&#xe606;</span>rocketmq</span>
+    
+        <span class="sidebar-tag-name" data-tags="Config"><span class="iconfont-archer">&#xe606;</span>Config</span>
+    
+        <span class="sidebar-tag-name" data-tags="Tomcat"><span class="iconfont-archer">&#xe606;</span>Tomcat</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring cloud"><span class="iconfont-archer">&#xe606;</span>spring cloud</span>
+    
+        <span class="sidebar-tag-name" data-tags="Hystrix"><span class="iconfont-archer">&#xe606;</span>Hystrix</span>
+    
+        <span class="sidebar-tag-name" data-tags="Gateway"><span class="iconfont-archer">&#xe606;</span>Gateway</span>
+    
+        <span class="sidebar-tag-name" data-tags="网关"><span class="iconfont-archer">&#xe606;</span>网关</span>
+    
+        <span class="sidebar-tag-name" data-tags="Apollo"><span class="iconfont-archer">&#xe606;</span>Apollo</span>
+    
+        <span class="sidebar-tag-name" data-tags="commons"><span class="iconfont-archer">&#xe606;</span>commons</span>
+    
+        <span class="sidebar-tag-name" data-tags="Eureka"><span class="iconfont-archer">&#xe606;</span>Eureka</span>
+    
+        <span class="sidebar-tag-name" data-tags="Feign"><span class="iconfont-archer">&#xe606;</span>Feign</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ribbon"><span class="iconfont-archer">&#xe606;</span>Ribbon</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="java"><span class="iconfont-archer">&#xe60a;</span>java</span>
+    
+        <span class="sidebar-category-name" data-categories="java-基础"><span class="iconfont-archer">&#xe60a;</span>java-基础</span>
+    
+        <span class="sidebar-category-name" data-categories="架构之路"><span class="iconfont-archer">&#xe60a;</span>架构之路</span>
+    
+        <span class="sidebar-category-name" data-categories="缓存"><span class="iconfont-archer">&#xe60a;</span>缓存</span>
+    
+        <span class="sidebar-category-name" data-categories="JUC"><span class="iconfont-archer">&#xe60a;</span>JUC</span>
+    
+        <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
+    
+        <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
+    
+        <span class="sidebar-category-name" data-categories="运维"><span class="iconfont-archer">&#xe60a;</span>运维</span>
+    
+        <span class="sidebar-category-name" data-categories="SOFA"><span class="iconfont-archer">&#xe60a;</span>SOFA</span>
+    
+        <span class="sidebar-category-name" data-categories="mybatis"><span class="iconfont-archer">&#xe60a;</span>mybatis</span>
+    
+        <span class="sidebar-category-name" data-categories="rpc"><span class="iconfont-archer">&#xe60a;</span>rpc</span>
+    
+        <span class="sidebar-category-name" data-categories="日志"><span class="iconfont-archer">&#xe60a;</span>日志</span>
+    
+        <span class="sidebar-category-name" data-categories="解决方案"><span class="iconfont-archer">&#xe60a;</span>解决方案</span>
+    
+        <span class="sidebar-category-name" data-categories="spring"><span class="iconfont-archer">&#xe60a;</span>spring</span>
+    
+        <span class="sidebar-category-name" data-categories="git"><span class="iconfont-archer">&#xe60a;</span>git</span>
+    
+        <span class="sidebar-category-name" data-categories="web"><span class="iconfont-archer">&#xe60a;</span>web</span>
+    
+        <span class="sidebar-category-name" data-categories="session"><span class="iconfont-archer">&#xe60a;</span>session</span>
+    
+        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
+    
+        <span class="sidebar-category-name" data-categories="leetcode"><span class="iconfont-archer">&#xe60a;</span>leetcode</span>
+    
+        <span class="sidebar-category-name" data-categories="maven"><span class="iconfont-archer">&#xe60a;</span>maven</span>
+    
+        <span class="sidebar-category-name" data-categories="linux"><span class="iconfont-archer">&#xe60a;</span>linux</span>
+    
+        <span class="sidebar-category-name" data-categories="书法"><span class="iconfont-archer">&#xe60a;</span>书法</span>
+    
+        <span class="sidebar-category-name" data-categories="spring-mvc"><span class="iconfont-archer">&#xe60a;</span>spring-mvc</span>
+    
+        <span class="sidebar-category-name" data-categories="spring/session"><span class="iconfont-archer">&#xe60a;</span>spring/session</span>
+    
+        <span class="sidebar-category-name" data-categories="springboot"><span class="iconfont-archer">&#xe60a;</span>springboot</span>
+    
+        <span class="sidebar-category-name" data-categories="spring-cloud"><span class="iconfont-archer">&#xe60a;</span>spring-cloud</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "GuoLei Song"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

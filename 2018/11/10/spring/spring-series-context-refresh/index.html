@@ -1,0 +1,3544 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="GuoLei Song">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="GuoLei Song">
+    
+    <meta name="keywords" content="glmapper,spring,spring cloud,宋国磊">
+    
+    <meta name="description" content="从平凡的世界中全身而退">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Spring源码系列-容器刷新 · glmapper</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin="">
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin="">
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">glmapper</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Spring源码系列-容器刷新</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">glmapper</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Spring源码系列-容器刷新
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.6k</span>阅读时长: <span class="post-count reading-time">6 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/11/10</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p><code>Spring对于程序员说来说都不陌生；作为一个强大的开源技术，帮助我们能够更好的进行项目的开发与维护。</code></p>
+<p>上次在Spring的启动过程文章中对Spring的启动过程做了一个较为详细的说明和分析。那么在实际的过程中，Spring的启动实际上就是Spring容器的初始化过程。本文将从源码的角度结合自己断点执行过程中保留的现场来分析一下容器的刷新过程（主要分析前几个方法，后面几个会分开来说）。</p>
+<p>Spring的启动是通过ContextLoaderListener来进行的，在ContextLoaderListener中通过委托父类ContextLoader的initWebApplicationContext来完成具体的初始化过程。具体的启动过程可以看下之前的那篇文章。</p>
+<p>在initWebApplicationContext方法是用来创建容器的，核心代码如下：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/160878791bfd4866?w=776&amp;h=306&amp;f=png&amp;s=21620" alt=""><br>今天主要来看configureAndRefreshWebApplicationContext方法中最后的wac.refresh()到底发生了哪些事;</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/1608789936e4812b?w=656&amp;h=628&amp;f=png&amp;s=37436" alt=""></p>
+<h3 id="1、obtainFreshBeanFactory：BeanFactory的刷新和创建"><a href="#1、obtainFreshBeanFactory：BeanFactory的刷新和创建" class="headerlink" title="1、obtainFreshBeanFactory：BeanFactory的刷新和创建"></a>1、obtainFreshBeanFactory：BeanFactory的刷新和创建</h3><p>refresh()方法主要为IoC容器Bean的生命周期管理提供条件，Spring IoC容器载入Bean定义资源文件从其子类容器的refreshBeanFactory()方法启动，所以整个refresh()中“ConfigurableListableBeanFactory beanFactory =obtainFreshBeanFactory();”这句以后代码的都是注册容器的信息源和生命周期事件，载入过程就是从这句代码启动。<br>AbstractApplicationContext的obtainFreshBeanFactory()方法调用子类容器的refreshBeanFactory()方法，启动容器载入Bean定义资源文件的过程。<br>refresh()方法的作用是：在创建IoC容器前，如果已经有容器存在，则需要把已有的容器销毁和关闭，以保证在refresh之后使用的是新建立起来的IoC容器。refresh的作用类似于对IoC容器的重启，在新建立好的容器中对容器进行初始化，对Bean定义资源进行载入。<br>和refreshBeanFactory方法类似，载入Bean定义的方法loadBeanDefinitions也使用了委派模式，在AbstractRefreshableApplicationContext类中只定义了抽象方法，具体的实现调用子类容器中的方法实现。</p>
+<p><strong>//通知子类去刷新内部bean 工厂</strong></p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/160878ba771d7cb0?w=627&amp;h=229&amp;f=png&amp;s=12991" alt=""><br>再来看refreshBeanFactory</p>
+<p><code>此实现执行该上下文的底层bean工厂的实际刷新，关闭以前的bean工厂（如果有的话），并为上下文生命周期的下一阶段初始化一个新的bean工厂。</code></p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/160878cb0149042c?w=881&amp;h=366&amp;f=png&amp;s=21522" alt=""></p>
+<p><strong>customizeBeanFactory(DefaultListableBeanFactory beanFactory)</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">        //通过当前上下文来自定义内部bean工厂&lt;br&gt;</span><br><span class="line">	 * Customize the internal bean factory used by this context.</span><br><span class="line">	 * Called for each &#123;@link #refresh()&#125; attempt.</span><br><span class="line">	 * &lt;p&gt;The default implementation applies this context&apos;s</span><br><span class="line">	 * &#123;@linkplain #setAllowBeanDefinitionOverriding &quot;allowBeanDefinitionOverriding&quot;&#125;</span><br><span class="line">	 * and &#123;@linkplain #setAllowCircularReferences &quot;allowCircularReferences&quot;&#125; settings,</span><br><span class="line">	 * if specified. Can be overridden in subclasses to customize any of</span><br><span class="line">	 * &#123;@link DefaultListableBeanFactory&#125;&apos;s settings.</span><br><span class="line">	 * @param beanFactory the newly created bean factory for this context</span><br><span class="line">	 * @see DefaultListableBeanFactory#setAllowBeanDefinitionOverriding</span><br><span class="line">	 * @see DefaultListableBeanFactory#setAllowCircularReferences</span><br><span class="line">	 * @see DefaultListableBeanFactory#setAllowRawInjectionDespiteWrapping</span><br><span class="line">	 * @see DefaultListableBeanFactory#setAllowEagerClassLoading</span><br><span class="line">	 */</span><br><span class="line">	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) &#123;</span><br><span class="line">		if (this.allowBeanDefinitionOverriding != null) &#123;</span><br><span class="line">			beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);</span><br><span class="line">		&#125;</span><br><span class="line">		if (this.allowCircularReferences != null) &#123;</span><br><span class="line">			beanFactory.setAllowCircularReferences(this.allowCircularReferences);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>XmlWebApplicationContext类中loadBeanDefinitions（beanFactory）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException &#123;</span><br><span class="line">		// Create a new XmlBeanDefinitionReader for the given BeanFactory.</span><br><span class="line">		XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);</span><br><span class="line"></span><br><span class="line">		// Configure the bean definition reader with this context&apos;s</span><br><span class="line">		// resource loading environment.</span><br><span class="line">		beanDefinitionReader.setEnvironment(getEnvironment());</span><br><span class="line">		beanDefinitionReader.setResourceLoader(this);</span><br><span class="line">		beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));</span><br><span class="line"></span><br><span class="line">		// Allow a subclass to provide custom initialization of the reader,</span><br><span class="line">		// then proceed with actually loading the bean definitions.</span><br><span class="line">		initBeanDefinitionReader(beanDefinitionReader);</span><br><span class="line">		loadBeanDefinitions(beanDefinitionReader);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>AbstractApplicationContext调用loadBeanDefinitions(DefaultListableBeanFactory beanFactory) ，此方法根据首先创建XmlBeanDefinitionReader对象，然后配置该对象的上下文和资源加载环境，同时调用子类实现的initBeanDefinitionReader对XmlBeanDefinitionReader进行个性化配置，最近后入到initBeanDefinitionReader(beanDefinitionReader)的调用：</p>
+<ol>
+<li>据给定的BeanFactory创建XmlBeanDefinitionReader 对象  </li>
+<li>配置beanDefinitionReader的上下文和资源加载环境  </li>
+<li>用子类实现的initBeanDefinitionReader对XmlBeanDefinitionReader进行个性化配置initBeanDefinitionReader(beanDefinitionReader);  </li>
+<li>调用载入Bean定义的方法，在当前类中只定义了抽象的loadBeanDefinitions方法，具体的实现调用子类容器  </li>
+</ol>
+<p><strong>装载bean定义通过XmlBeanDefinitionReader。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// Create a new XmlBeanDefinitionReader for the given BeanFactory. 通过给定的bean工厂创建一个新的XmlBeanDefinitionReader</span><br><span class="line">1.XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);</span><br><span class="line"></span><br><span class="line">2.使用上下文的资源加载环境配置bean定义读取器。</span><br><span class="line">   beanDefinitionReader.setEnvironment(getEnvironment());</span><br><span class="line">   beanDefinitionReader.setResourceLoader(this);</span><br><span class="line">   beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));</span><br><span class="line">3.允许子类提供reader的自定义初始化，然后继续实际加载bean定义。</span><br><span class="line">    //通过制定的XmlBeanDefinitionReader来载入beandefinitionReader </span><br><span class="line">   initBeanDefinitionReader(beanDefinitionReader)</span><br><span class="line">   // 通过制定的XmlBeanDefinitionReader来载入bean definitions</span><br><span class="line">   loadBeanDefinitions(beanDefinitionReader)</span><br></pre></td></tr></table></figure>
+<p>AbstractApplicationContext调用loadBeanDefinitions(beanDefinitionReader)，这个方法是取得资源或资源路径然后通过传入的reader去加载BeanDefinitions。<br><img src="https://user-gold-cdn.xitu.io/2017/12/24/160879563687ab72?w=997&amp;h=205&amp;f=png&amp;s=22629" alt=""></p>
+<h3 id="2、loadBeanDefinitions"><a href="#2、loadBeanDefinitions" class="headerlink" title="2、loadBeanDefinitions"></a>2、loadBeanDefinitions</h3><p>目前使用Spring的配置都是基于XML的，因此使用XmlBeanDefinitionReader 中的loadBeanDefinitions方法。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/1608797d7481bc37?w=583&amp;h=112&amp;f=png&amp;s=7511" alt=""><br><img src="https://user-gold-cdn.xitu.io/2017/12/24/160879802355b9b2?w=799&amp;h=444&amp;f=png&amp;s=27799" alt=""><br>看doLoadBeanDefinitions,这个就是具体的读取文件配置，然后注册成Bean</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087994cca671ae?w=578&amp;h=141&amp;f=png&amp;s=9005" alt=""></p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/1608799702d1a27a?w=778&amp;h=467&amp;f=png&amp;s=29776" alt=""></p>
+<h3 id="3、prepareBeanFactory"><a href="#3、prepareBeanFactory" class="headerlink" title="3、prepareBeanFactory"></a>3、prepareBeanFactory</h3><p>配置工厂的标准上下文特性，如上下文的类装载器和后处理器。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/160879d74f10ac5c?w=810&amp;h=569&amp;f=png&amp;s=52456" alt=""></p>
+<ul>
+<li>告诉内部bean工厂使用上下文的类装入器等。</li>
+<li>上下文回调配置bean工厂。</li>
+<li>BeanFactory接口未登记为普通工厂的解析式。MessageSource登记（为自动装配创建）作为一个Bean</li>
+<li>如果创建；就去寻找LoadTimeWeaver，然后准备组织</li>
+<li>注册默认环境bean。</li>
+</ul>
+<p>通过断点来看下当前的beanFactory</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/160879dad75a8048?w=612&amp;h=583&amp;f=png&amp;s=53737" alt=""><br><img src="https://user-gold-cdn.xitu.io/2017/12/24/160879ed5cdaef5f?w=604&amp;h=560&amp;f=png&amp;s=49027" alt=""><br>继续执行…</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087a04fe33eb56?w=752&amp;h=168&amp;f=png&amp;s=14279" alt=""><br><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087a06f5fb4c2e?w=808&amp;h=188&amp;f=png&amp;s=22508" alt=""><br>beanDefinitionMap</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087a1b5ada4189?w=1191&amp;h=413&amp;f=png&amp;s=48945" alt=""><br>manualSingletonNames</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087a204892dc0a?w=782&amp;h=306&amp;f=png&amp;s=32662" alt=""></p>
+<h3 id="4、postProcessBeanFactory"><a href="#4、postProcessBeanFactory" class="headerlink" title="4、postProcessBeanFactory"></a>4、postProcessBeanFactory</h3><p>注册web特性的全局域</p>
+<p><strong>1).registerWebApplicationScopes</strong><br><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087a32aa0195bc?w=855&amp;h=201&amp;f=png&amp;s=15426" alt=""><br>注册具有web特性的域；包括：”request”, “session”, “globalSession”, “application”</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087a462ab9a807?w=824&amp;h=408&amp;f=png&amp;s=35130" alt=""><br>看下存储结构：<br><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087a48b52b1efb?w=530&amp;h=46&amp;f=png&amp;s=3519" alt=""><br>registerScope方法<br><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087a4cda81d6b1?w=809&amp;h=140&amp;f=png&amp;s=11295" alt=""><br><strong>2).registerEnvironmentBeans</strong></p>
+<p>注册web特性 环境bean（“contextparameters”、“ContextAttribute”）与给定的WebApplicationContext使用BeanFactory。</p>
+<p>1.servletContext<br><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087a7c6281aca0?w=1220&amp;h=401&amp;f=png&amp;s=52028" alt=""><br>2.servletConfig<br><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087a98a9e47514?w=1224&amp;h=255&amp;f=png&amp;s=38217" alt=""><br>3.registerSingleton</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087ac67b8a29be?w=773&amp;h=308&amp;f=png&amp;s=31414" alt=""></p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087ac95dcd1938?w=1071&amp;h=246&amp;f=png&amp;s=34326" alt=""></p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087acbf2427eda?w=880&amp;h=305&amp;f=png&amp;s=34889" alt=""><br>这里是找到了我们默认的配置文件参数：<br><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087aceb75503c0?w=796&amp;h=334&amp;f=png&amp;s=52552" alt=""><br>beanName=contextParameters</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087af2fc1441a9?w=689&amp;h=172&amp;f=png&amp;s=11770" alt=""><br><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087af4eefec01f?w=1127&amp;h=165&amp;f=png&amp;s=26627" alt=""><br><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087af6a105d944?w=886&amp;h=269&amp;f=png&amp;s=34219" alt=""><br>最后是将contextAttributes放入；contextAttributes中包含的属性值比较多，具体如下面所示：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087b0058a9d783?w=931&amp;h=258&amp;f=png&amp;s=37259" alt=""><br>主要包括：<br>javax.servlet.context.tempdir,<br>org.apache.catalina.resources, org.springframework.web.context.support.ServletContextScope, org.apache.tomcat.util.scan.MergedWebXml,<br>org.apache.tomcat.InstanceManager,<br>org.apache.catalina.jsp_classpath,<br>javax.websocket.server.ServerContainer,<br>org.apache.tomcat.JarScanner</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/24/16087b145d6705ce?w=1123&amp;h=223&amp;f=png&amp;s=28111" alt=""><br>这里是把需要的东西全部载入进来了，有很多。就不贴了(mime-mapping)….</p>
+<h3 id="5、invokeBeanFactoryPostProcessors"><a href="#5、invokeBeanFactoryPostProcessors" class="headerlink" title="5、invokeBeanFactoryPostProcessors"></a>5、invokeBeanFactoryPostProcessors</h3><p><strong>BeanDefinitionRegistryPostProcessor实例化</strong>：标准BeanFactoryPostProcessor的扩展，BeanFactoryPostProcessor的作用是用来进一步定义注册的BeanDefinition，IoC容器本质就是Bean管理，所以BeanFactoryPostProcessor本身也是Bean，要对BeanFactoryPostProcessor的BeanDefinition进一步定义就通过BeanDefinitionRegistryPostProcessor进行注册，BeanDefinitionRegistryPostProcessor及其子类是Ioc容器最实例化的一类Bean。它们在ConfigurableApplicationContext（ApplicationContext子接口）实现类调用refresh()方法调用invokeBeanFactoryPostProcessors(beanFactory);方法时就被实例化。</p>
+<p>OK，今天关于这部分的分析就到此结束了，后面的过程会在下一篇Spring系列文章中继续来讲refresh中的过程。</p>
+<p><code>如果您对系列文章有任何意见，可以给我留言，感谢大家。</code></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
+            </p><p>原文链接：<a href="http://www.glmapper.com/2018/11/10/spring/spring-series-context-refresh/">http://www.glmapper.com/2018/11/10/spring/spring-series-context-refresh/</a>
+            </p><p>发表日期：<a href="http://www.glmapper.com/2018/11/10/spring/spring-series-context-refresh/">November 10th 2018, 1:59:19 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2018/11/10/spring/spring-series-context-refresh/">December 16th 2020, 1:17:18 pm</a>
+            </p><p>版权声明：转载请注明出处</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/11/10/java-design-model-builder/" title="菜鸟成长系列-Builder 建造者模式">
+                    <div class="nextTitle">菜鸟成长系列-Builder 建造者模式</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/11/10/java-design-model-factory/" title="菜鸟成长系列-工厂模式">
+                    <div class="prevTitle">菜鸟成长系列-工厂模式</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:glmapper_2018@163.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/glmapper" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechart.png">
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://weibo.com/u/2412872703" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://juejin.im/user/58fcc0768d6d810058965a06" class="iconfont-archer juejin" target="_blank" title="juejin"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title="rss"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span></span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、obtainFreshBeanFactory：BeanFactory的刷新和创建"><span class="toc-number">1.</span> <span class="toc-text">1、obtainFreshBeanFactory：BeanFactory的刷新和创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、loadBeanDefinitions"><span class="toc-number">2.</span> <span class="toc-text">2、loadBeanDefinitions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、prepareBeanFactory"><span class="toc-number">3.</span> <span class="toc-text">3、prepareBeanFactory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、postProcessBeanFactory"><span class="toc-number">4.</span> <span class="toc-text">4、postProcessBeanFactory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5、invokeBeanFactoryPostProcessors"><span class="toc-number">5.</span> <span class="toc-text">5、invokeBeanFactoryPostProcessors</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 123
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2020/12/16/maven/maven-repository/">maven-repository</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/12</span><a class="archive-post-title" href="/2020/12/12/linux/concept-linux-namespace/">概念基础-Linux 中的 namespace</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href="/2020/10/26/linux/linux-yum/">yum 指令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href="/2020/10/26/jvm/jvm-self-command/">JVM 性能调优监控工具</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href="/2020/10/26/photograph/photograph-serise-two/">摄影-2</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/24</span><a class="archive-post-title" href="/2020/10/24/photograph/photograph-serise-one/">摄影-1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/10</span><a class="archive-post-title" href="/2020/08/10/linux/base-operations-top-command/">Linux Top 命令指南</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/15</span><a class="archive-post-title" href="/2020/07/15/sofa-ark-container-mode/">SOFAArk 解析系列-容器模型</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/21</span><a class="archive-post-title" href="/2020/06/21/spring/spring-series-factory-bean-and-post-processor/">聊一聊 BeanPostProcessor 不生效</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/19</span><a class="archive-post-title" href="/2020/05/19/solution-series-zhongtai/">什么是中台？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href="/2020/05/01/java-base-classloader-typecheck/">ClassLoader 类加载-type checking 对类加载的影响</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href="/2020/04/12/solution-series-microservices/">【译】微服务（microservices）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/05</span><a class="archive-post-title" href="/2020/04/05/springboot/springboot-series-rocketmq/">SpringBoot 实践系列-集成 RocketMQ</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/03</span><a class="archive-post-title" href="/2020/04/03/solution-series-dynamic-module/">解决方案系列-基于 SOFAArk 实现应用的动态装载和卸载</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href="/2020/03/29/solution-series-cluster-selector/">解决方案系列-集群选主(基于DB)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/16</span><a class="archive-post-title" href="/2020/03/16/java-base-iterator-of-set/">聊一聊 CopyOnWriteArraySet 的迭代删除</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/12</span><a class="archive-post-title" href="/2020/02/12/springboot/springboot-series-filter-exception/">SpringBoot 实践系列-Filter 中的异常处理和 Controller 中的异常处理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/28</span><a class="archive-post-title" href="/2020/01/28/java-design-model-adapter/">菜鸟成长系列-适配器模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/20</span><a class="archive-post-title" href="/2020/01/20/sofa-tracer-integration-analysis/">一文详解蚂蚁金服分布式链路组件 SOFATracer 的埋点机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2020/01/05/springboot/springboot-series-auto-configure/">SpringBoot 源码系列-自动配置及 starter 机制解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span><a class="archive-post-title" href="/2020/01/03/springboot/springboot-series-externalize-prop/">SpringBoot 实践系列-外部化配置优先级问题</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/29</span><a class="archive-post-title" href="/2019/12/29/springboot/springboot-series-propertysource/">SpringBoot 源码系列-配置解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/24</span><a class="archive-post-title" href="/2019/12/24/springboot/springboot-series-summary/">SpringBoot 源码解析系列 & SpringBoot 实践系列综述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/20</span><a class="archive-post-title" href="/2019/12/20/tool-config-git-ssh/">git ssh 配置及使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href="/2019/12/14/springboot/springboot-series-log/">SpringBoot 源码系列-日志详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/14</span><a class="archive-post-title" href="/2019/12/14/springboot/springboot-series-bean-life/">SpringBoot 源码系列-Bean 的生命周期与扩展</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/09</span><a class="archive-post-title" href="/2019/12/09/springboot/springboot-series-access-resource/">SpringBoot 实践系列-资源访问</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2019/12/07/springboot/springboot-series-started/">SpringBoot 源码系列-启动过程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/13</span><a class="archive-post-title" href="/2019/10/13/springboot/springboot-series-fatjar/">SpringBoot 源码系列-FatJar 启动原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/06</span><a class="archive-post-title" href="/2019/10/06/springboot/springboot-series-server-tomcat/">SpringBoot 源码系列-内嵌 Tomcat 的实现原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/28</span><a class="archive-post-title" href="/2019/08/28/sofa-ark-plugin-rule/">ARK 插件基本规则及注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/24</span><a class="archive-post-title" href="/2019/08/24/base-java-reacotr/">响应式编程 Reactor 小记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/19</span><a class="archive-post-title" href="/2019/08/19/base-java-generics/">聊一聊-JAVA 泛型中的通配符 T，E，K，V，？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/01</span><a class="archive-post-title" href="/2019/08/01/seiri-shell-record/">shell 脚本简单归纳和实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/23</span><a class="archive-post-title" href="/2019/07/23/maven/maven-debug/">一个 maven 插件打包问题的排查</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/30</span><a class="archive-post-title" href="/2019/06/30/topic-jar-manifest-intro/">聊一聊 JAR 文件和 MANIFEST.MF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/29</span><a class="archive-post-title" href="/2019/04/29/cas-several-qa/">并发编程-关于 CAS 的几个问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/zookeeper-client-curator/">ZooKeeper 客户端之 Curator</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span><a class="archive-post-title" href="/2019/04/13/springboot/springboot-series-event/">SpringBoot 源码系列-事件机制详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/07</span><a class="archive-post-title" href="/2019/03/07/springboot/springboot-series-kafka-introduction/">SpringBoot 实践系列-Kafka简介&集成SpringBoot</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/04</span><a class="archive-post-title" href="/2019/03/04/zookeeper-on-linux/">Linux 下安装 Zookeeper</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/19</span><a class="archive-post-title" href="/2019/01/19/springboot/springcloud-gateway-predicate-project/">SpringCloud-网关 Gateway 入门体验</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/09</span><a class="archive-post-title" href="/2019/01/09/springboot/springcloud-hystrix-project/">SpringCloud-断路器 Hystrix</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/09</span><a class="archive-post-title" href="/2019/01/09/springboot/springcloud-config-apollo/">SpringCloud-配置中心 Apollo</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springboot/springcloud-config-analysis/">SpringCloud-Config 配置中心原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/mysql-on-linux/">Linux 下安装 Mysql 数据库</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springboot/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcloud-overview/">SpringCloud 总览</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-context-analysis/">SpringCloud-Spring Cloud Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-config-project/">SpringCloud-配置中心 Config</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-eureka-register/">SpringCloud-Eureka 服务注册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-feign-project/">SpringCloud-声明式服务调用 Feign</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/23</span><a class="archive-post-title" href="/2018/12/23/spring/spring-session-idresolver/">SpringSession系列-sessionId解析和Cookie读写策略</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/shufa/shufa-20181216/">20181216-书法练习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/16</span><a class="archive-post-title" href="/2018/12/16/spring/spring-session-redis-map/">SpringSession系列-存储机制之Redis&Map</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href="/2018/12/07/sofa-tracer-mvc-plugin/">SOFATracer 插件埋点机制详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring/spring-session-solutions/">SpringSession系列-分布式Session实现方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring/spring-session-req-resp/">SpringSession系列-请求与响应重写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/16</span><a class="archive-post-title" href="/2018/11/16/sofa-boot-health-analizy/">SOFABoot 健康检查能力分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/shufa/shufa-20181111/">20181111-书法练习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-builder/">菜鸟成长系列-Builder 建造者模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-obs/">菜鸟成长系列-观察者模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-modulemethod/">菜鸟成长系列-模板方法模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-strategy/">菜鸟成长系列-策略模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc2/">JUC·ThreadPoolExecutor 线程池</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-up-juc1/">JUC·Executor 框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-base-webmvc3/">SpringMVC系列源码：DispatcherServlet</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-base-webmvc2/">SpringMVC源码系列：AbstractHandlerMapping</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-base-webmvc4/">SpringMVC源码系列：AbstractUrlHandlerMapping</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-base-webmvc1/">SpringMVC源码系列：HandlerMapping</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-annotation/">Spring源码系列：注解说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-2/">Spring源码系列：BeanDefinition载入（中）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-base-webmvc5/">SpringMVC源码系列：九大组件小记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-3/">Spring源码系列：BeanDefinition载入(下)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-beandefinition/">Spring源码系列：BeanDefinition 源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-createbean/">Spring源码系列：依赖注入（二）createBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-beanwrapper/">Spring源码系列：BeanWrapper</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-beanfactory/">Spring源码系列：BeanFactory的创建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-getbean/">Spring源码系列：依赖注入（一）getBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-props/">Spring源码系列：依赖注入（三）-属性注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-intro/">Spring源码系列：依赖注入-引言</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-version-change/">Spring源码系列：Spring的版本变更</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-summary/">Spring源码系列：依赖注入（四）-总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-1/">Spring源码系列：BeanDefinition载入(上)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-one/">面向对象的四大基础特性</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-overall/">菜鸟成长系列-概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/glmapper-bird-two/">多态、接口和抽象类</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-hashmap/">从源码来聊一聊hashmap</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/guavacacheone/">Google Guava 在实际场景中的应用封装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-thread-deadlock/">怎么写一个死锁？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-bird-three/">菜鸟成长系列-面向对象的6种设计原则</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-base-one/">一个朋友圈泛型问题引发的“案子”</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-factory/">菜鸟成长系列-工厂模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-key-word/">JAVA中的关键字</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-thread-base/">JAVA基础知识系列---进程、线程安全</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx 反向代理和负载均衡策略实战案例</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java-design-model-singleton/">菜鸟成长系列-单例模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-maven-ssm/">基于maven构建多模块化的SSM框架</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/project-frame-ssm/">项目开发框架-SSM</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/seiri-mybatis/">关于 Mybatis 中 SQL 语句的整理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/seiri-rpc/">关于 rpc 的整理和理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-servlet/">聊一聊 Web 核心 - Servlet</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-session-cookie/">聊一聊 session和cookie</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/alg-one/">算法-排序算法思想及实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode5/">每天一道算法题：无重复字符的最长子串</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode4/">每天一道算法题：求两个排序数组的中位数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode3/">每天一道算法题：最长回文子串</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcodeone/">每天一道算法题：颠倒整数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcodetwo/">每天一道算法题：Z字形转换</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-aop-advice/">聊一聊 AOP：Advice 源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-aop-base/">聊一聊 AOP ：表现形式与基础概念</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-context-refresh/">Spring源码系列-容器刷新</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-starting/">Spring源码系列：Spring的启动过程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofa-tracer-disruptor/">SOFATracer 中 Disruptor 实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/logone/">看完这个不会配置 logback ，请你吃瓜！</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofa-tracer-zipkin/">分布式链路跟踪组件 SOFATracer 和 Zipkin 模型转换原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/topic-resttemplate/">聊一聊 RestTemplate</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-extention-one/">聊一聊 Spring 中的扩展机制（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-extention-namespacehandler/">聊一聊 Spring 中的扩展机制(二) - NamespaceHandler</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-session-integration-springboot/">：SpringSession系列-集成SpringBoot</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="java"><span class="iconfont-archer">&#xe606;</span>java</span>
+    
+        <span class="sidebar-tag-name" data-tags="泛型"><span class="iconfont-archer">&#xe606;</span>泛型</span>
+    
+        <span class="sidebar-tag-name" data-tags="Reactor"><span class="iconfont-archer">&#xe606;</span>Reactor</span>
+    
+        <span class="sidebar-tag-name" data-tags="规划"><span class="iconfont-archer">&#xe606;</span>规划</span>
+    
+        <span class="sidebar-tag-name" data-tags="hash"><span class="iconfont-archer">&#xe606;</span>hash</span>
+    
+        <span class="sidebar-tag-name" data-tags="map"><span class="iconfont-archer">&#xe606;</span>map</span>
+    
+        <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
+    
+        <span class="sidebar-tag-name" data-tags="guava"><span class="iconfont-archer">&#xe606;</span>guava</span>
+    
+        <span class="sidebar-tag-name" data-tags="线程"><span class="iconfont-archer">&#xe606;</span>线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="thread"><span class="iconfont-archer">&#xe606;</span>thread</span>
+    
+        <span class="sidebar-tag-name" data-tags="set"><span class="iconfont-archer">&#xe606;</span>set</span>
+    
+        <span class="sidebar-tag-name" data-tags="CopyOnWriteArraySet"><span class="iconfont-archer">&#xe606;</span>CopyOnWriteArraySet</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="classloader"><span class="iconfont-archer">&#xe606;</span>classloader</span>
+    
+        <span class="sidebar-tag-name" data-tags="cas"><span class="iconfont-archer">&#xe606;</span>cas</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
+    
+        <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
+    
+        <span class="sidebar-tag-name" data-tags="nginx"><span class="iconfont-archer">&#xe606;</span>nginx</span>
+    
+        <span class="sidebar-tag-name" data-tags="代理模式"><span class="iconfont-archer">&#xe606;</span>代理模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="负载均衡"><span class="iconfont-archer">&#xe606;</span>负载均衡</span>
+    
+        <span class="sidebar-tag-name" data-tags="ssm"><span class="iconfont-archer">&#xe606;</span>ssm</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
+    
+        <span class="sidebar-tag-name" data-tags="mybatis"><span class="iconfont-archer">&#xe606;</span>mybatis</span>
+    
+        <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
+    
+        <span class="sidebar-tag-name" data-tags="maven"><span class="iconfont-archer">&#xe606;</span>maven</span>
+    
+        <span class="sidebar-tag-name" data-tags="mysql"><span class="iconfont-archer">&#xe606;</span>mysql</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="shell"><span class="iconfont-archer">&#xe606;</span>shell</span>
+    
+        <span class="sidebar-tag-name" data-tags="sofa-ark"><span class="iconfont-archer">&#xe606;</span>sofa-ark</span>
+    
+        <span class="sidebar-tag-name" data-tags="sql"><span class="iconfont-archer">&#xe606;</span>sql</span>
+    
+        <span class="sidebar-tag-name" data-tags="数据库"><span class="iconfont-archer">&#xe606;</span>数据库</span>
+    
+        <span class="sidebar-tag-name" data-tags="rpc"><span class="iconfont-archer">&#xe606;</span>rpc</span>
+    
+        <span class="sidebar-tag-name" data-tags="dubbo"><span class="iconfont-archer">&#xe606;</span>dubbo</span>
+    
+        <span class="sidebar-tag-name" data-tags="微服务"><span class="iconfont-archer">&#xe606;</span>微服务</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFATracer"><span class="iconfont-archer">&#xe606;</span>SOFATracer</span>
+    
+        <span class="sidebar-tag-name" data-tags="Disruptor"><span class="iconfont-archer">&#xe606;</span>Disruptor</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenTracing"><span class="iconfont-archer">&#xe606;</span>OpenTracing</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFABoot"><span class="iconfont-archer">&#xe606;</span>SOFABoot</span>
+    
+        <span class="sidebar-tag-name" data-tags="logback"><span class="iconfont-archer">&#xe606;</span>logback</span>
+    
+        <span class="sidebar-tag-name" data-tags="slf4j"><span class="iconfont-archer">&#xe606;</span>slf4j</span>
+    
+        <span class="sidebar-tag-name" data-tags="链路跟踪"><span class="iconfont-archer">&#xe606;</span>链路跟踪</span>
+    
+        <span class="sidebar-tag-name" data-tags="解决方案"><span class="iconfont-archer">&#xe606;</span>解决方案</span>
+    
+        <span class="sidebar-tag-name" data-tags="集群选主"><span class="iconfont-archer">&#xe606;</span>集群选主</span>
+    
+        <span class="sidebar-tag-name" data-tags="中台"><span class="iconfont-archer">&#xe606;</span>中台</span>
+    
+        <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
+    
+        <span class="sidebar-tag-name" data-tags="聊一聊"><span class="iconfont-archer">&#xe606;</span>聊一聊</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFA"><span class="iconfont-archer">&#xe606;</span>SOFA</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFAArk"><span class="iconfont-archer">&#xe606;</span>SOFAArk</span>
+    
+        <span class="sidebar-tag-name" data-tags="git"><span class="iconfont-archer">&#xe606;</span>git</span>
+    
+        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
+    
+        <span class="sidebar-tag-name" data-tags="servlet"><span class="iconfont-archer">&#xe606;</span>servlet</span>
+    
+        <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
+    
+        <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
+    
+        <span class="sidebar-tag-name" data-tags="zookeeper"><span class="iconfont-archer">&#xe606;</span>zookeeper</span>
+    
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+    
+        <span class="sidebar-tag-name" data-tags="leetcode"><span class="iconfont-archer">&#xe606;</span>leetcode</span>
+    
+        <span class="sidebar-tag-name" data-tags="草原"><span class="iconfont-archer">&#xe606;</span>草原</span>
+    
+        <span class="sidebar-tag-name" data-tags="夕阳"><span class="iconfont-archer">&#xe606;</span>夕阳</span>
+    
+        <span class="sidebar-tag-name" data-tags="yum"><span class="iconfont-archer">&#xe606;</span>yum</span>
+    
+        <span class="sidebar-tag-name" data-tags="书法"><span class="iconfont-archer">&#xe606;</span>书法</span>
+    
+        <span class="sidebar-tag-name" data-tags="性能调优"><span class="iconfont-archer">&#xe606;</span>性能调优</span>
+    
+        <span class="sidebar-tag-name" data-tags="aop"><span class="iconfont-archer">&#xe606;</span>aop</span>
+    
+        <span class="sidebar-tag-name" data-tags="namestapce"><span class="iconfont-archer">&#xe606;</span>namestapce</span>
+    
+        <span class="sidebar-tag-name" data-tags="top"><span class="iconfont-archer">&#xe606;</span>top</span>
+    
+        <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring 事件机制"><span class="iconfont-archer">&#xe606;</span>spring 事件机制</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring 扩展机制"><span class="iconfont-archer">&#xe606;</span>spring 扩展机制</span>
+    
+        <span class="sidebar-tag-name" data-tags="西湖"><span class="iconfont-archer">&#xe606;</span>西湖</span>
+    
+        <span class="sidebar-tag-name" data-tags="springboot"><span class="iconfont-archer">&#xe606;</span>springboot</span>
+    
+        <span class="sidebar-tag-name" data-tags="log"><span class="iconfont-archer">&#xe606;</span>log</span>
+    
+        <span class="sidebar-tag-name" data-tags="springmvc"><span class="iconfont-archer">&#xe606;</span>springmvc</span>
+    
+        <span class="sidebar-tag-name" data-tags="kafka"><span class="iconfont-archer">&#xe606;</span>kafka</span>
+    
+        <span class="sidebar-tag-name" data-tags="PropertySource"><span class="iconfont-archer">&#xe606;</span>PropertySource</span>
+    
+        <span class="sidebar-tag-name" data-tags="rocketmq"><span class="iconfont-archer">&#xe606;</span>rocketmq</span>
+    
+        <span class="sidebar-tag-name" data-tags="Config"><span class="iconfont-archer">&#xe606;</span>Config</span>
+    
+        <span class="sidebar-tag-name" data-tags="Tomcat"><span class="iconfont-archer">&#xe606;</span>Tomcat</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring cloud"><span class="iconfont-archer">&#xe606;</span>spring cloud</span>
+    
+        <span class="sidebar-tag-name" data-tags="Hystrix"><span class="iconfont-archer">&#xe606;</span>Hystrix</span>
+    
+        <span class="sidebar-tag-name" data-tags="Gateway"><span class="iconfont-archer">&#xe606;</span>Gateway</span>
+    
+        <span class="sidebar-tag-name" data-tags="网关"><span class="iconfont-archer">&#xe606;</span>网关</span>
+    
+        <span class="sidebar-tag-name" data-tags="Apollo"><span class="iconfont-archer">&#xe606;</span>Apollo</span>
+    
+        <span class="sidebar-tag-name" data-tags="commons"><span class="iconfont-archer">&#xe606;</span>commons</span>
+    
+        <span class="sidebar-tag-name" data-tags="Eureka"><span class="iconfont-archer">&#xe606;</span>Eureka</span>
+    
+        <span class="sidebar-tag-name" data-tags="Feign"><span class="iconfont-archer">&#xe606;</span>Feign</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ribbon"><span class="iconfont-archer">&#xe606;</span>Ribbon</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="java"><span class="iconfont-archer">&#xe60a;</span>java</span>
+    
+        <span class="sidebar-category-name" data-categories="java-基础"><span class="iconfont-archer">&#xe60a;</span>java-基础</span>
+    
+        <span class="sidebar-category-name" data-categories="架构之路"><span class="iconfont-archer">&#xe60a;</span>架构之路</span>
+    
+        <span class="sidebar-category-name" data-categories="缓存"><span class="iconfont-archer">&#xe60a;</span>缓存</span>
+    
+        <span class="sidebar-category-name" data-categories="JUC"><span class="iconfont-archer">&#xe60a;</span>JUC</span>
+    
+        <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
+    
+        <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
+    
+        <span class="sidebar-category-name" data-categories="运维"><span class="iconfont-archer">&#xe60a;</span>运维</span>
+    
+        <span class="sidebar-category-name" data-categories="SOFA"><span class="iconfont-archer">&#xe60a;</span>SOFA</span>
+    
+        <span class="sidebar-category-name" data-categories="mybatis"><span class="iconfont-archer">&#xe60a;</span>mybatis</span>
+    
+        <span class="sidebar-category-name" data-categories="rpc"><span class="iconfont-archer">&#xe60a;</span>rpc</span>
+    
+        <span class="sidebar-category-name" data-categories="日志"><span class="iconfont-archer">&#xe60a;</span>日志</span>
+    
+        <span class="sidebar-category-name" data-categories="解决方案"><span class="iconfont-archer">&#xe60a;</span>解决方案</span>
+    
+        <span class="sidebar-category-name" data-categories="spring"><span class="iconfont-archer">&#xe60a;</span>spring</span>
+    
+        <span class="sidebar-category-name" data-categories="git"><span class="iconfont-archer">&#xe60a;</span>git</span>
+    
+        <span class="sidebar-category-name" data-categories="web"><span class="iconfont-archer">&#xe60a;</span>web</span>
+    
+        <span class="sidebar-category-name" data-categories="session"><span class="iconfont-archer">&#xe60a;</span>session</span>
+    
+        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
+    
+        <span class="sidebar-category-name" data-categories="leetcode"><span class="iconfont-archer">&#xe60a;</span>leetcode</span>
+    
+        <span class="sidebar-category-name" data-categories="maven"><span class="iconfont-archer">&#xe60a;</span>maven</span>
+    
+        <span class="sidebar-category-name" data-categories="linux"><span class="iconfont-archer">&#xe60a;</span>linux</span>
+    
+        <span class="sidebar-category-name" data-categories="书法"><span class="iconfont-archer">&#xe60a;</span>书法</span>
+    
+        <span class="sidebar-category-name" data-categories="spring-mvc"><span class="iconfont-archer">&#xe60a;</span>spring-mvc</span>
+    
+        <span class="sidebar-category-name" data-categories="spring/session"><span class="iconfont-archer">&#xe60a;</span>spring/session</span>
+    
+        <span class="sidebar-category-name" data-categories="springboot"><span class="iconfont-archer">&#xe60a;</span>springboot</span>
+    
+        <span class="sidebar-category-name" data-categories="spring-cloud"><span class="iconfont-archer">&#xe60a;</span>spring-cloud</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "GuoLei Song"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
