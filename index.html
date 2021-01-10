@@ -370,12 +370,9 @@ Java应用程序的问题：发生 OOM 导致进程 Crash
 JVM自身故障：JVM 或J DK 自身的 Bug 导致进程 Crash
 被操作系统 OOM-Killer
 
-ps -ef | grep xxx 查看进程
+Java应用程序的问题：发生 OOM 导致进程 Crash一般情况下，出现 OOM 异常，JVM 的 GC 会进行回收，是不会直接导致 JVM 进程退出的。如果出现退出的情况，那就是内存泄漏，由于内存占用越来越大，最后就直接到 crash 了，这种 JVM 的 OOM 导致的异常，比较好排查。排查步骤如下：
 
-dmesg | grep java 
-grep -i ‘killed process’ /var/log/messages
-
-
+1、-XX:+HeapDumpOnOutOfMemoryErr...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->

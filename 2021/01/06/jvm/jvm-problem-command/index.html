@@ -272,7 +272,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">72</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">428</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -405,10 +405,20 @@ height:50vh;
 <ul>
 <li>Java应用程序的问题：发生 OOM 导致进程 Crash</li>
 <li>JVM自身故障：JVM 或J DK 自身的 Bug 导致进程 Crash</li>
-<li><p>被操作系统 OOM-Killer</p>
-</li>
-<li><p>ps -ef | grep xxx 查看进程</p>
-</li>
+<li>被操作系统 OOM-Killer</li>
+</ul>
+<h4 id="Java应用程序的问题：发生-OOM-导致进程-Crash"><a href="#Java应用程序的问题：发生-OOM-导致进程-Crash" class="headerlink" title="Java应用程序的问题：发生 OOM 导致进程 Crash"></a>Java应用程序的问题：发生 OOM 导致进程 Crash</h4><p>一般情况下，出现 OOM 异常，JVM 的 GC 会进行回收，是不会直接导致 JVM 进程退出的。如果出现退出的情况，那就是内存泄漏，由于内存占用越来越大，最后就直接到 crash 了，这种 JVM 的 OOM 导致的异常，比较好排查。排查步骤如下：</p>
+<ul>
+<li>1、-XX:+HeapDumpOnOutOfMemoryError 和 -XX:HeapDumpPath=*/java.hprof</li>
+<li>2、根据 HeapDumpPath 指定的路径查看是否产生 dump 文件</li>
+<li>3、根据 dump 文件进行分析</li>
+</ul>
+<h4 id="JVM自身故障：JVM-或-JDK-自身的-Bug-导致进程-Crash"><a href="#JVM自身故障：JVM-或-JDK-自身的-Bug-导致进程-Crash" class="headerlink" title="JVM自身故障：JVM 或 JDK 自身的 Bug 导致进程 Crash"></a>JVM自身故障：JVM 或 JDK 自身的 Bug 导致进程 Crash</h4><p>当 JVM 出现致命错误时，会生成一个 hs_err_pid_xxx.log 这样的文件，该文件包含了导致 JVM crash 的重要信息，可以通过分析该文件定位到导致 crash 的根源，从而改善以保证系统稳定。当出现 crash 时，该文件默认会生成到工作目录下，然而可以通过 JVM 参数 -XX:ErrorFile 指定生成路径</p>
+<blockquote>
+<p>-XX:ErrorFile=/xxx/xxx/hs_err_pid<pid>.log<br>附 Java BUG dataBase 库：<a href="https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8134389" target="_blank" rel="noopener">https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8134389</a></pid></p>
+</blockquote>
+<h4 id="被操作系统-OOM-Killer"><a href="#被操作系统-OOM-Killer" class="headerlink" title="被操作系统 OOM-Killer"></a>被操作系统 OOM-Killer</h4><p>Linux 内核有个机制叫 OOM killer（Out-Of-Memory killer），该机制会监控那些占用内存过大，尤其是瞬间很快消耗大量内存的进程，为了防止内存耗尽而内核会把该进程杀掉。可以去 /var/log/messages 里翻系统报错日志，执行如下命令:</p>
+<ul>
 <li>dmesg | grep java </li>
 <li>grep -i ‘killed process’ /var/log/messages</li>
 </ul>
@@ -420,7 +430,7 @@ height:50vh;
             <p>原文作者：<a href="http://www.glmapper.com">GuoLei Song</a>
             </p><p>原文链接：<a href="http://www.glmapper.com/2021/01/06/jvm/jvm-problem-command/">http://www.glmapper.com/2021/01/06/jvm/jvm-problem-command/</a>
             </p><p>发表日期：<a href="http://www.glmapper.com/2021/01/06/jvm/jvm-problem-command/">January 6th 2021, 7:40:08 pm</a>
-            </p><p>更新日期：<a href="http://www.glmapper.com/2021/01/06/jvm/jvm-problem-command/">January 6th 2021, 7:51:32 pm</a>
+            </p><p>更新日期：<a href="http://www.glmapper.com/2021/01/06/jvm/jvm-problem-command/">January 7th 2021, 4:12:23 pm</a>
             </p><p>版权声明：转载请注明出处</p>
         </div>
     
@@ -564,7 +574,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Java应用程序的问题：发生-OOM-导致进程-Crash"><span class="toc-number">1.</span> <span class="toc-text">Java应用程序的问题：发生 OOM 导致进程 Crash</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JVM自身故障：JVM-或-JDK-自身的-Bug-导致进程-Crash"><span class="toc-number">2.</span> <span class="toc-text">JVM自身故障：JVM 或 JDK 自身的 Bug 导致进程 Crash</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#被操作系统-OOM-Killer"><span class="toc-number">3.</span> <span class="toc-text">被操作系统 OOM-Killer</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
