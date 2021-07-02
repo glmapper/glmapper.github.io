@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[你知道 Junit 是怎么跑的吗？]]></title>
+    <url>%2F2021%2F07%2F02%2Ftests%2Fjunit-run-principle%2F</url>
+    <content type="text"><![CDATA[Junit 是由 Kent Beck 和 Erich Gamma 于 1995 年底着手编写的框架，自此以后，Junit 框架日益普及，现在已经成为单元测试 Java 应用程序的事实上的标准。 在软件开发领域中，从来没有这样的事情：少数几行代码对大量代码起着如此重要的作用 — Martin Fowler 从一个简单的例子开始认识 Junit本文注重点在于研究 Junit 运行的基本原理和执行单元测试的流程，所以对于一些额外的信息和数据不单独准备，本文所使用的测试 case 如下： 123456789101112131415161718192021222324252627282930313233343536package com.glmapper.bridge.boot;import org.junit.*;public class JunitSamplesTest &#123; @Before public void before()&#123; System.out.println(".....this is before test......"); &#125; @After public void after()&#123; System.out.println(".....this is after test......"); &#125; @BeforeClass public static void beforeClass()&#123; System.out.println(".....this is before class test......"); &#125; @AfterClass public static void afterClass()&#123; System.out.println(".....this is after class test......"); &#125; @Test public void testOne()&#123; System.out.println("this is test one"); &#125; @Test public void testTwo()&#123; System.out.println("this is test two"); &#125;&#125; 执行结果如下：123456789.....this is before class test......Disconnected from the target VM, address: '127.0.0.1:65400', transport: 'socket'.....this is before test......this is test one.....this is after test...........this is before test......this is test two.....this is after test...........this is after class test...... 从代码和执行结果来看，BeforeClass 和 AfterClass 注解分别在测试类开始之前和之后执行，Before 和 After 注解在测试类中每个测试方法的前后执行。 问题域从开发者的角度来看，对于任何一个技术产品组件，如果想要更好的使用它，就意味着必须了解它。通过上面提供的 case 可以看到，Junit 使用非常简单，基本 0 门槛上手，通过给测试的方法加一个 @Test 注解，然后将待测试逻辑放在 被 @Test 标注的方法内，然后 run 就好了。简单源于组件开发者的顶层抽象和封装，将技术细节屏蔽，然后以最简洁的 API 或者注解面向用户，这也是 Junit 能够让广大开发者容易接受的根本原因，值得我们借鉴学习。 回归正题，基于上面分析，Junit 使用简单在于其提供了非常简洁的 API 和注解，那对于我们来说，这些就是作为分析 Junit 的基本着手点；通过这些，来拨开 Junit 的基本原理。基于第一节的小案例，这里抛出这样几个问题： Junit 是怎么触发执行的 为什么被标注 @Test 注解的方法会被执行，而没有标注的不会 Before 和 After 执行时机 BeforeClass 和 AfterClass 执行时机 Junit 是怎么将执行结果收集并返回的（这里不关注 IDE 提供的渲染） Junit 是如何执行的？这里把断点直接打在目标测试方法位置，然后 debug 执行 通过堆栈来找到用例执行的整个路径。因为本 case 是通过 idea 启动执行，所以可以看到的入口实际是被 idea 包装过的。但是这里也抓到了 JUnitCore 这样的一个入口。 JUnitCore 是运行测试用例的门面入口，通过源码注释可以看到，JUnitCore 从 junit 4 才有，但是其向下兼容了 3.8.x 版本系列。我们在跑测试用例时，其实大多数情况下在本地都是通过 IDE 来触发用例运行，或者通过 mvn test 来运行用例，实际上，不管是 IDE 还是 mvn 都是对 JUnitCore 的封装。我们完全可以通过 main 方法的方式来运行，比如运行下面代码的 main 方法来通过一个 JUnitCore 实例，然后指定被测试类来触发用例执行，为了尽量使得堆栈更贴近 Junit 自己的代码，我们通过这种方式启动来减少堆栈对于代码执行路径的干扰。 12345678910111213141516171819202122232425262728293031323334353637public class JunitSamplesTest &#123; @Before public void before()&#123; System.out.println(".....this is before test......"); &#125; @After public void after()&#123; System.out.println(".....this is after test......"); &#125; @BeforeClass public static void beforeClass()&#123; System.out.println(".....this is before class test......"); &#125; @AfterClass public static void afterClass()&#123; System.out.println(".....this is after class test......"); &#125; @Test public void testOne()&#123; System.out.println("this is test one"); &#125; @Test public void testTwo()&#123; System.out.println("this is test two"); &#125; public static void main(String[] args) &#123; JUnitCore jUnitCore = new JUnitCore(); jUnitCore.run(JunitSamplesTest.class); &#125;&#125; 这里得到了最简化的测试执行入口： 如果使用 java 命令来引导启动，其实就是从 JunitCore 内部自己的 main 方法开始执行的 1234567891011/** * Run the tests contained in the classes named in the args. If all tests run successfully, exit with a status of 0. Otherwise exit with a status of 1. Write * feedback while tests are running and write stack traces for all failed tests after the tests all complete. * Params: * args – names of classes in which to find tests to run **/public static void main(String... args) &#123; Result result = new JUnitCore().runMain(new RealSystem(), args); System.exit(result.wasSuccessful() ? 0 : 1);&#125; 为什么被标注 @Test 注解的方法会被执行，而没有标注的不会这里比较好理解，被打了 @Test 注解的方法，一定是 Junit 通过某种方式将其扫描到了，然后作为待执行的一个集合或者队列中。下面通过分析代码来论证下。 org.junit.runners.BlockJUnit4ClassRunner#getChildren 1234@Overrideprotected List&lt;FrameworkMethod&gt; getChildren() &#123; return computeTestMethods();&#125; 通过方法 computeTestMethods 方法名其实就可以看出其目的，就是计算出所有的测试方法。 etAnnotatedMethods 通过指定的 annotationClass 类型，将当前 TestClass 中类型为 annotationClass 类型注解标注的方法过滤出来， getFilteredChildren 中最后将获取得到的测试方法放在 filteredChildren 中缓存起来。这里简单汇总下 @Test 注解被识别的整个过程（其他注解如 @Before 都是一样的） 1、Junit 在初始化构建 Runner 的过程，内部会基于给定的 测试类创建一个 TestClass 对象模型，用于描述当前测试类在 Junit 中的表示。1234567891011121314151617181920// clazz 是待测试类public TestClass(Class&lt;?&gt; clazz) &#123; this.clazz = clazz; if (clazz != null &amp;&amp; clazz.getConstructors().length &gt; 1) &#123; // 测试类不能有有参构造函数 throw new IllegalArgumentException( "Test class can only have one constructor"); &#125; Map&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkMethod&gt;&gt; methodsForAnnotations = new LinkedHashMap&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkMethod&gt;&gt;(); Map&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkField&gt;&gt; fieldsForAnnotations = new LinkedHashMap&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkField&gt;&gt;(); // 扫描待测试类中所有的 Junit 注解，包括 @Test @Before @After 等等 scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations); // 过滤出打在方法上的注解， this.methodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations); // 过滤出打在变量上的注解 this.fieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);&#125; methodsForAnnotations 和 fieldsForAnnotations 缓存了当前待测试类所有被 junit 注解标注过的方法和变量 2、getFilteredChildren 中，从 methodsForAnnotations 中筛选出所有 @Test 注解标注的方法。（getDescription()-&gt; getFilteredChildren -&gt; computeTestMethods -&gt; 从 methodsForAnnotations 按类型过滤） 3、返回所有 @Test 注解标注的方法 Before 和 After 执行时机要搞定这个问题，其实有必要了解下 Junit 中一个比较重要的概念 Statement。 123456public abstract class Statement &#123; /** * Run the action, throwing a &#123;@code Throwable&#125; if anything goes wrong. */ public abstract void evaluate() throws Throwable;&#125; Statement 从 junit 4.5 版本被提出，Statement 表示在运行 JUnit 测试组件的过程中要在运行时执行的一个或多个操作，简单说就是，对于被 @Before @After 注解标注的方法，在 JUnit 会被作为一种 Statement 存在，分别对应于 RunBefores 和 RunnerAfter，这些 statement 中持有了当前运行所有的 FrameworkMethod。 FrameworkMethod 是 JUnit 中所有被 junit 注解标注方式的内部描述，@Test, @Before, @After, @BeforeClass, @AfterClass 标注的方法最终都作为 FrameworkMethod 实例存在。 Statement 的创建有两种方式，基于 FrameworkMethod 的 methodBlock 和基于 RunNotifier 的 classBlock，这里介绍 methodBlock ，classBlock 下节讨论。 12345678910111213141516171819202122protected Statement methodBlock(final FrameworkMethod method) &#123; Object test; try &#123; test = new ReflectiveCallable() &#123; @Override protected Object runReflectiveCall() throws Throwable &#123; return createTest(method); &#125; &#125;.run(); &#125; catch (Throwable e) &#123; return new Fail(e); &#125; Statement statement = methodInvoker(method, test); statement = possiblyExpectingExceptions(method, test, statement); statement = withPotentialTimeout(method, test, statement); statement = withBefores(method, test, statement); statement = withAfters(method, test, statement); statement = withRules(method, test, statement); statement = withInterruptIsolation(statement); return statement; &#125; withAfters、withBefores 会将 RunAfters 和 RunBefore 绑定到 statement，最后 形成一个 statement 链，这个链的执行入口时 RunAfters#evaluate。 12345678910111213141516171819@Overridepublic void evaluate() throws Throwable &#123; List&lt;Throwable&gt; errors = new ArrayList&lt;Throwable&gt;(); try &#123; next.evaluate(); &#125; catch (Throwable e) &#123; errors.add(e); &#125; finally &#123; // 在 finally 中执行 after 方法 for (FrameworkMethod each : afters) &#123; try &#123; invokeMethod(each); &#125; catch (Throwable e) &#123; errors.add(e); &#125; &#125; &#125; MultipleFailureException.assertEmpty(errors);&#125; next 链中包括 before 和待执行的测试方法 所以我们看到的就是 before -&gt; testMethod -&gt; after。 这里其实和预想的不太一样，关于 before 和 after 这种逻辑，第一想法是通过代理的方式，对测试方法进行代理拦截，类似 Spring AOP 中的 Before 和 After，其实不然。 BeforeClass 和 AfterClass 执行时机前面分析了 methodBlock，了解到 junit 中通过这个方法创建 statement 并且将 before 和 after 的方法绑定给 statement，以此推断，classBlock 的作用就是将 BeforeClass 和 AfterClass 绑定给statement 。1234567891011protected Statement classBlock(final RunNotifier notifier) &#123; // childrenInvoker 这里会调用到 methodBlock Statement statement = childrenInvoker(notifier); if (!areAllChildrenIgnored()) &#123; statement = withBeforeClasses(statement); statement = withAfterClasses(statement); statement = withClassRules(statement); statement = withInterruptIsolation(statement); &#125; return statement;&#125; BeforeClass 和 before 都会对应创建一个 RunnerBefores，区别在于 BeforeClass 在创建 RunnerBefores 时，不会指定目标测试方法。 BeforeClass 在执行 statement 之前，运行该类和超类上所有非覆盖的@BeforeClass方法;如果有抛出异常，停止执行并传递异常。 AfterClass 在执行 statement链最后，在该类和超类上运行所有未覆盖的 @AfterClass 方法；始终执行所有 AfterClass 方法：如有必要，将前面步骤抛出的异常与来自 AfterClass 方法的异常合并到 org.junit.runners.model.MultipleFailureException 中。 Junit 是怎么将执行结果收集并返回的junit 所有执行的结果都存放在 Result 中123456789101112// 所有 case 数private final AtomicInteger count;// 忽略执行的 case 数（被打了 ignore）private final AtomicInteger ignoreCount;// 失败 case 数private final AtomicInteger assumptionFailureCount;// 所有失败 case 的结果private final CopyOnWriteArrayList&lt;Failure&gt; failures;// 执行时间private final AtomicLong runTime;// 开始时间private final AtomicLong startTime; Result 中内置了一个默认的来监听器，这个监听器会在每个 case 执行完成之后进行相应的回调，Listener 如下：123456789101112131415161718192021222324252627282930313233343536@RunListener.ThreadSafe private class Listener extends RunListener &#123; // 设置开始时间 @Override public void testRunStarted(Description description) throws Exception &#123; startTime.set(System.currentTimeMillis()); &#125; // 执行完所有 case @Override public void testRunFinished(Result result) throws Exception &#123; long endTime = System.currentTimeMillis(); runTime.addAndGet(endTime - startTime.get()); &#125; // 执行完某个 case @Override public void testFinished(Description description) throws Exception &#123; count.getAndIncrement(); &#125; // 执行完某个 case 失败 @Override public void testFailure(Failure failure) throws Exception &#123; failures.add(failure); &#125; // 执行完某个ignore case @Override public void testIgnored(Description description) throws Exception &#123; ignoreCount.getAndIncrement(); &#125; @Override public void testAssumptionFailure(Failure failure) &#123; // Assumption 产生的失败 assumptionFailureCount.getAndIncrement(); &#125; &#125; JUnit 4 开始在测试中支持假设 Assumptions，在 Assumptions 中，封装了一组使用的方法，以支持基于假设的条件测试执行。假设实际就是指定某个特定条件，假如不能满足假设条件，假设不会导致测试失败，只是终止当前测试。这也是假设与断言的最大区别，因为对于断言而言，会导致测试失败。 所以 JUnit 通过监听器机制收集所有的测试信息，最终封装到 Result 中返回。 总结Junit 中有一些比较基本的概念，比如 Runner，statement 等；在初始化时，默认情况下 junit 会构建出 BlockJUnit4ClassRunner 这样的一个 Runner，并且在这个 Runner 中会持有被测试类的所有信息。Runner 运行测试并在执行此操作时将重要事件通知 RunNotifier。 也可以使用 RunWith 调用自定义 Runner，这里只要你的 Runner 是 org.junit.runner.Runner 子类即可；创建自定义运行程序时，除了在此处实现抽象方法外，还必须提供一个构造函数，这个构造函数将包含测试的类作为参数–如：SpringRunner。 Runner 的 run 方法内部就是构建和执行 Statement 链的过程，Statement 中描述了单元测试中需要执行的一系列操作，每个 case 均以 RunnerAfter -&gt; TargetMethod -&gt; RunnerBefore 的执行顺序依次执行；执行过程中，junit 通过监听器机制回调 case 调用的每个生命周期阶段，并将各个case 执行的信息进行收集汇总，最终返回执行结果 Result 。]]></content>
+      <categories>
+        <category>测试</category>
+      </categories>
+      <tags>
+        <tag>junit</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[JAVA进程被 kill 排查]]></title>
     <url>%2F2021%2F01%2F06%2Fjvm%2Fjvm-problem-command%2F</url>
     <content type="text"><![CDATA[可能会导致 JAVA 进程被 kill 的原因 Java应用程序的问题：发生 OOM 导致进程 Crash JVM自身故障：JVM 或J DK 自身的 Bug 导致进程 Crash 被操作系统 OOM-Killer Java应用程序的问题：发生 OOM 导致进程 Crash一般情况下，出现 OOM 异常，JVM 的 GC 会进行回收，是不会直接导致 JVM 进程退出的。如果出现退出的情况，那就是内存泄漏，由于内存占用越来越大，最后就直接到 crash 了，这种 JVM 的 OOM 导致的异常，比较好排查。排查步骤如下： 1、-XX:+HeapDumpOnOutOfMemoryError 和 -XX:HeapDumpPath=*/java.hprof 2、根据 HeapDumpPath 指定的路径查看是否产生 dump 文件 3、根据 dump 文件进行分析 JVM自身故障：JVM 或 JDK 自身的 Bug 导致进程 Crash当 JVM 出现致命错误时，会生成一个 hs_err_pid_xxx.log 这样的文件，该文件包含了导致 JVM crash 的重要信息，可以通过分析该文件定位到导致 crash 的根源，从而改善以保证系统稳定。当出现 crash 时，该文件默认会生成到工作目录下，然而可以通过 JVM 参数 -XX:ErrorFile 指定生成路径 -XX:ErrorFile=/xxx/xxx/hs_err_pid.log附 Java BUG dataBase 库：https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8134389 被操作系统 OOM-KillerLinux 内核有个机制叫 OOM killer（Out-Of-Memory killer），该机制会监控那些占用内存过大，尤其是瞬间很快消耗大量内存的进程，为了防止内存耗尽而内核会把该进程杀掉。可以去 /var/log/messages 里翻系统报错日志，执行如下命令: dmesg | grep java grep -i ‘killed process’ /var/log/messages]]></content>
@@ -42,8 +53,8 @@
         <category>leetcode</category>
       </categories>
       <tags>
-        <tag>leetcode</tag>
         <tag>算法</tag>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -1250,8 +1261,8 @@
         <category>leetcode</category>
       </categories>
       <tags>
-        <tag>leetcode</tag>
         <tag>算法</tag>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -1262,8 +1273,8 @@
         <category>leetcode</category>
       </categories>
       <tags>
-        <tag>leetcode</tag>
         <tag>算法</tag>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -1274,8 +1285,8 @@
         <category>leetcode</category>
       </categories>
       <tags>
-        <tag>leetcode</tag>
         <tag>算法</tag>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -1286,8 +1297,8 @@
         <category>leetcode</category>
       </categories>
       <tags>
-        <tag>leetcode</tag>
         <tag>算法</tag>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
