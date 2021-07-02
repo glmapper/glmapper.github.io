@@ -346,40 +346,6 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2019/12/09/springboot/springboot-series-access-resource/">
-            
-                <span>SpringBoot 实践系列-资源访问</span>
-        </a>
-        <div class="abstract-content">
-            
-原文链接：https://smarterco.de/java-load-file-from-classpath-in-spring-boot/
-
-简介当我们创建一个 SpringBoot web 应用时，有时候需要从 classpath 去加载一些文件，这里记录下在 war 和 jar 两种不同文件格式下加载文件的解决方案
-The ResourceLoader在 Java 中 ，我们可以使用当前线程的 classLoader 去尝试加载文件，但是 Spring Framework 为我们提供了更加优雅的解决方案，例如 ResourceLoader。
-使用 ResourceLoader ...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/09</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="springboot">springboot</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
         <a class="abstract-title" href="/2019/12/07/springboot/springboot-series-started/">
             
                 <span>SpringBoot 源码系列-启动过程分析</span>
@@ -705,6 +671,54 @@ JAR 作用大体可以分为以下几种：
             <div class="abstract-tags">
     
         <a class="post-tag" href="javascript:void(0);" data-tags="java">java</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2019/04/29/cas-several-qa/">
+            
+                <span>并发编程-关于 CAS 的几个问题</span>
+        </a>
+        <div class="abstract-content">
+            CAS 相关基础知识CAS的全称是Compare And Swap ,即比较交换。CAS 中一般会设计到3个参数:
+
+内存值 V
+旧的预期值A
+要修改的新值B
+
+当且仅当预期值 A 和内存值 V 相同时，将内存值V修改为 B，否则什么都不做。
+
+这里关于 CPU 指令对于 CAS 的支持不深入研究,有兴趣的可以自行了解。
+
+CAS 几个问题很多书籍和文章中都有提出它存在的几个问题：
+
+1、循环时间长开销很大
+2、只能保证一个共享变量的原子操作
+3、ABA 问题
+
+下面就这三个问题展开来聊一下。
+1、关于“循环时间长开销很大”的疑惑与验证自旋 CAS 如果长时间不成功，会给 CPU 带来非...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/29</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="java">java</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="cas">cas</a>
     
 </div>
             
@@ -2802,22 +2816,9 @@ JAR 作用大体可以分为以下几种：
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 125
+        Total : 124
         </div>
         <!-- search  -->
         
@@ -2830,11 +2831,6 @@ JAR 作用大体可以分为以下几种：
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">01/16</span><a class="archive-post-title" href="/2021/01/16/spring-ioc-summary/">Spring系列-Ioc 容器</a>
-        </li>
     
     
         <li class="archive-post-item">

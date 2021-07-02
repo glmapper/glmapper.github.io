@@ -359,54 +359,6 @@ height:50vh;
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2019/04/29/cas-several-qa/">
-            
-                <span>并发编程-关于 CAS 的几个问题</span>
-        </a>
-        <div class="abstract-content">
-            CAS 相关基础知识CAS的全称是Compare And Swap ,即比较交换。CAS 中一般会设计到3个参数:
-
-内存值 V
-旧的预期值A
-要修改的新值B
-
-当且仅当预期值 A 和内存值 V 相同时，将内存值V修改为 B，否则什么都不做。
-
-这里关于 CPU 指令对于 CAS 的支持不深入研究,有兴趣的可以自行了解。
-
-CAS 几个问题很多书籍和文章中都有提出它存在的几个问题：
-
-1、循环时间长开销很大
-2、只能保证一个共享变量的原子操作
-3、ABA 问题
-
-下面就这三个问题展开来聊一下。
-1、关于“循环时间长开销很大”的疑惑与验证自旋 CAS 如果长时间不成功，会给 CPU 带来非...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/29</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="java">java</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="cas">cas</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
         <a class="abstract-title" href="/2019/04/13/springboot/springboot-series-event/">
             
                 <span>SpringBoot 源码系列-事件机制详解</span>
@@ -781,6 +733,55 @@ zk从 ZooKeeper官网 下载 zookeeper-3....
         <a class="post-tag" href="javascript:void(0);" data-tags="zookeeper">zookeeper</a>
     
         <a class="post-tag" href="javascript:void(0);" data-tags="Config">Config</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2019/01/05/mysql-on-linux/">
+            
+                <span>Linux 下安装 Mysql 数据库</span>
+        </a>
+        <div class="abstract-content">
+            最近在搞 Apollo ，熟悉的同学应该知道，Apollo 需要依赖 Mysql。本以为很容易搞定，但是却踩了一路坑，眼高手低，也参考了网上很多博客，果然是残缺就是美！本篇就简单记录一下这个过程，以便后面参考。
+环境
+linux：centOS 7
+
+jdk：8
+
+Mysql：5.7.24
+
+
+准备安装前，我们可以检测系统是否自带安装 MySQL:
+1rpm -qa | grep mysql
+如果你系统有安装，那可以选择进行卸载，有两种模式：
+
+普通删除模式
+1rpm -e mysql
+
+强力删除模式
+1rpm -e --nodeps mysql
+如果使用上面命令删除时，提示有依赖的其它文...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/05</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="mysql">mysql</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="linux">linux</a>
     
 </div>
             
@@ -2985,22 +2986,9 @@ zk从 ZooKeeper官网 下载 zookeeper-3....
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 125
+        Total : 124
         </div>
         <!-- search  -->
         
@@ -3013,11 +3001,6 @@ zk从 ZooKeeper官网 下载 zookeeper-3....
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">01/16</span><a class="archive-post-title" href="/2021/01/16/spring-ioc-summary/">Spring系列-Ioc 容器</a>
-        </li>
     
     
         <li class="archive-post-item">

@@ -346,42 +346,6 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2018/11/10/spring/spring-series-inject-intro/">
-            
-                <span>Spring源码系列：依赖注入-引言</span>
-        </a>
-        <div class="abstract-content">
-            
-Spring源码系列：BeanDefinition源码解析
-Spring源码系列：BeanDefinition载入(上)
-Spring源码系列：BeanDefinition载入(中)
-Spring源码系列：BeanDefinition载入(下)
-
-在上面四篇文章中大概分析了一下Bean的载入，其实这个过程就是在Ioc容器中建立BeanDefinition的数据映射。但是对于Bean的实例化并未涉及，在之前的分析中也提到，bean的实例化是在依赖注入是才具体完成。
-关于依赖注入关于Spring，我们最先想到的就两个Ioc和Aop；然后关于Ioc我们又能牵扯出两个：控制反转和依赖注入。控制...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
         <a class="abstract-title" href="/2018/11/10/spring/spring-series-version-change/">
             
                 <span>Spring源码系列：Spring的版本变更</span>
@@ -674,6 +638,37 @@ This class can be implemented by application developers, although this is...
             <div class="abstract-tags">
     
         <a class="post-tag" href="javascript:void(0);" data-tags="设计模式">设计模式</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/spring/spring-series-context-refresh/">
+            
+                <span>Spring源码系列-容器刷新</span>
+        </a>
+        <div class="abstract-content">
+            Spring对于程序员说来说都不陌生；作为一个强大的开源技术，帮助我们能够更好的进行项目的开发与维护。
+上次在Spring的启动过程文章中对Spring的启动过程做了一个较为详细的说明和分析。那么在实际的过程中，Spring的启动实际上就是Spring容器的初始化过程。本文将从源码的角度结合自己断点执行过程中保留的现场来分析一下容器的刷新过程（主要分析前几个方法，后面几个会分开来说）。
+Spring的启动是通过ContextLoaderListener来进行的，在ContextLoaderListener中通过委托父类ContextLoader的initWebApplicationCon...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="spring">spring</a>
     
 </div>
             
@@ -2771,22 +2766,9 @@ This class can be implemented by application developers, although this is...
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 125
+        Total : 124
         </div>
         <!-- search  -->
         
@@ -2799,11 +2781,6 @@ This class can be implemented by application developers, although this is...
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">01/16</span><a class="archive-post-title" href="/2021/01/16/spring-ioc-summary/">Spring系列-Ioc 容器</a>
-        </li>
     
     
         <li class="archive-post-item">

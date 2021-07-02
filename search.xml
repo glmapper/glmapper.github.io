@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[Spring系列-Ioc 容器]]></title>
-    <url>%2F2021%2F01%2F16%2Fspring-ioc-summary%2F</url>
-    <content type="text"></content>
-  </entry>
-  <entry>
     <title><![CDATA[JAVA进程被 kill 排查]]></title>
     <url>%2F2021%2F01%2F06%2Fjvm%2Fjvm-problem-command%2F</url>
     <content type="text"><![CDATA[可能会导致 JAVA 进程被 kill 的原因 Java应用程序的问题：发生 OOM 导致进程 Crash JVM自身故障：JVM 或J DK 自身的 Bug 导致进程 Crash 被操作系统 OOM-Killer Java应用程序的问题：发生 OOM 导致进程 Crash一般情况下，出现 OOM 异常，JVM 的 GC 会进行回收，是不会直接导致 JVM 进程退出的。如果出现退出的情况，那就是内存泄漏，由于内存占用越来越大，最后就直接到 crash 了，这种 JVM 的 OOM 导致的异常，比较好排查。排查步骤如下： 1、-XX:+HeapDumpOnOutOfMemoryError 和 -XX:HeapDumpPath=*/java.hprof 2、根据 HeapDumpPath 指定的路径查看是否产生 dump 文件 3、根据 dump 文件进行分析 JVM自身故障：JVM 或 JDK 自身的 Bug 导致进程 Crash当 JVM 出现致命错误时，会生成一个 hs_err_pid_xxx.log 这样的文件，该文件包含了导致 JVM crash 的重要信息，可以通过分析该文件定位到导致 crash 的根源，从而改善以保证系统稳定。当出现 crash 时，该文件默认会生成到工作目录下，然而可以通过 JVM 参数 -XX:ErrorFile 指定生成路径 -XX:ErrorFile=/xxx/xxx/hs_err_pid.log附 Java BUG dataBase 库：https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8134389 被操作系统 OOM-KillerLinux 内核有个机制叫 OOM killer（Out-Of-Memory killer），该机制会监控那些占用内存过大，尤其是瞬间很快消耗大量内存的进程，为了防止内存耗尽而内核会把该进程杀掉。可以去 /var/log/messages 里翻系统报错日志，执行如下命令: dmesg | grep java grep -i ‘killed process’ /var/log/messages]]></content>
