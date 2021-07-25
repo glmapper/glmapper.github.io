@@ -346,31 +346,28 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2021/01/06/jvm/jvm-problem-command/">
+        <a class="abstract-title" href="/2020/05/01/java/java-base-classloader-typecheck/">
             
-                <span>JAVA 进程被 kill 排查</span>
+                <span>ClassLoader 类加载-type checking 对类加载的影响</span>
         </a>
         <div class="abstract-content">
-            可能会导致 JAVA 进程被 kill 的原因
+            Type CheckingType Checking (类型检测) 的作用是分析程序在编译或者运行期间，其类型表达是否一致的一个过程。举个例子：如果一个变量被声明为 int 类型，那么他就不能被赋值为实际的值（或者字符串类型、或者其他任何类型）。java 语言的类型检测分为两种：
 
-Java应用程序的问题：发生 OOM 导致进程 Crash
-JVM自身故障：JVM 或J DK 自身的 Bug 导致进程 Crash
-被操作系统 OOM-Killer
+静态类型检测（static checking）: 问题在程序运行之前被自动找到，也就是在编译阶段完成的检查。静态类型检测更多的是关注在”类型“上。
+动态类型检测（dynamic checking）: 问题在运行期间被检测，动态运行检测关注的是在”值“上。
 
-Java应用程序的问题：发生 OOM 导致进程 Crash一般情况下，出现 OOM 异常，JVM 的 GC 会进行回收，是不会直接导致 JVM 进程退出的。如果出现退出的情况，那就是内存泄漏，由于内存占用越来越大，最后就直接到 crash 了，这种 JVM 的 OOM 导致的异常，比较好排查。排查步骤如下：
-
-1、-XX:+HeapDumpOnOutOfMemoryErr...
+本文主要介绍静态类型检测。java 语言在编译时会做...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/01/06</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/05/01</span>
             </div>
             <!-- tags  -->
             
             <div class="abstract-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="JVM">JVM</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="classloader">classloader</a>
     
 </div>
             
@@ -383,28 +380,24 @@ Java应用程序的问题：发生 OOM 导致进程 Crash一般情况下，出�
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2020/10/26/jvm/jvm-self-command/">
+        <a class="abstract-title" href="/2020/03/16/java/java-base-iterator-of-set/">
             
-                <span>JVM 性能调优监控工具</span>
+                <span>聊一聊 CopyOnWriteArraySet 的迭代删除</span>
         </a>
         <div class="abstract-content">
-            本篇主要学习记录下工作中常用的 JDK 自带的一些 JVM 性能调优监控工具，通过了解这些工具，可以在排查问题时给予我们非常大的帮助，将一些隐藏在底下的东西拿到明面上来做分析。
-jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运行的进程状态信息。语法格式如下：
-1jps [options] [hostid]
-如果不指定 hostid 就默认为当前主机或服务器，命令行参数选项说明如下：
--q 不输出类名、Jar名和传入main方法的参数12➜  ~ jps -q42060
--m 输出传入 main 方法的参数(与默认...
+            上周在工程中涉及到一个清理 Set 集合的操作，将满足设定条件的项从 Set 中删除掉。简化版本代码如下：
+123456789101112public static void main(String[] args) &#123;    Set&lt;String&gt; sets = new CopyOnWriteArraySet&lt;&gt;();    sets.add("1");    sets.add("3");    sets.add("3");    sets.add("4");    Iterator&lt;String&gt; iterator = sets.itera...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/10/26</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/16</span>
             </div>
             <!-- tags  -->
             
             <div class="abstract-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="性能调优">性能调优</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="集合">集合</a>
     
 </div>
             
@@ -417,19 +410,20 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2019/08/24/base-java-reacotr/">
+        <a class="abstract-title" href="/2019/08/19/java/java-generic-wildcard/">
             
-                <span>响应式编程 Reactor 小记</span>
+                <span>聊一聊-JAVA 泛型中的通配符 T，E，K，V，？</span>
         </a>
         <div class="abstract-content">
-            从响应式编程说起响应式编程是一种关注于数据流（data streams）和变化传递（propagation of change）的异步编程方式。 这意味着它可以用既有的编程语言表达静态（如数组）或动态（如事件源）的数据流。
-在响应式编程方面，微软跨出了第一步，它在 .NET 生态中创建了响应式扩展库（Reactive Extensions library, Rx）。接着 RxJava 在 JVM 上实现了响应式编程。后来，在 JVM 平台出现了一套标准的响应式 编程规范，它定义了一系列标准接口和交互规范。并整合到 Java 9 中（Flow 类）。
-响应式编程通常作为面向对象编程中的“观...
+            前言Java 泛型（generics）是 JDK 5 中引入的一个新特性, 泛型提供了编译时类型安全检测机制，该机制允许开发者在编译时检测到非法的类型。
+泛型的本质是参数化类型，也就是说所操作的数据类型被指定为一个参数。
+泛型带来的好处在没有泛型的情况的下，通过对类型 Object 的引用来实现参数的“任意化”，“任意化”带来的缺点是要做显式的强制类型转换，而这种转换是要求开发者对实际参数类型可以预知的情况下进行的。对于强制类型转换错误的情况，编译器可能不提示错误，在运行的时候才出现异常，这是本身就是一个安全隐患。
+那么泛型的好处就是在编译的时候能够检查类型安全，并且所有的强制转换都是自...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/24</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/19</span>
             </div>
             <!-- tags  -->
             
@@ -437,7 +431,271 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
         <a class="post-tag" href="javascript:void(0);" data-tags="java">java</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="Reactor">Reactor</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="泛型">泛型</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2019/06/30/java/java-base-jar-manifest-intro/">
+            
+                <span>聊一聊 JAR 文件和 MANIFEST.MF</span>
+        </a>
+        <div class="abstract-content">
+            在 JAVA 语言这个圈子里面摸爬滚打，除了对于语言层面和框架层面的学习之外，有一些东西它一直存在，但是确没有对它们有足够的重视，因为都觉得它是理所当然，比如 JAR 是个什么？
+提到 JAR，最先可能想到的就是依赖，比如 fastjson.jar ，它可以作为依赖在项目中来引用，但是不能通过 java -jar 来执行，这种就是非可执行的 JAR。另外一种，比如我们项目打包之后生成的 JAR （当然也可能是 war），我们可以通过 java -jar 来运行程序，我们把它称之为可执行的 JAR。
+JAR 作用大体可以分为以下几种：
+
+用于发布和使用类库
+作为应用程序和扩展的构建单元
+作...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/06/30</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="java">java</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2019/04/29/java/java-juc-cas-qa/">
+            
+                <span>并发编程-关于 CAS 的几个问题</span>
+        </a>
+        <div class="abstract-content">
+            CAS 相关基础知识CAS的全称是Compare And Swap ,即比较交换。CAS 中一般会设计到3个参数:
+
+内存值 V
+旧的预期值A
+要修改的新值B
+
+当且仅当预期值 A 和内存值 V 相同时，将内存值V修改为 B，否则什么都不做。
+
+这里关于 CPU 指令对于 CAS 的支持不深入研究,有兴趣的可以自行了解。
+
+CAS 几个问题很多书籍和文章中都有提出它存在的几个问题：
+
+1、循环时间长开销很大
+2、只能保证一个共享变量的原子操作
+3、ABA 问题
+
+下面就这三个问题展开来聊一下。
+1、关于“循环时间长开销很大”的疑惑与验证自旋 CAS 如果长时间不成功，会给 CPU 带来非...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/29</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="java">java</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="juc">juc</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/java/java-juc-ThreadPoolExecutor/">
+            
+                <span>JUC·ThreadPoolExecutor 线程池</span>
+        </a>
+        <div class="abstract-content">
+            ThreadPoolExecutor算是JUC中最常用的类之一了。ThreadPoolExecutor，顾名思义，thread-pool-executor,硬翻译就是“线程-池-执行者”；java中，通过ThreadPoolExecutor可以很容易的创建一个线程池。但是我们为什么要使用线程池？呢？它能够带来什么样的优势呢？它又是怎么实现的呢？OK，带着这几个问题，我们来学习一下JAVA中的线程池技术。
+为什么要使用线程池？关于这个问题其实有点鸡肋，我觉得再问这个问题之前更应该问为什么要有线程池。那为什么呢?
+
+this is a 例子：
+快递行业最近两年发展的灰常火热，听说工资也非常的...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="java">java</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="thread">thread</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="juc">juc</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/java/java-juc-Executor/">
+            
+                <span>JUC·Executor 框架</span>
+        </a>
+        <div class="abstract-content">
+            前言多线程和并发这两个东西真的是向往已久，总是有一种神秘的感觉，想去探索一波，又担心水平不够无法驾驭。想以读书笔记的方式来写，但是又觉得缺少自己的一些思考；但是在没有足够并发编程经验的情况下又没法去写出很深刻的东西，毕竟没有踩过坑。所以在阅读spring源码的同时，也想抽点时间来看一看JUC的东西，关于这块只能说是记录自己学习JUC的一个过程，尝试用一些具体的代码demo来加深理解。所以就把本系列写成《【 初识】-JUC·XXXX》，用来让自己打开并发编程的大门。
+JUCJUC即java.util.concurrent；也就是java提供的并发包。JUC中从包结构上来看主要是：
+
+jav...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="java">java</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="thread">thread</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="juc">juc</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/java/java-base-thread-deadlock/">
+            
+                <span>怎么写一个死锁？</span>
+        </a>
+        <div class="abstract-content">
+            刚把手头上的项目代码撸完，闲来看看博客，然后就看到了线程这块的东西。之前有简单的记录过线程和进行的零碎知识。JAVA基础知识系列—进程、线程安全
+看着看着就想着怎么能写一个死锁呢，打开eclipse，突然感觉无从下手；之前都是一直在解决阻塞、死锁这些问题，现在反过来去写一个死锁感觉有点莫名奇妙。。。
+ok,写一个死锁就要有一种场景，并且满足死锁的条件。
+
+互斥条件：一个资源每次只能被一个进程使用。
+请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放
+不剥夺条件:进程已获得的资源，在末使用完之前，不能强行剥夺。
+循环等待条件:若干进程之间形成一种头尾相接的循环等待资源关系。...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="java">java</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="thread">thread</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/java/java-base-hashmap/">
+            
+                <span>从源码来聊一聊 hashmap</span>
+        </a>
+        <div class="abstract-content">
+            HashMap为什么会是面试中的常客呢？我觉得有以下几点原因：* 考察你阅读源码的能力* 是否了解内部数据结构* 是否了解其存储和查询逻辑* 对非线程安全情况下的使用考虑前段时间一同事面试蚂蚁金服，就被问到了这个问题；其实很多情况下都是从hashMap,hashTable,ConcurrentHahMap三者之间的关系衍生而出，当然也有直接就针对hashMap原理直接进行考察的。实际上本质都一样，就是为了考察你是否对集合中这些常用集合的原理、实现和使用场景是否清楚。一方面是我们开发中用的多，当然用的人也就多，但是用的好的人却不多（我也用的多，用的也不好）。所以就借此机会（强行蹭一波）再来...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="集合">集合</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href="/2018/11/10/java/java-generic-reflect-usage/">
+            
+                <span>一个朋友圈泛型问题引发的“案子”</span>
+        </a>
+        <div class="abstract-content">
+            昨天朋友圈问了一个问题：对于下面的list，何如在list添加一个Integer型整数？1ArrayList&lt;String&gt; list = new ArrayList&lt;String&gt;();
+有这样几种回答：
+
+1.不知道（非专业回答）
+2.硬塞（非专业回答）
+3.把String 改成Integer再添加（违背了问题初衷）
+4.把String改成Object，可以加任意类型（违背了问题初衷）
+5.String换成通配符
+6.反射
+
+对于1、2就不说了，属于搞事情的！3、4、5三种方式违背了问题的初衷，如果可以改，那我们直接new三个ArrayList就可以了。6反射...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="java">java</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="泛型">泛型</a>
     
 </div>
             
@@ -445,6 +703,10 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     </article>
     
     <!-- paginator  -->
+    
+    <nav class="page-nav">
+        <span class="page-number current">1</span><a class="page-number" href="/categories/JAVA/page/2/">2</a><a class="extend next" rel="next" href="/categories/JAVA/page/2/">NEXT &#62;</a>
+    </nav>
     
 </main>
             <!-- profile -->
@@ -2532,9 +2794,32 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 127
+        Total : 128
         </div>
         <!-- search  -->
         
@@ -2547,6 +2832,11 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/25</span><a class="archive-post-title" href="/2021/07/25/shares/shares-sofa-meetup-7/">记：SOFA Meepup 合肥站-SOFA 微服务体系技术生态于实践</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -2609,12 +2899,12 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/26</span><a class="archive-post-title" href="/2020/10/26/photograph/photograph-serise-two/">摄影-2</a>
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href="/2020/10/26/linux/linux-cmd-yum/">yum 指令</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/26</span><a class="archive-post-title" href="/2020/10/26/linux/linux-cmd-yum/">yum 指令</a>
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href="/2020/10/26/photograph/photograph-serise-two/">摄影-2</a>
         </li>
     
     
@@ -2823,12 +3113,12 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springboot/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/linux/linux-soft-mysql/">Linux 下安装 Mysql 数据库</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/linux/linux-soft-mysql/">Linux 下安装 Mysql 数据库</a>
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href="/2019/01/05/springboot/springcloud-config-zk-project/">SpringCloud-配置中心 spring-cloud-config-zookeeper</a>
         </li>
     
     
@@ -2847,7 +3137,7 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
         </li>
     
     
@@ -2857,12 +3147,7 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-eureka-discovery/">SpringCloud-Eureka 服务发现</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-config-project/">SpringCloud-配置中心 Config</a>
         </li>
     
     
@@ -2877,7 +3162,12 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-config-project/">SpringCloud-配置中心 Config</a>
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-eureka-client-analysis/">Spring Cloud-Eureka Client 原理解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href="/2018/12/31/springboot/springcoud-ribbon-project/">SpringCloud-负载均衡器 Ribbon</a>
         </li>
     
     
@@ -2902,12 +3192,12 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring/spring-session-req-resp/">SpringSession系列-请求与响应重写</a>
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring/spring-session-solutions/">SpringSession系列-分布式Session实现方案</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring/spring-session-solutions/">SpringSession系列-分布式Session实现方案</a>
+            <span class="archive-post-date">11/24</span><a class="archive-post-title" href="/2018/11/24/spring/spring-session-req-resp/">SpringSession系列-请求与响应重写</a>
         </li>
     
     
@@ -2922,62 +3212,7 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-2/">Spring源码系列：BeanDefinition载入（中）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-beandefinition/">Spring源码系列：BeanDefinition 源码解析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-3/">Spring源码系列：BeanDefinition载入(下)</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-annotation/">Spring源码系列：注解说明</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-beanwrapper/">Spring源码系列：BeanWrapper</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-createbean/">Spring源码系列：依赖注入（二）createBean</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-intro/">Spring源码系列：依赖注入-引言</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-summary/">Spring源码系列：依赖注入（四）-总结</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-getbean/">Spring源码系列：依赖注入（一）getBean</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-version-change/">Spring源码系列：Spring的版本变更</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-props/">Spring源码系列：依赖注入（三）-属性注入</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-1/">Spring源码系列：BeanDefinition载入(上)</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/designmodels/java-design-model-obs/">菜鸟成长系列-观察者模式</a>
         </li>
     
     
@@ -2988,11 +3223,6 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
         <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/designmodels/java-design-model-modulemethod/">菜鸟成长系列-模板方法模式</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/designmodels/java-design-model-obs/">菜鸟成长系列-观察者模式</a>
         </li>
     
     
@@ -3022,12 +3252,12 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-mvc-DispatcherServlet/">SpringMVC系列源码：DispatcherServlet</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-mvc-HandlerMapping/">SpringMVC源码系列：HandlerMapping</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-mvc-HandlerMapping/">SpringMVC源码系列：HandlerMapping</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-mvc-DispatcherServlet/">SpringMVC系列源码：DispatcherServlet</a>
         </li>
     
     
@@ -3037,17 +3267,77 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-annotation/">Spring源码系列：注解说明</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-2/">Spring源码系列：BeanDefinition载入（中）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-beanwrapper/">Spring源码系列：BeanWrapper</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-beandefinition/">Spring源码系列：BeanDefinition 源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-createbean/">Spring源码系列：依赖注入（二）createBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-3/">Spring源码系列：BeanDefinition载入(下)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-getbean/">Spring源码系列：依赖注入（一）getBean</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-intro/">Spring源码系列：依赖注入-引言</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-summary/">Spring源码系列：依赖注入（四）-总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-version-change/">Spring源码系列：Spring的版本变更</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-inject-props/">Spring源码系列：依赖注入（三）-属性注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-bd-loaded-1/">Spring源码系列：BeanDefinition载入(上)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/guavacacheone/">Google Guava 在实际场景中的应用封装</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx 反向代理和负载均衡策略实战案例</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/seiri-mybatis/">关于 Mybatis 中 SQL 语句的整理</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/seiri-mybatis/">关于 Mybatis 中 SQL 语句的整理</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/nginxone/">nginx 反向代理和负载均衡策略实战案例</a>
         </li>
     
     
@@ -3067,47 +3357,17 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode4/">每天一道算法题：求两个排序数组的中位数</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode5/">每天一道算法题：无重复字符的最长子串</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode3/">每天一道算法题：最长回文子串</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcodeone/">每天一道算法题：颠倒整数</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-aop-base/">聊一聊 AOP ：表现形式与基础概念</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-aop-advice/">聊一聊 AOP：Advice 源码解析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-starting/">Spring源码系列：Spring的启动过程</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-context-refresh/">Spring源码系列-容器刷新</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/designmodels/glmapper-bird-overall/">菜鸟成长系列-概述</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/designmodels/glmapper-bird-one/">面向对象的四大基础特性</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/designmodels/java-design-model-factory/">菜鸟成长系列-工厂模式</a>
         </li>
     
     
@@ -3122,22 +3382,17 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/designmodels/java-design-model-factory/">菜鸟成长系列-工厂模式</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/designmodels/java-design-model-singleton/">菜鸟成长系列-单例模式</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java/java-base-hashmap/">从源码来聊一聊 hashmap</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java/java-base-key-word/">JAVA 中的关键字</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java/java-base-key-word/">JAVA 中的关键字</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/java/java-base-hashmap/">从源码来聊一聊 hashmap</a>
         </li>
     
     
@@ -3157,7 +3412,27 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode4/">每天一道算法题：求两个排序数组的中位数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/alg-sorted/">算法-排序算法思想及实现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode5/">每天一道算法题：无重复字符的最长子串</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcode3/">每天一道算法题：最长回文子串</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/leetcode/leetcodeone/">每天一道算法题：颠倒整数</a>
         </li>
     
     
@@ -3172,17 +3447,22 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/designmodels/glmapper-bird-one/">面向对象的四大基础特性</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-aop-advice/">聊一聊 AOP：Advice 源码解析</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-extention-one/">聊一聊 Spring 中的扩展机制（一）</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-aop-base/">聊一聊 AOP ：表现形式与基础概念</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-extention-namespacehandler/">聊一聊 Spring 中的扩展机制(二) - NamespaceHandler</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-context-refresh/">Spring源码系列-容器刷新</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-series-starting/">Spring源码系列：Spring的启动过程</a>
         </li>
     
     
@@ -3192,12 +3472,22 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofa/sofa-tracer-zipkin/">分布式链路跟踪组件 SOFATracer 和 Zipkin 模型转换原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofa/sofa-tracer-disruptor/">SOFATracer 中 Disruptor 实践</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/sofa/sofa-tracer-zipkin/">分布式链路跟踪组件 SOFATracer 和 Zipkin 模型转换原理</a>
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-extention-namespacehandler/">聊一聊 Spring 中的扩展机制(二) - NamespaceHandler</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/10</span><a class="archive-post-title" href="/2018/11/10/spring/spring-extention-one/">聊一聊 Spring 中的扩展机制（一）</a>
         </li>
     
     
@@ -3217,53 +3507,11 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
         <span class="sidebar-tag-name" data-tags="java"><span class="iconfont-archer">&#xe606;</span>java</span>
     
-        <span class="sidebar-tag-name" data-tags="泛型"><span class="iconfont-archer">&#xe606;</span>泛型</span>
-    
-        <span class="sidebar-tag-name" data-tags="cas"><span class="iconfont-archer">&#xe606;</span>cas</span>
-    
         <span class="sidebar-tag-name" data-tags="Reactor"><span class="iconfont-archer">&#xe606;</span>Reactor</span>
     
         <span class="sidebar-tag-name" data-tags="cache"><span class="iconfont-archer">&#xe606;</span>cache</span>
     
         <span class="sidebar-tag-name" data-tags="guava"><span class="iconfont-archer">&#xe606;</span>guava</span>
-    
-        <span class="sidebar-tag-name" data-tags="规划"><span class="iconfont-archer">&#xe606;</span>规划</span>
-    
-        <span class="sidebar-tag-name" data-tags="classloader"><span class="iconfont-archer">&#xe606;</span>classloader</span>
-    
-        <span class="sidebar-tag-name" data-tags="线程"><span class="iconfont-archer">&#xe606;</span>线程</span>
-    
-        <span class="sidebar-tag-name" data-tags="thread"><span class="iconfont-archer">&#xe606;</span>thread</span>
-    
-        <span class="sidebar-tag-name" data-tags="hash"><span class="iconfont-archer">&#xe606;</span>hash</span>
-    
-        <span class="sidebar-tag-name" data-tags="map"><span class="iconfont-archer">&#xe606;</span>map</span>
-    
-        <span class="sidebar-tag-name" data-tags="set"><span class="iconfont-archer">&#xe606;</span>set</span>
-    
-        <span class="sidebar-tag-name" data-tags="CopyOnWriteArraySet"><span class="iconfont-archer">&#xe606;</span>CopyOnWriteArraySet</span>
-    
-        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
-    
-        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
-    
-        <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
-    
-        <span class="sidebar-tag-name" data-tags="kafka"><span class="iconfont-archer">&#xe606;</span>kafka</span>
-    
-        <span class="sidebar-tag-name" data-tags="mysql"><span class="iconfont-archer">&#xe606;</span>mysql</span>
-    
-        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
-    
-        <span class="sidebar-tag-name" data-tags="logback"><span class="iconfont-archer">&#xe606;</span>logback</span>
-    
-        <span class="sidebar-tag-name" data-tags="slf4j"><span class="iconfont-archer">&#xe606;</span>slf4j</span>
-    
-        <span class="sidebar-tag-name" data-tags="nginx"><span class="iconfont-archer">&#xe606;</span>nginx</span>
-    
-        <span class="sidebar-tag-name" data-tags="代理模式"><span class="iconfont-archer">&#xe606;</span>代理模式</span>
-    
-        <span class="sidebar-tag-name" data-tags="负载均衡"><span class="iconfont-archer">&#xe606;</span>负载均衡</span>
     
         <span class="sidebar-tag-name" data-tags="mybatis"><span class="iconfont-archer">&#xe606;</span>mybatis</span>
     
@@ -3271,13 +3519,11 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
         <span class="sidebar-tag-name" data-tags="数据库"><span class="iconfont-archer">&#xe606;</span>数据库</span>
     
-        <span class="sidebar-tag-name" data-tags="ssm"><span class="iconfont-archer">&#xe606;</span>ssm</span>
+        <span class="sidebar-tag-name" data-tags="nginx"><span class="iconfont-archer">&#xe606;</span>nginx</span>
     
-        <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
+        <span class="sidebar-tag-name" data-tags="代理模式"><span class="iconfont-archer">&#xe606;</span>代理模式</span>
     
-        <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
-    
-        <span class="sidebar-tag-name" data-tags="maven"><span class="iconfont-archer">&#xe606;</span>maven</span>
+        <span class="sidebar-tag-name" data-tags="负载均衡"><span class="iconfont-archer">&#xe606;</span>负载均衡</span>
     
         <span class="sidebar-tag-name" data-tags="rpc"><span class="iconfont-archer">&#xe606;</span>rpc</span>
     
@@ -3287,15 +3533,91 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
         <span class="sidebar-tag-name" data-tags="shell"><span class="iconfont-archer">&#xe606;</span>shell</span>
     
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="git"><span class="iconfont-archer">&#xe606;</span>git</span>
+    
+        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
+    
+        <span class="sidebar-tag-name" data-tags="servlet"><span class="iconfont-archer">&#xe606;</span>servlet</span>
+    
+        <span class="sidebar-tag-name" data-tags="web"><span class="iconfont-archer">&#xe606;</span>web</span>
+    
+        <span class="sidebar-tag-name" data-tags="zookeeper"><span class="iconfont-archer">&#xe606;</span>zookeeper</span>
+    
+        <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
+    
+        <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
+    
+        <span class="sidebar-tag-name" data-tags="聊一聊"><span class="iconfont-archer">&#xe606;</span>聊一聊</span>
+    
+        <span class="sidebar-tag-name" data-tags="规划"><span class="iconfont-archer">&#xe606;</span>规划</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
+    
+        <span class="sidebar-tag-name" data-tags="kafka"><span class="iconfont-archer">&#xe606;</span>kafka</span>
+    
+        <span class="sidebar-tag-name" data-tags="docker"><span class="iconfont-archer">&#xe606;</span>docker</span>
+    
+        <span class="sidebar-tag-name" data-tags="JVM"><span class="iconfont-archer">&#xe606;</span>JVM</span>
+    
+        <span class="sidebar-tag-name" data-tags="dockerfile"><span class="iconfont-archer">&#xe606;</span>dockerfile</span>
+    
+        <span class="sidebar-tag-name" data-tags="性能调优"><span class="iconfont-archer">&#xe606;</span>性能调优</span>
+    
+        <span class="sidebar-tag-name" data-tags="classloader"><span class="iconfont-archer">&#xe606;</span>classloader</span>
+    
+        <span class="sidebar-tag-name" data-tags="集合"><span class="iconfont-archer">&#xe606;</span>集合</span>
+    
+        <span class="sidebar-tag-name" data-tags="thread"><span class="iconfont-archer">&#xe606;</span>thread</span>
+    
+        <span class="sidebar-tag-name" data-tags="泛型"><span class="iconfont-archer">&#xe606;</span>泛型</span>
+    
+        <span class="sidebar-tag-name" data-tags="juc"><span class="iconfont-archer">&#xe606;</span>juc</span>
+    
+        <span class="sidebar-tag-name" data-tags="leetcode"><span class="iconfont-archer">&#xe606;</span>leetcode</span>
+    
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+    
+        <span class="sidebar-tag-name" data-tags="yum"><span class="iconfont-archer">&#xe606;</span>yum</span>
+    
+        <span class="sidebar-tag-name" data-tags="logback"><span class="iconfont-archer">&#xe606;</span>logback</span>
+    
+        <span class="sidebar-tag-name" data-tags="slf4j"><span class="iconfont-archer">&#xe606;</span>slf4j</span>
+    
+        <span class="sidebar-tag-name" data-tags="namestapce"><span class="iconfont-archer">&#xe606;</span>namestapce</span>
+    
+        <span class="sidebar-tag-name" data-tags="top"><span class="iconfont-archer">&#xe606;</span>top</span>
+    
+        <span class="sidebar-tag-name" data-tags="mysql"><span class="iconfont-archer">&#xe606;</span>mysql</span>
+    
+        <span class="sidebar-tag-name" data-tags="maven"><span class="iconfont-archer">&#xe606;</span>maven</span>
+    
+        <span class="sidebar-tag-name" data-tags="草原"><span class="iconfont-archer">&#xe606;</span>草原</span>
+    
+        <span class="sidebar-tag-name" data-tags="夕阳"><span class="iconfont-archer">&#xe606;</span>夕阳</span>
+    
+        <span class="sidebar-tag-name" data-tags="西湖"><span class="iconfont-archer">&#xe606;</span>西湖</span>
+    
+        <span class="sidebar-tag-name" data-tags="sofa"><span class="iconfont-archer">&#xe606;</span>sofa</span>
+    
         <span class="sidebar-tag-name" data-tags="sofa-ark"><span class="iconfont-archer">&#xe606;</span>sofa-ark</span>
     
-        <span class="sidebar-tag-name" data-tags="SOFABoot"><span class="iconfont-archer">&#xe606;</span>SOFABoot</span>
+        <span class="sidebar-tag-name" data-tags="ssm"><span class="iconfont-archer">&#xe606;</span>ssm</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring"><span class="iconfont-archer">&#xe606;</span>spring</span>
     
         <span class="sidebar-tag-name" data-tags="SOFATracer"><span class="iconfont-archer">&#xe606;</span>SOFATracer</span>
     
         <span class="sidebar-tag-name" data-tags="Disruptor"><span class="iconfont-archer">&#xe606;</span>Disruptor</span>
     
         <span class="sidebar-tag-name" data-tags="OpenTracing"><span class="iconfont-archer">&#xe606;</span>OpenTracing</span>
+    
+        <span class="sidebar-tag-name" data-tags="SOFABoot"><span class="iconfont-archer">&#xe606;</span>SOFABoot</span>
+    
+        <span class="sidebar-tag-name" data-tags="书法"><span class="iconfont-archer">&#xe606;</span>书法</span>
     
         <span class="sidebar-tag-name" data-tags="链路跟踪"><span class="iconfont-archer">&#xe606;</span>链路跟踪</span>
     
@@ -3307,73 +3629,25 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
         <span class="sidebar-tag-name" data-tags="SOFAArk"><span class="iconfont-archer">&#xe606;</span>SOFAArk</span>
     
-        <span class="sidebar-tag-name" data-tags="git"><span class="iconfont-archer">&#xe606;</span>git</span>
-    
-        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
+        <span class="sidebar-tag-name" data-tags="springboot"><span class="iconfont-archer">&#xe606;</span>springboot</span>
     
         <span class="sidebar-tag-name" data-tags="中台"><span class="iconfont-archer">&#xe606;</span>中台</span>
     
-        <span class="sidebar-tag-name" data-tags="servlet"><span class="iconfont-archer">&#xe606;</span>servlet</span>
-    
-        <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
-    
-        <span class="sidebar-tag-name" data-tags="聊一聊"><span class="iconfont-archer">&#xe606;</span>聊一聊</span>
-    
-        <span class="sidebar-tag-name" data-tags="zookeeper"><span class="iconfont-archer">&#xe606;</span>zookeeper</span>
-    
-        <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
-    
-        <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
-    
-        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
-    
-        <span class="sidebar-tag-name" data-tags="JVM"><span class="iconfont-archer">&#xe606;</span>JVM</span>
-    
-        <span class="sidebar-tag-name" data-tags="性能调优"><span class="iconfont-archer">&#xe606;</span>性能调优</span>
-    
-        <span class="sidebar-tag-name" data-tags="leetcode"><span class="iconfont-archer">&#xe606;</span>leetcode</span>
-    
-        <span class="sidebar-tag-name" data-tags="dockerfile"><span class="iconfont-archer">&#xe606;</span>dockerfile</span>
-    
-        <span class="sidebar-tag-name" data-tags="docker"><span class="iconfont-archer">&#xe606;</span>docker</span>
-    
-        <span class="sidebar-tag-name" data-tags="top"><span class="iconfont-archer">&#xe606;</span>top</span>
-    
-        <span class="sidebar-tag-name" data-tags="yum"><span class="iconfont-archer">&#xe606;</span>yum</span>
-    
-        <span class="sidebar-tag-name" data-tags="namestapce"><span class="iconfont-archer">&#xe606;</span>namestapce</span>
-    
-        <span class="sidebar-tag-name" data-tags="草原"><span class="iconfont-archer">&#xe606;</span>草原</span>
-    
-        <span class="sidebar-tag-name" data-tags="夕阳"><span class="iconfont-archer">&#xe606;</span>夕阳</span>
-    
-        <span class="sidebar-tag-name" data-tags="书法"><span class="iconfont-archer">&#xe606;</span>书法</span>
-    
-        <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
-    
-        <span class="sidebar-tag-name" data-tags="aop"><span class="iconfont-archer">&#xe606;</span>aop</span>
-    
-        <span class="sidebar-tag-name" data-tags="spring 事件机制"><span class="iconfont-archer">&#xe606;</span>spring 事件机制</span>
-    
-        <span class="sidebar-tag-name" data-tags="spring 扩展机制"><span class="iconfont-archer">&#xe606;</span>spring 扩展机制</span>
-    
-        <span class="sidebar-tag-name" data-tags="springboot"><span class="iconfont-archer">&#xe606;</span>springboot</span>
-    
         <span class="sidebar-tag-name" data-tags="springmvc"><span class="iconfont-archer">&#xe606;</span>springmvc</span>
-    
-        <span class="sidebar-tag-name" data-tags="log"><span class="iconfont-archer">&#xe606;</span>log</span>
-    
-        <span class="sidebar-tag-name" data-tags="Tomcat"><span class="iconfont-archer">&#xe606;</span>Tomcat</span>
-    
-        <span class="sidebar-tag-name" data-tags="rocketmq"><span class="iconfont-archer">&#xe606;</span>rocketmq</span>
     
         <span class="sidebar-tag-name" data-tags="PropertySource"><span class="iconfont-archer">&#xe606;</span>PropertySource</span>
     
-        <span class="sidebar-tag-name" data-tags="Config"><span class="iconfont-archer">&#xe606;</span>Config</span>
+        <span class="sidebar-tag-name" data-tags="rocketmq"><span class="iconfont-archer">&#xe606;</span>rocketmq</span>
+    
+        <span class="sidebar-tag-name" data-tags="Tomcat"><span class="iconfont-archer">&#xe606;</span>Tomcat</span>
     
         <span class="sidebar-tag-name" data-tags="spring cloud"><span class="iconfont-archer">&#xe606;</span>spring cloud</span>
     
+        <span class="sidebar-tag-name" data-tags="Config"><span class="iconfont-archer">&#xe606;</span>Config</span>
+    
         <span class="sidebar-tag-name" data-tags="Apollo"><span class="iconfont-archer">&#xe606;</span>Apollo</span>
+    
+        <span class="sidebar-tag-name" data-tags="log"><span class="iconfont-archer">&#xe606;</span>log</span>
     
         <span class="sidebar-tag-name" data-tags="Gateway"><span class="iconfont-archer">&#xe606;</span>Gateway</span>
     
@@ -3385,17 +3659,21 @@ jps(Java Virtual Machine Process Status Tool)jps 主要用来输出 JVM 中运�
     
         <span class="sidebar-tag-name" data-tags="commons"><span class="iconfont-archer">&#xe606;</span>commons</span>
     
-        <span class="sidebar-tag-name" data-tags="Ribbon"><span class="iconfont-archer">&#xe606;</span>Ribbon</span>
-    
         <span class="sidebar-tag-name" data-tags="Feign"><span class="iconfont-archer">&#xe606;</span>Feign</span>
     
-        <span class="sidebar-tag-name" data-tags="西湖"><span class="iconfont-archer">&#xe606;</span>西湖</span>
+        <span class="sidebar-tag-name" data-tags="Ribbon"><span class="iconfont-archer">&#xe606;</span>Ribbon</span>
+    
+        <span class="sidebar-tag-name" data-tags="aop"><span class="iconfont-archer">&#xe606;</span>aop</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring 扩展机制"><span class="iconfont-archer">&#xe606;</span>spring 扩展机制</span>
+    
+        <span class="sidebar-tag-name" data-tags="spring 事件机制"><span class="iconfont-archer">&#xe606;</span>spring 事件机制</span>
+    
+        <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
+    
+        <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
     
         <span class="sidebar-tag-name" data-tags="junit"><span class="iconfont-archer">&#xe606;</span>junit</span>
-    
-        <span class="sidebar-tag-name" data-tags="集合"><span class="iconfont-archer">&#xe606;</span>集合</span>
-    
-        <span class="sidebar-tag-name" data-tags="juc"><span class="iconfont-archer">&#xe606;</span>juc</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -3432,287 +3710,61 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="java"><span class="iconfont-archer">&#xe60a;</span>java</span>
     
-        <span class="sidebar-category-name" data-categories="java-基础"><span class="iconfont-archer">&#xe60a;</span>java-基础</span>
-    
         <span class="sidebar-category-name" data-categories="缓存"><span class="iconfont-archer">&#xe60a;</span>缓存</span>
-    
-        <span class="sidebar-category-name" data-categories="架构之路"><span class="iconfont-archer">&#xe60a;</span>架构之路</span>
-    
-        <span class="sidebar-category-name" data-categories="JUC"><span class="iconfont-archer">&#xe60a;</span>JUC</span>
-    
-        <span class="sidebar-category-name" data-categories="mq"><span class="iconfont-archer">&#xe60a;</span>mq</span>
-    
-        <span class="sidebar-category-name" data-categories="运维"><span class="iconfont-archer">&#xe60a;</span>运维</span>
-    
-        <span class="sidebar-category-name" data-categories="日志"><span class="iconfont-archer">&#xe60a;</span>日志</span>
-    
-        <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
     
         <span class="sidebar-category-name" data-categories="mybatis"><span class="iconfont-archer">&#xe60a;</span>mybatis</span>
     
-        <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
+        <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
     
         <span class="sidebar-category-name" data-categories="rpc"><span class="iconfont-archer">&#xe60a;</span>rpc</span>
     
-        <span class="sidebar-category-name" data-categories="SOFA"><span class="iconfont-archer">&#xe60a;</span>SOFA</span>
-    
-        <span class="sidebar-category-name" data-categories="解决方案"><span class="iconfont-archer">&#xe60a;</span>解决方案</span>
+        <span class="sidebar-category-name" data-categories="运维"><span class="iconfont-archer">&#xe60a;</span>运维</span>
     
         <span class="sidebar-category-name" data-categories="git"><span class="iconfont-archer">&#xe60a;</span>git</span>
     
         <span class="sidebar-category-name" data-categories="web"><span class="iconfont-archer">&#xe60a;</span>web</span>
     
-        <span class="sidebar-category-name" data-categories="spring"><span class="iconfont-archer">&#xe60a;</span>spring</span>
-    
         <span class="sidebar-category-name" data-categories="session"><span class="iconfont-archer">&#xe60a;</span>session</span>
-    
-        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
-    
-        <span class="sidebar-category-name" data-categories="leetcode"><span class="iconfont-archer">&#xe60a;</span>leetcode</span>
-    
-        <span class="sidebar-category-name" data-categories="docker"><span class="iconfont-archer">&#xe60a;</span>docker</span>
-    
-        <span class="sidebar-category-name" data-categories="linux"><span class="iconfont-archer">&#xe60a;</span>linux</span>
-    
-        <span class="sidebar-category-name" data-categories="maven"><span class="iconfont-archer">&#xe60a;</span>maven</span>
-    
-        <span class="sidebar-category-name" data-categories="书法"><span class="iconfont-archer">&#xe60a;</span>书法</span>
-    
-        <span class="sidebar-category-name" data-categories="spring-mvc"><span class="iconfont-archer">&#xe60a;</span>spring-mvc</span>
-    
-        <span class="sidebar-category-name" data-categories="spring-aop"><span class="iconfont-archer">&#xe60a;</span>spring-aop</span>
-    
-        <span class="sidebar-category-name" data-categories="spring/session"><span class="iconfont-archer">&#xe60a;</span>spring/session</span>
-    
-        <span class="sidebar-category-name" data-categories="springboot"><span class="iconfont-archer">&#xe60a;</span>springboot</span>
-    
-        <span class="sidebar-category-name" data-categories="spring-cloud"><span class="iconfont-archer">&#xe60a;</span>spring-cloud</span>
-    
-        <span class="sidebar-category-name" data-categories="测试"><span class="iconfont-archer">&#xe60a;</span>测试</span>
     
         <span class="sidebar-category-name" data-categories="设计模式"><span class="iconfont-archer">&#xe60a;</span>设计模式</span>
     
+        <span class="sidebar-category-name" data-categories="docker"><span class="iconfont-archer">&#xe60a;</span>docker</span>
+    
         <span class="sidebar-category-name" data-categories="JAVA"><span class="iconfont-archer">&#xe60a;</span>JAVA</span>
     
-    </div>
-    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
-    <div class="sidebar-categories-list"></div>
-</div>
-    </div>
-</div> 
-    <script>
-    var siteMeta = {
-        root: "/",
-        author: "GuoLei Song"
-    }
-</script>
-    <!-- CDN failover -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
-    <script type="text/javascript">
-        if (typeof window.$ === 'undefined')
-        {
-            console.warn('jquery load from jsdelivr failed, will load local script')
-            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
-        }
-    </script>
-    <script src="/scripts/main.js"></script>
-    <!-- algolia -->
+        <span class="sidebar-category-name" data-categories="leetcode"><span class="iconfont-archer">&#xe60a;</span>leetcode</span>
     
-    <!-- busuanzi  -->
+        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
     
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    
-    <!-- CNZZ  -->
-    
-    </div>
-    <!-- async load share.js -->
-     
-    </body>
-</html>
-
-
- class="iconfont-archer">&#xe606;</span>中台</span>
-    
-        <span class="sidebar-tag-name" data-tags="servlet"><span class="iconfont-archer">&#xe606;</span>servlet</span>
-    
-        <span class="sidebar-tag-name" data-tags="restful"><span class="iconfont-archer">&#xe606;</span>restful</span>
-    
-        <span class="sidebar-tag-name" data-tags="聊一聊"><span class="iconfont-archer">&#xe606;</span>聊一聊</span>
-    
-        <span class="sidebar-tag-name" data-tags="zookeeper"><span class="iconfont-archer">&#xe606;</span>zookeeper</span>
-    
-        <span class="sidebar-tag-name" data-tags="session"><span class="iconfont-archer">&#xe606;</span>session</span>
-    
-        <span class="sidebar-tag-name" data-tags="cookie"><span class="iconfont-archer">&#xe606;</span>cookie</span>
-    
-        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
-    
-        <span class="sidebar-tag-name" data-tags="JVM"><span class="iconfont-archer">&#xe606;</span>JVM</span>
-    
-        <span class="sidebar-tag-name" data-tags="性能调优"><span class="iconfont-archer">&#xe606;</span>性能调优</span>
-    
-        <span class="sidebar-tag-name" data-tags="leetcode"><span class="iconfont-archer">&#xe606;</span>leetcode</span>
-    
-        <span class="sidebar-tag-name" data-tags="dockerfile"><span class="iconfont-archer">&#xe606;</span>dockerfile</span>
-    
-        <span class="sidebar-tag-name" data-tags="docker"><span class="iconfont-archer">&#xe606;</span>docker</span>
-    
-        <span class="sidebar-tag-name" data-tags="top"><span class="iconfont-archer">&#xe606;</span>top</span>
-    
-        <span class="sidebar-tag-name" data-tags="yum"><span class="iconfont-archer">&#xe606;</span>yum</span>
-    
-        <span class="sidebar-tag-name" data-tags="namestapce"><span class="iconfont-archer">&#xe606;</span>namestapce</span>
-    
-        <span class="sidebar-tag-name" data-tags="草原"><span class="iconfont-archer">&#xe606;</span>草原</span>
-    
-        <span class="sidebar-tag-name" data-tags="夕阳"><span class="iconfont-archer">&#xe606;</span>夕阳</span>
-    
-        <span class="sidebar-tag-name" data-tags="书法"><span class="iconfont-archer">&#xe606;</span>书法</span>
-    
-        <span class="sidebar-tag-name" data-tags="mvc"><span class="iconfont-archer">&#xe606;</span>mvc</span>
-    
-        <span class="sidebar-tag-name" data-tags="aop"><span class="iconfont-archer">&#xe606;</span>aop</span>
-    
-        <span class="sidebar-tag-name" data-tags="spring 事件机制"><span class="iconfont-archer">&#xe606;</span>spring 事件机制</span>
-    
-        <span class="sidebar-tag-name" data-tags="spring 扩展机制"><span class="iconfont-archer">&#xe606;</span>spring 扩展机制</span>
-    
-        <span class="sidebar-tag-name" data-tags="springboot"><span class="iconfont-archer">&#xe606;</span>springboot</span>
-    
-        <span class="sidebar-tag-name" data-tags="springmvc"><span class="iconfont-archer">&#xe606;</span>springmvc</span>
-    
-        <span class="sidebar-tag-name" data-tags="log"><span class="iconfont-archer">&#xe606;</span>log</span>
-    
-        <span class="sidebar-tag-name" data-tags="Tomcat"><span class="iconfont-archer">&#xe606;</span>Tomcat</span>
-    
-        <span class="sidebar-tag-name" data-tags="rocketmq"><span class="iconfont-archer">&#xe606;</span>rocketmq</span>
-    
-        <span class="sidebar-tag-name" data-tags="PropertySource"><span class="iconfont-archer">&#xe606;</span>PropertySource</span>
-    
-        <span class="sidebar-tag-name" data-tags="Config"><span class="iconfont-archer">&#xe606;</span>Config</span>
-    
-        <span class="sidebar-tag-name" data-tags="spring cloud"><span class="iconfont-archer">&#xe606;</span>spring cloud</span>
-    
-        <span class="sidebar-tag-name" data-tags="Apollo"><span class="iconfont-archer">&#xe606;</span>Apollo</span>
-    
-        <span class="sidebar-tag-name" data-tags="Gateway"><span class="iconfont-archer">&#xe606;</span>Gateway</span>
-    
-        <span class="sidebar-tag-name" data-tags="网关"><span class="iconfont-archer">&#xe606;</span>网关</span>
-    
-        <span class="sidebar-tag-name" data-tags="Hystrix"><span class="iconfont-archer">&#xe606;</span>Hystrix</span>
-    
-        <span class="sidebar-tag-name" data-tags="Eureka"><span class="iconfont-archer">&#xe606;</span>Eureka</span>
-    
-        <span class="sidebar-tag-name" data-tags="commons"><span class="iconfont-archer">&#xe606;</span>commons</span>
-    
-        <span class="sidebar-tag-name" data-tags="Ribbon"><span class="iconfont-archer">&#xe606;</span>Ribbon</span>
-    
-        <span class="sidebar-tag-name" data-tags="Feign"><span class="iconfont-archer">&#xe606;</span>Feign</span>
-    
-        <span class="sidebar-tag-name" data-tags="西湖"><span class="iconfont-archer">&#xe606;</span>西湖</span>
-    
-        <span class="sidebar-tag-name" data-tags="junit"><span class="iconfont-archer">&#xe606;</span>junit</span>
-    
-        <span class="sidebar-tag-name" data-tags="集合"><span class="iconfont-archer">&#xe606;</span>集合</span>
-    
-        <span class="sidebar-tag-name" data-tags="juc"><span class="iconfont-archer">&#xe606;</span>juc</span>
-    
-    </div>
-    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
-    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
-    缺失模块。<br>
-    1、请确保node版本大于6.2<br>
-    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
-    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
-    3、在根目录_config.yml里添加配置：
-    <pre style="color: #787878; font-size: 0.6rem;">
-jsonContent:
-  meta: false
-  pages: false
-  posts:
-    title: true
-    date: true
-    path: true
-    text: false
-    raw: false
-    content: false
-    slug: false
-    updated: false
-    comments: false
-    link: false
-    permalink: false
-    excerpt: false
-    categories: true
-    tags: true</pre>
-    </div> 
-    <div class="sidebar-tags-list"></div>
-</div>
-        <div class="sidebar-panel-categories">
-    <div class="sidebar-categories-name">
-    
-        <span class="sidebar-category-name" data-categories="java"><span class="iconfont-archer">&#xe60a;</span>java</span>
-    
-        <span class="sidebar-category-name" data-categories="java-基础"><span class="iconfont-archer">&#xe60a;</span>java-基础</span>
-    
-        <span class="sidebar-category-name" data-categories="缓存"><span class="iconfont-archer">&#xe60a;</span>缓存</span>
-    
-        <span class="sidebar-category-name" data-categories="架构之路"><span class="iconfont-archer">&#xe60a;</span>架构之路</span>
-    
-        <span class="sidebar-category-name" data-categories="JUC"><span class="iconfont-archer">&#xe60a;</span>JUC</span>
-    
-        <span class="sidebar-category-name" data-categories="mq"><span class="iconfont-archer">&#xe60a;</span>mq</span>
-    
-        <span class="sidebar-category-name" data-categories="运维"><span class="iconfont-archer">&#xe60a;</span>运维</span>
+        <span class="sidebar-category-name" data-categories="linux"><span class="iconfont-archer">&#xe60a;</span>linux</span>
     
         <span class="sidebar-category-name" data-categories="日志"><span class="iconfont-archer">&#xe60a;</span>日志</span>
     
-        <span class="sidebar-category-name" data-categories="nginx"><span class="iconfont-archer">&#xe60a;</span>nginx</span>
+        <span class="sidebar-category-name" data-categories="maven"><span class="iconfont-archer">&#xe60a;</span>maven</span>
     
-        <span class="sidebar-category-name" data-categories="mybatis"><span class="iconfont-archer">&#xe60a;</span>mybatis</span>
-    
-        <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
-    
-        <span class="sidebar-category-name" data-categories="rpc"><span class="iconfont-archer">&#xe60a;</span>rpc</span>
+        <span class="sidebar-category-name" data-categories="社区"><span class="iconfont-archer">&#xe60a;</span>社区</span>
     
         <span class="sidebar-category-name" data-categories="SOFA"><span class="iconfont-archer">&#xe60a;</span>SOFA</span>
     
-        <span class="sidebar-category-name" data-categories="解决方案"><span class="iconfont-archer">&#xe60a;</span>解决方案</span>
-    
-        <span class="sidebar-category-name" data-categories="git"><span class="iconfont-archer">&#xe60a;</span>git</span>
-    
-        <span class="sidebar-category-name" data-categories="web"><span class="iconfont-archer">&#xe60a;</span>web</span>
-    
-        <span class="sidebar-category-name" data-categories="spring"><span class="iconfont-archer">&#xe60a;</span>spring</span>
-    
-        <span class="sidebar-category-name" data-categories="session"><span class="iconfont-archer">&#xe60a;</span>session</span>
-    
-        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
-    
-        <span class="sidebar-category-name" data-categories="leetcode"><span class="iconfont-archer">&#xe60a;</span>leetcode</span>
-    
-        <span class="sidebar-category-name" data-categories="docker"><span class="iconfont-archer">&#xe60a;</span>docker</span>
-    
-        <span class="sidebar-category-name" data-categories="linux"><span class="iconfont-archer">&#xe60a;</span>linux</span>
-    
-        <span class="sidebar-category-name" data-categories="maven"><span class="iconfont-archer">&#xe60a;</span>maven</span>
+        <span class="sidebar-category-name" data-categories="架构"><span class="iconfont-archer">&#xe60a;</span>架构</span>
     
         <span class="sidebar-category-name" data-categories="书法"><span class="iconfont-archer">&#xe60a;</span>书法</span>
     
-        <span class="sidebar-category-name" data-categories="spring-mvc"><span class="iconfont-archer">&#xe60a;</span>spring-mvc</span>
-    
-        <span class="sidebar-category-name" data-categories="spring-aop"><span class="iconfont-archer">&#xe60a;</span>spring-aop</span>
-    
-        <span class="sidebar-category-name" data-categories="spring/session"><span class="iconfont-archer">&#xe60a;</span>spring/session</span>
+        <span class="sidebar-category-name" data-categories="解决方案"><span class="iconfont-archer">&#xe60a;</span>解决方案</span>
     
         <span class="sidebar-category-name" data-categories="springboot"><span class="iconfont-archer">&#xe60a;</span>springboot</span>
     
         <span class="sidebar-category-name" data-categories="spring-cloud"><span class="iconfont-archer">&#xe60a;</span>spring-cloud</span>
     
+        <span class="sidebar-category-name" data-categories="spring-aop"><span class="iconfont-archer">&#xe60a;</span>spring-aop</span>
+    
+        <span class="sidebar-category-name" data-categories="spring"><span class="iconfont-archer">&#xe60a;</span>spring</span>
+    
+        <span class="sidebar-category-name" data-categories="spring-mvc"><span class="iconfont-archer">&#xe60a;</span>spring-mvc</span>
+    
         <span class="sidebar-category-name" data-categories="测试"><span class="iconfont-archer">&#xe60a;</span>测试</span>
     
-        <span class="sidebar-category-name" data-categories="设计模式"><span class="iconfont-archer">&#xe60a;</span>设计模式</span>
-    
-        <span class="sidebar-category-name" data-categories="JAVA"><span class="iconfont-archer">&#xe60a;</span>JAVA</span>
+        <span class="sidebar-category-name" data-categories="spring/session"><span class="iconfont-archer">&#xe60a;</span>spring/session</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>

@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[记：SOFA Meepup 合肥站-SOFA 微服务体系技术生态于实践]]></title>
+    <url>%2F2021%2F07%2F25%2Fshares%2Fshares-sofa-meetup-7%2F</url>
+    <content type="text"><![CDATA[SOFA Meepup 合肥站从5月份开始筹划，至 7.24 在合肥成功举办，历时 2 个月的时间，从到场人数、来看，并没有受到大雨的影响，合肥开发者同学对于技术的热衷没有我们预测的那么薄弱，尤其是在微服务领域；在线观看人数也大于预想，这对于所有参与组织活动的同学及给予大力支持的社区来说，都是极大的鼓励和反馈。 点点滴滴，希望以文字的形式记录下来，记录这次活动之旅。 缘起SOFA 是蚂蚁集团（当时叫蚂蚁金服）在 2018 年一季度开始陆陆续续对外开源的一系列产品族，除了微服务体系之外，还有云原生相关的产品组件；期间历经一次品牌升级，托管的 github 仓库也从 alipay 迁移至 sofastack，目前蚂蚁集团 sofa 产品在社区由 sofastack 社区和蚂蚁集团 sofa 团队共同维护发展。下面是其官网地址和 github 仓库地址： 官网：https://www.sofastack.tech/ github： https://github.com/sofastack 其实在 2019 年的时候，将 sofa meetup 活动办到合肥的想法已经萌生，只不过局限于当时的一些特殊情况，没能继续推进这个事情的落地。2021 年 5 月份，我从蚂蚁集团 sofa 团队离职，当时和 sofa 团队负责人鲁大师（鲁直）又提及这个事情，他表示非常支持让 sofa meetup 能够在合肥举办，在推进这个事情上给我打了一针强心剂。 回到合肥之后，第一时间和安徽开发者社区（嗨码社区）江总（江冬勤，阿里云 mvp）一起，就 sofa meetup 在合肥举办的事情做了初步的沟通，并着手联系 sofastack 社区负责同学，开始推进活动落地，随后另一个社区发起者合肥清博大数据王总（王欢）、七牛老白、apisix 头哥也加入到活动策划小组中来，使得活动的整体落地节奏大大加快。 进行时 2019 年，我曾以讲师的身份参与了 sofa meetup 上海站的活动，当时并没有觉得举办活动是个多麻烦的事情，定个场地，发发宣传这种；但是作为参与整个合肥站从发起到结束这样的整个流程人来说，才知道是真的不容易，这里必须给 SOFAGirl 花花（英花）同学点赞；法务、财务、讲师、主题、场地、直播、礼品、主持、物料、策划组定期进度同步、现场安排… 从来都亲力亲为。 临近活动，sofastack 社区同学和头哥从上海、成都、杭州等地陆续赶来，受 “烟花” 台风影响，他们的高铁乘次都遭遇了被取消的问题，虽然活动有备案，是进行视频直播分享，但相对于现场分享来说，其力度和影响是远远不够的，大家又紧急的调整购买了可行的乘次，sofastack 的有两位同学直到晚上 9 点多才到合肥。 活动是 7.24 号下午 1.30 开始，合肥早上天气还是挺好的，有点风，不下雨；到了中午 12.30 左右，天气换了个风格，开始降起了暴雨，当时我们在会场调侃说，本来报名的同学是开始准备过来参加活动了，刚准备出门看到这么大的雨，会不会就不来了；但是事实是，大雨并没有对此产生多大的影响，至中场休息前，会前准备的座位已经不够了，又在后面加了一排；这也说明了，对于技术人来说，无关环境，期望的是通过技术分享来接收一些新的知识理念和技术思路，是学习的态度。 相聚sofastack 是我深度参与的第一个开源项目，也经历了从 sofa 团队成员到 sofastack 社区成员的角色变换；这次来合肥的 sofastack 讲师和运营同学，曾都是我在 sofa 团队时并肩作战的小伙伴和师兄，晚上在接到他们时，感觉格外亲切，吃饭唠嗑，逛逛合肥的罍街，夜游天鹅湖，比较遗憾的是，没有留下一些合照留念。 感想参与技术社区，不仅仅是出于对于技术的追求和热爱，更珍贵的是可以认识很多非常优秀的技术人和同路者。。。]]></content>
+      <categories>
+        <category>社区</category>
+      </categories>
+      <tags>
+        <tag>sofa</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Spring Aop 中的代理模式变化及 AopContext 问题小记]]></title>
     <url>%2F2021%2F07%2F17%2Fspring%2Fspring-aop-proxy-and-aopcontext%2F</url>
     <content type="text"><![CDATA[AOP 称为面向切面编程，其底层原理就是动态代理；JAVA 中比较常见的动态代理有两种，分别是 JDK 动态代理和 CGLIB 动态代理，这点从 Spring Aop 的 AopProxy 的实现就可以得出验证。 123AopProxy --- JdkDynamicAopProxy --- CglibAopProxy Spring 作为 Java 应用领域最 牛 X 的基础框架产品，在对于一些版本变更导致的兼容性问题的处理上一直被诟病，对于这两种代理方式的选择上，Spring 不同版本存在一定的差异，这也是本文产生的一个原因。 从一个异常说起本来是打算写个 AOP demo 来验证下 AopContext 在跨线程场景下丢失 proxy 对象问题的，由于在 pom 中指定依赖了 spring-aop 版本（5.1.2），而工程 spring-boot 版本使用是 2.4.2，启动时就抛出了如下的异常（仅截取了后 3 段 casuse by）： 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950...Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name &apos;jdkServiceImpl&apos; defined in file [/Users/sgl/Documents/projects/github/aop-guides/target/classes/com/glmapper/bridge/boot/jdk/JdkServiceImpl.class]: Initialization of bean failed; nested exception is org.springframework.aop.framework.AopConfigException: Unexpected AOP exception; nested exception is java.lang.IllegalStateException: Unable to load cache item at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:617) at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:531) at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335) at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333) at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208) at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276) at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1380) at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1300) at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:640) ... 46 moreCaused by: org.springframework.aop.framework.AopConfigException: Unexpected AOP exception; nested exception is java.lang.IllegalStateException: Unable to load cache item at org.springframework.aop.framework.CglibAopProxy.getProxy(CglibAopProxy.java:214) at org.springframework.aop.framework.ProxyFactory.getProxy(ProxyFactory.java:110) at org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator.createProxy(AbstractAutoProxyCreator.java:473) at org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator.wrapIfNecessary(AbstractAutoProxyCreator.java:352) at org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator.postProcessAfterInitialization(AbstractAutoProxyCreator.java:301) at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsAfterInitialization(AbstractAutowireCapableBeanFactory.java:444) at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1792) at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:609) ... 55 moreCaused by: java.lang.IllegalStateException: Unable to load cache item at org.springframework.cglib.core.internal.LoadingCache.createEntry(LoadingCache.java:79) at org.springframework.cglib.core.internal.LoadingCache.get(LoadingCache.java:34) at org.springframework.cglib.core.AbstractClassGenerator$ClassLoaderData.get(AbstractClassGenerator.java:134) at org.springframework.cglib.core.AbstractClassGenerator.create(AbstractClassGenerator.java:319) at org.springframework.cglib.proxy.Enhancer.createHelper(Enhancer.java:572) at org.springframework.cglib.proxy.Enhancer.createClass(Enhancer.java:419) at org.springframework.aop.framework.ObjenesisCglibAopProxy.createProxyClassAndInstance(ObjenesisCglibAopProxy.java:58) at org.springframework.aop.framework.CglibAopProxy.getProxy(CglibAopProxy.java:205) ... 62 moreCaused by: java.lang.VerifyError: Stack map does not match the one at exception handler 9Exception Details: Location: com/glmapper/bridge/boot/jdk/JdkServiceImpl$$EnhancerBySpringCGLIB$$3045df64.&lt;init&gt;()V @9: athrow Reason: Current frame&apos;s flags are not assignable to stack map frame&apos;s. Current Frame: bci: @0 flags: &#123; flagThisUninit &#125; locals: &#123; uninitializedThis &#125; stack: &#123; &apos;java/lang/RuntimeException&apos; &#125; Stackmap Frame: bci: @9 flags: &#123; &#125; locals: &#123; &#125; stack: &#123; &apos;java/lang/Throwable&apos; &#125; ... 看到这个异常有点莫名其妙，然后尝试通过关键字去网上搜了下，确实找到了一个非常类似的 case Unexpected AOP exception; nested exception is java.lang.IllegalStateException: Unable to load cache item。从问题描述来看，大致有以下几个方向： 1、spring boot devtools 热部署导致 2、CGLIB 或 Objenesis 不理解 Java 13 字节代码 3、依赖问题 在我的 demo 中，1 和 2 都是未涉及的，所以将专注点放在 3 上面。一开始尝试 Stack map does not match the one at exception handler 9 全局查找，尝试找到产生堆栈的代码片段，实际上是没有在代码中找到的；随后翻看了 openjdk 的源码才找到。另一个比较疑惑的问题在于：这个异常产生仅当通过 run test unit 的时候才会有，正常通过启动工程并发起调用并不会出现。当我把 Spring Aop 版本切换到 5.3.3 时，run test unit 也可以正常被执行。 图1：spring-aop 版本为 5.3.3, Class.forName 正常执行到下一行 图2：spring-aop 版本为 5.1.2 执行直接报错 其实堆栈来看，两者并无差异。到这里不打算继续深究原因，回到 VerifyError 异常：1当 “verifier” 检测到 classfile 虽然格式良好，但包含某种内部不一致或安全问题时抛出。 加上产生的条件：在 springboot 测试场景下，使用低于管控版本的 spring aop 从而导致该问题；合理规避吧… Spring aop 动态代理机制在不同版本中的差异这里仅作为备忘点介绍一下，大多数情况下在使用的时候并不会关注到。 1、Spring 5.x 版本开始，AOP 默认依旧使用 JDK 动态代理，并非网上说的默认改成了 CGLIB。 2、SpringBoot 2.x 开始，由于使用 JDK 动态代理可能导致的类型转化异常问题，默认使用 CGLIB。 3、SpringBoot 2.x 中，如果需要默认使用 JDK 动态代理可以通过配置项 spring.aop.proxy-target-class=false 来进行修改，proxyTargetClass 配置已无效。 相关论证可以见：AopAutoConfiguration、@EnableAspectJAutoProxy 及官方文档说明。 AopContext关于 AopContext 可能部分开发者对其是陌生的；但是有这样一种场景一定是你遇到过的：123456789101112131415@Servicepublic class JdkServiceImpl implements JdkService &#123; @Override @Metrics(name = "helloJdk") public void helloJdk() &#123; // invoke inner inner(); &#125; @Metrics(name = "inner") public void inner() &#123; System.out.println("this is Jdk inner method"); &#125;&#125; 当你写了一个自定义注解，然后通过 aop 去拦截时，对于类内部方法之间的调用无法拦截，如上代码片段，在 helloJdk 中调用 inner，同样打上了 @Metrics 注解，实际上 inner 的调用是不会被 aop 拦截到的；原因在于，这里的 inner 调用实际上等同于 this.inner()，而当前的 this 对象是 JdkServiceImpl 对象本身，并非代理类，所以切不到是正常的。 那这里其实就可能通过 AopContext 来辅助一下，这里有个前提条件，通过注解添加配置（加在类上）： 1@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true) 或通过 xml 配置文件添加配置： 1&lt;aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/&gt; 否则会跑出如下错误： 1Cannot find current proxy: Set &apos;exposeProxy&apos; property on Advised to &apos;true&apos; to make it available. 原因在于，当 exposeProxy 为 true 时，才会将当前 proxy 对象塞到 AopContext 中。 12345if (this.advised.exposeProxy) &#123; // Make invocation available if necessary. oldProxy = AopContext.setCurrentProxy(proxy); setProxyContext = true;&#125; AopContext 的实现很简单，就是在内部维护了一个 ThreadLocal：1private static final ThreadLocal&lt;Object&gt; currentProxy = new NamedThreadLocal&lt;&gt;("Current AOP proxy"); 所以在使用这个工具类的时候，还需要关注另一个问题，就是当在跨线程，或者使用线程池的情况下，需要手动将 proxy 透传到新的线程中，否则，即使开始 exposeProxy = true，同样也会出现 Cannot find current proxy: Set &#39;exposeProxy&#39; 报错。]]></content>
@@ -54,8 +65,8 @@
         <category>docker</category>
       </categories>
       <tags>
-        <tag>dockerfile</tag>
         <tag>docker</tag>
+        <tag>dockerfile</tag>
       </tags>
   </entry>
   <entry>
@@ -77,8 +88,8 @@
         <category>leetcode</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -456,8 +467,8 @@
         <category>运维</category>
       </categories>
       <tags>
-        <tag>linux</tag>
         <tag>shell</tag>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -570,8 +581,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>Config</tag>
         <tag>spring cloud</tag>
+        <tag>Config</tag>
         <tag>Apollo</tag>
       </tags>
   </entry>
@@ -607,8 +618,8 @@
         <category>运维</category>
       </categories>
       <tags>
-        <tag>mysql</tag>
         <tag>linux</tag>
+        <tag>mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -631,8 +642,8 @@
         <category>spring cloud</category>
       </categories>
       <tags>
-        <tag>Config</tag>
         <tag>spring cloud</tag>
+        <tag>Config</tag>
       </tags>
   </entry>
   <entry>
@@ -715,8 +726,8 @@
         <category>session</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>session</tag>
+        <tag>spring</tag>
       </tags>
   </entry>
   <entry>
@@ -739,8 +750,8 @@
         <category>session</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>session</tag>
+        <tag>spring</tag>
       </tags>
   </entry>
   <entry>
@@ -765,8 +776,8 @@
         <category>session</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>session</tag>
+        <tag>spring</tag>
       </tags>
   </entry>
   <entry>
@@ -778,8 +789,8 @@
         <category>session</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>session</tag>
+        <tag>spring</tag>
       </tags>
   </entry>
   <entry>
@@ -845,8 +856,8 @@
         <category>spring mvc</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>web</tag>
+        <tag>spring</tag>
         <tag>mvc</tag>
       </tags>
   </entry>
@@ -858,8 +869,8 @@
         <category>spring mvc</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>web</tag>
+        <tag>spring</tag>
         <tag>mvc</tag>
       </tags>
   </entry>
@@ -1029,8 +1040,8 @@
         <category>spring mvc</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>web</tag>
+        <tag>spring</tag>
         <tag>mvc</tag>
       </tags>
   </entry>
@@ -1042,8 +1053,8 @@
         <category>spring mvc</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>web</tag>
+        <tag>spring</tag>
         <tag>mvc</tag>
       </tags>
   </entry>
@@ -1055,8 +1066,8 @@
         <category>spring mvc</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>web</tag>
+        <tag>spring</tag>
         <tag>mvc</tag>
       </tags>
   </entry>
@@ -1170,10 +1181,10 @@
       </categories>
       <tags>
         <tag>mybatis</tag>
-        <tag>ssm</tag>
-        <tag>spring</tag>
         <tag>web</tag>
         <tag>maven</tag>
+        <tag>ssm</tag>
+        <tag>spring</tag>
       </tags>
   </entry>
   <entry>
@@ -1218,9 +1229,9 @@
       </categories>
       <tags>
         <tag>mybatis</tag>
+        <tag>web</tag>
         <tag>ssm</tag>
         <tag>spring</tag>
-        <tag>web</tag>
       </tags>
   </entry>
   <entry>
@@ -1243,8 +1254,8 @@
         <category>web</category>
       </categories>
       <tags>
-        <tag>web</tag>
         <tag>servlet</tag>
+        <tag>web</tag>
       </tags>
   </entry>
   <entry>
@@ -1277,8 +1288,8 @@
         <category>leetcode</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -1289,8 +1300,8 @@
         <category>leetcode</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -1301,8 +1312,8 @@
         <category>leetcode</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -1313,8 +1324,8 @@
         <category>leetcode</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -1364,9 +1375,9 @@
         <category>session</category>
       </categories>
       <tags>
-        <tag>聊一聊</tag>
         <tag>session</tag>
         <tag>cookie</tag>
+        <tag>聊一聊</tag>
       </tags>
   </entry>
   <entry>
@@ -1450,10 +1461,10 @@
         <category>spring</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>web</tag>
-        <tag>restful</tag>
         <tag>聊一聊</tag>
+        <tag>spring</tag>
+        <tag>restful</tag>
       </tags>
   </entry>
   <entry>
@@ -1464,8 +1475,8 @@
         <category>spring</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>聊一聊</tag>
+        <tag>spring</tag>
         <tag>spring 扩展机制</tag>
       </tags>
   </entry>
@@ -1478,8 +1489,8 @@
       </categories>
       <tags>
         <tag>聊一聊</tag>
-        <tag>spring 事件机制</tag>
         <tag>spring 扩展机制</tag>
+        <tag>spring 事件机制</tag>
       </tags>
   </entry>
   <entry>
@@ -1491,8 +1502,8 @@
         <category>session</category>
       </categories>
       <tags>
-        <tag>spring</tag>
         <tag>session</tag>
+        <tag>spring</tag>
       </tags>
   </entry>
 </search>
