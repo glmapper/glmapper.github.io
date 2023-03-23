@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2022-12-04T07:52:00.244Z</updated>
+  <updated>2023-03-14T03:17:48.431Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -15,6 +15,23 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>win 系统中使用 gitbash 作为 idea 的默认终端</title>
+    <link href="http://www.glmapper.com/2023/03/14/git/tool-config-git-bash-under-win/"/>
+    <id>http://www.glmapper.com/2023/03/14/git/tool-config-git-bash-under-win/</id>
+    <published>2023-03-14T03:16:21.000Z</published>
+    <updated>2023-03-14T03:17:48.431Z</updated>
+    
+    
+    
+    
+    <category term="git" scheme="http://www.glmapper.com/categories/git/"/>
+    
+    
+    <category term="git" scheme="http://www.glmapper.com/tags/git/"/>
+    
+  </entry>
   
   <entry>
     <title>K8S system OOM 和资源配置实践</title>
@@ -445,27 +462,6 @@
     <category term="mock" scheme="http://www.glmapper.com/tags/mock/"/>
     
     <category term="Mockito" scheme="http://www.glmapper.com/tags/Mockito/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>JVM-Java 对象模型</title>
-    <link href="http://www.glmapper.com/2021/11/05/jvm/jvm-openjdk-oop-klass/"/>
-    <id>http://www.glmapper.com/2021/11/05/jvm/jvm-openjdk-oop-klass/</id>
-    <published>2021-11-05T03:23:39.000Z</published>
-    <updated>2022-04-24T03:25:44.859Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;Java对象保存在堆内存中。在内存中，一个Java对象包含三部分：对象头、实例数据和对齐填充。其中对象头是一个很关键的部分，因为对象头中包含锁状态标志、线程持有的锁等标志。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="jvm" scheme="http://www.glmapper.com/categories/jvm/"/>
-    
-    
-    <category term="jvm" scheme="http://www.glmapper.com/tags/jvm/"/>
-    
-    <category term="oop-klass" scheme="http://www.glmapper.com/tags/oop-klass/"/>
     
   </entry>
   
