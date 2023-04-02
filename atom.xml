@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-03-14T03:17:48.431Z</updated>
+  <updated>2023-04-02T11:59:51.924Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -21,8 +21,16 @@
     <link href="http://www.glmapper.com/2023/03/14/git/tool-config-git-bash-under-win/"/>
     <id>http://www.glmapper.com/2023/03/14/git/tool-config-git-bash-under-win/</id>
     <published>2023-03-14T03:16:21.000Z</published>
-    <updated>2023-03-14T03:17:48.431Z</updated>
+    <updated>2023-04-02T11:59:51.924Z</updated>
     
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;意义不大，建议直接使用 wsl2 或者将 win 系统换成 ubuntu 等桌面版本 linux</summary>
+        
+      
     
     
     
