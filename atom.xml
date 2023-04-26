@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-04-02T11:59:51.924Z</updated>
+  <updated>2023-04-26T02:56:20.921Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用 ngrok 解决测试时外部系统无法访问本地网络问题</title>
+    <link href="http://www.glmapper.com/2023/04/26/tools/tool-ngrok/"/>
+    <id>http://www.glmapper.com/2023/04/26/tools/tool-ngrok/</id>
+    <published>2023-04-26T02:21:59.000Z</published>
+    <updated>2023-04-26T02:56:20.921Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;问题&quot;&gt;&lt;a href=&quot;#问题&quot; class=&quot;headerlink&quot; title=&quot;问题&quot;&gt;&lt;/a&gt;问题&lt;/h2&gt;&lt;p&gt;日常开发中有一些场景会有这样的诉求，就是外部系统 callback 回调本系统，但是本系统没有提供外部访问的 IP</summary>
+        
+      
+    
+    
+    
+    <category term="工具" scheme="http://www.glmapper.com/categories/%E5%B7%A5%E5%85%B7/"/>
+    
+    
+    <category term="tool" scheme="http://www.glmapper.com/tags/tool/"/>
+    
+    <category term="ngrok" scheme="http://www.glmapper.com/tags/ngrok/"/>
+    
+  </entry>
   
   <entry>
     <title>win 系统中使用 gitbash 作为 idea 的默认终端</title>
@@ -447,29 +474,6 @@
     <category term="mysql" scheme="http://www.glmapper.com/tags/mysql/"/>
     
     <category term="log" scheme="http://www.glmapper.com/tags/log/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>聊一聊 Mockito</title>
-    <link href="http://www.glmapper.com/2021/11/06/tests/test-mock-mockito/"/>
-    <id>http://www.glmapper.com/2021/11/06/tests/test-mock-mockito/</id>
-    <published>2021-11-06T03:26:33.000Z</published>
-    <updated>2022-04-24T03:29:36.816Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;Mockito 是 mocking 框架，它让你用简洁的API做测试。而且 Mockito 简单易学，它可读性强和验证语法简洁。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="test" scheme="http://www.glmapper.com/categories/test/"/>
-    
-    
-    <category term="test" scheme="http://www.glmapper.com/tags/test/"/>
-    
-    <category term="mock" scheme="http://www.glmapper.com/tags/mock/"/>
-    
-    <category term="Mockito" scheme="http://www.glmapper.com/tags/Mockito/"/>
     
   </entry>
   
