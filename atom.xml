@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-04-26T03:16:20.350Z</updated>
+  <updated>2023-05-31T02:00:35.108Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -15,6 +15,19 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>tool-samba-file-server</title>
+    <link href="http://www.glmapper.com/2023/05/31/tools/tool-samba-file-server/"/>
+    <id>http://www.glmapper.com/2023/05/31/tools/tool-samba-file-server/</id>
+    <published>2023-05-31T02:00:35.000Z</published>
+    <updated>2023-05-31T02:00:35.108Z</updated>
+    
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>使用 ngrok 解决测试时外部系统无法访问本地网络问题</title>
@@ -441,34 +454,6 @@
     <category term="merge" scheme="http://www.glmapper.com/tags/merge/"/>
     
     <category term="rebase" scheme="http://www.glmapper.com/tags/rebase/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>mysql 日志文件</title>
-    <link href="http://www.glmapper.com/2021/11/08/middleware/middleware-mysql-log-file/"/>
-    <id>http://www.glmapper.com/2021/11/08/middleware/middleware-mysql-log-file/</id>
-    <published>2021-11-08T03:30:18.000Z</published>
-    <updated>2022-04-24T03:31:27.318Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;日志文件记录了影响 mysql 数据库的各种类型活动，mysql 中常见的日志文件主要包括以下 4 种：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;错误日志&lt;/li&gt;
-&lt;li&gt;二进制日志&lt;/li&gt;
-&lt;li&gt;慢查询日志&lt;/li&gt;
-&lt;li&gt;查询日志&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;这些日志文件可以帮助我们对mysql数据库的运行状态进行诊断，从而更好的进行数据库层面的优化。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Middleware" scheme="http://www.glmapper.com/categories/Middleware/"/>
-    
-    
-    <category term="mysql" scheme="http://www.glmapper.com/tags/mysql/"/>
-    
-    <category term="log" scheme="http://www.glmapper.com/tags/log/"/>
     
   </entry>
   
