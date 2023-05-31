@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-05-31T02:00:35.108Z</updated>
+  <updated>2023-05-31T02:45:58.050Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -17,15 +17,31 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>tool-samba-file-server</title>
+    <title>基于 CenOS7 + Samba 搭建文件服务器</title>
     <link href="http://www.glmapper.com/2023/05/31/tools/tool-samba-file-server/"/>
     <id>http://www.glmapper.com/2023/05/31/tools/tool-samba-file-server/</id>
     <published>2023-05-31T02:00:35.000Z</published>
-    <updated>2023-05-31T02:00:35.108Z</updated>
+    <updated>2023-05-31T02:45:58.050Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;出于产品、解决方案同事的诉求，需要搭建一个用于共享文件的平台，因此基于 Samba 搭建了一个共享文件服务器，这里记录一下，以便用于后续维护参阅。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt; Samba 是 SMB&amp;#x2F;CIFS</summary>
+        
+      
     
     
     
+    <category term="工具" scheme="http://www.glmapper.com/categories/%E5%B7%A5%E5%85%B7/"/>
     
+    
+    <category term="tool" scheme="http://www.glmapper.com/tags/tool/"/>
+    
+    <category term="samba" scheme="http://www.glmapper.com/tags/samba/"/>
     
   </entry>
   
