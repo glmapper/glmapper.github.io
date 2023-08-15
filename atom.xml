@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-08-15T02:56:05.300Z</updated>
+  <updated>2023-08-15T03:01:14.715Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://www.glmapper.com/2023/08/15/linux/linux-no-hangup/"/>
     <id>http://www.glmapper.com/2023/08/15/linux/linux-no-hangup/</id>
     <published>2023-08-15T02:12:22.000Z</published>
-    <updated>2023-08-15T02:56:05.300Z</updated>
+    <updated>2023-08-15T03:01:14.715Z</updated>
     
     
     <summary type="html">&lt;p&gt;nohup 表示不挂断地运行命令，是 no hangup 的缩写，语法格式如下：&lt;/p&gt;
