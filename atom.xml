@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-05-31T02:52:38.238Z</updated>
+  <updated>2023-08-15T02:42:31.871Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux nohup 命令</title>
+    <link href="http://www.glmapper.com/2023/08/15/linux/linux-no-hangup/"/>
+    <id>http://www.glmapper.com/2023/08/15/linux/linux-no-hangup/</id>
+    <published>2023-08-15T02:12:22.000Z</published>
+    <updated>2023-08-15T02:42:31.871Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;man-nohup&quot;&gt;&lt;a href=&quot;#man-nohup&quot; class=&quot;headerlink&quot; title=&quot;man nohup&quot;&gt;&lt;/a&gt;man nohup&lt;/h2&gt;&lt;figure class=&quot;highlight</summary>
+        
+      
+    
+    
+    
+    <category term="Linux" scheme="http://www.glmapper.com/categories/Linux/"/>
+    
+    
+    <category term="linux" scheme="http://www.glmapper.com/tags/linux/"/>
+    
+    <category term="nohup" scheme="http://www.glmapper.com/tags/nohup/"/>
+    
+  </entry>
   
   <entry>
     <title>基于 CentOS 7.6 + Samba 搭建文件服务器</title>
@@ -442,29 +469,6 @@
     <category term="SpringBoot" scheme="http://www.glmapper.com/tags/SpringBoot/"/>
     
     <category term="自动配置" scheme="http://www.glmapper.com/tags/%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>git 中 merge 和 rebase 小记</title>
-    <link href="http://www.glmapper.com/2021/11/09/git/git-cmd-rebase-merge/"/>
-    <id>http://www.glmapper.com/2021/11/09/git/git-cmd-rebase-merge/</id>
-    <published>2021-11-09T03:32:40.000Z</published>
-    <updated>2022-04-24T03:33:46.751Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;作为一线工程师的你，对于 git一定不会陌生，git 作为一个开源的分布式版本控制系统，有着广泛的用户基础。git 使用有很多可视化的工具，idea 自身也大多都集成了 git 套件，如下：&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="git" scheme="http://www.glmapper.com/categories/git/"/>
-    
-    
-    <category term="git" scheme="http://www.glmapper.com/tags/git/"/>
-    
-    <category term="merge" scheme="http://www.glmapper.com/tags/merge/"/>
-    
-    <category term="rebase" scheme="http://www.glmapper.com/tags/rebase/"/>
     
   </entry>
   
