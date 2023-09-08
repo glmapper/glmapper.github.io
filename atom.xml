@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-09-08T09:16:51.058Z</updated>
+  <updated>2023-09-08T09:20:31.991Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://www.glmapper.com/2023/09/08/tests/test-about-write-test/"/>
     <id>http://www.glmapper.com/2023/09/08/tests/test-about-write-test/</id>
     <published>2023-09-08T09:15:51.000Z</published>
-    <updated>2023-09-08T09:16:51.058Z</updated>
+    <updated>2023-09-08T09:20:31.991Z</updated>
     
     
     <summary type="html">&lt;p&gt;代码质量管理是软件开发过程中的关键组成部分，比如我们常说的&lt;strong&gt;代码规范&lt;/strong&gt;、代码可读性、&lt;strong&gt;单元测试和测试覆盖率&lt;/strong&gt;等，对于研发人员来说&lt;strong&gt;单元测试和测试覆盖率&lt;/strong&gt;是保障自己所编写代码的质量的重要手段；好的用例可以帮助研发人员&lt;strong&gt;确保代码质量和稳定性&lt;/strong&gt;、&lt;strong&gt;减少维护成本&lt;/strong&gt;、&lt;strong&gt;提高开发效率&lt;/strong&gt;以及&lt;strong&gt;促进团队合作&lt;/strong&gt;。之前看过一篇关于 OceanBase 质量之道的文章，文章中提到的工程理念就把测试作为非常重要的组成部分，是和研发同样重要的组成部分；也听过内部的同学说过，OB 最核心的是用例。&lt;/p&gt;</summary>
