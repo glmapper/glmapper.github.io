@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-08-15T03:01:14.715Z</updated>
+  <updated>2023-09-08T09:16:51.058Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>如何编写测试用例</title>
+    <link href="http://www.glmapper.com/2023/09/08/tests/test-about-write-test/"/>
+    <id>http://www.glmapper.com/2023/09/08/tests/test-about-write-test/</id>
+    <published>2023-09-08T09:15:51.000Z</published>
+    <updated>2023-09-08T09:16:51.058Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;代码质量管理是软件开发过程中的关键组成部分，比如我们常说的&lt;strong&gt;代码规范&lt;/strong&gt;、代码可读性、&lt;strong&gt;单元测试和测试覆盖率&lt;/strong&gt;等，对于研发人员来说&lt;strong&gt;单元测试和测试覆盖率&lt;/strong&gt;是保障自己所编写代码的质量的重要手段；好的用例可以帮助研发人员&lt;strong&gt;确保代码质量和稳定性&lt;/strong&gt;、&lt;strong&gt;减少维护成本&lt;/strong&gt;、&lt;strong&gt;提高开发效率&lt;/strong&gt;以及&lt;strong&gt;促进团队合作&lt;/strong&gt;。之前看过一篇关于 OceanBase 质量之道的文章，文章中提到的工程理念就把测试作为非常重要的组成部分，是和研发同样重要的组成部分；也听过内部的同学说过，OB 最核心的是用例。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="test" scheme="http://www.glmapper.com/categories/test/"/>
+    
+    
+    <category term="test" scheme="http://www.glmapper.com/tags/test/"/>
+    
+    <category term="junit" scheme="http://www.glmapper.com/tags/junit/"/>
+    
+  </entry>
   
   <entry>
     <title>Linux nohup 命令</title>
@@ -447,27 +468,6 @@
     <category term="SpringBoot" scheme="http://www.glmapper.com/tags/SpringBoot/"/>
     
     <category term="actuator" scheme="http://www.glmapper.com/tags/actuator/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>为什么你的 SpringBoot 自动配置失效了</title>
-    <link href="http://www.glmapper.com/2021/11/15/springboot/springboot-series-autoconfigure-invalid/"/>
-    <id>http://www.glmapper.com/2021/11/15/springboot/springboot-series-autoconfigure-invalid/</id>
-    <published>2021-11-15T03:35:18.000Z</published>
-    <updated>2022-04-24T03:36:16.938Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;本文源自近期项目中遇到的问题， bug 总是出现在你自以为是的地方…&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="SpringBoot" scheme="http://www.glmapper.com/categories/SpringBoot/"/>
-    
-    
-    <category term="SpringBoot" scheme="http://www.glmapper.com/tags/SpringBoot/"/>
-    
-    <category term="自动配置" scheme="http://www.glmapper.com/tags/%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE/"/>
     
   </entry>
   
