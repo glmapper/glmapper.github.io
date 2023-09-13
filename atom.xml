@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-09-08T09:20:31.991Z</updated>
+  <updated>2023-09-13T01:06:59.561Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Nginx 转发 404 问题的排查和思考</title>
+    <link href="http://www.glmapper.com/2023/09/13/middleware/middleware-nginx-proxy-pass/"/>
+    <id>http://www.glmapper.com/2023/09/13/middleware/middleware-nginx-proxy-pass/</id>
+    <published>2023-09-13T01:04:07.000Z</published>
+    <updated>2023-09-13T01:06:59.561Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;本篇文章原自当前业务遇到的一个实际问题，因为受到所在网络环境的因素影响，所以整体排查下来耗费了很大精力，记录一下。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;项目背景&quot;&gt;&lt;a href=&quot;#项目背景&quot; class=&quot;headerlink&quot; title=&quot;项目背景&quot;&gt;&lt;/a&gt;项目背景&lt;/h2&gt;&lt;p&gt;项目是 toG 项目，部署的网络环境是一个大的内网环境（又具体分为内网和内网互联网区），项目涉及到小程序、前端、后端（又包括 JAVA 和 GO 两个项目）的部署。整体的部署拓扑图大致如下：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Middleware" scheme="http://www.glmapper.com/categories/Middleware/"/>
+    
+    
+    <category term="nginx" scheme="http://www.glmapper.com/tags/nginx/"/>
+    
+    <category term="反向代理" scheme="http://www.glmapper.com/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/"/>
+    
+    <category term="负载均衡" scheme="http://www.glmapper.com/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/"/>
+    
+  </entry>
   
   <entry>
     <title>如何编写测试用例</title>
@@ -445,29 +471,6 @@
     <category term="杭州" scheme="http://www.glmapper.com/tags/%E6%9D%AD%E5%B7%9E/"/>
     
     <category term="合肥" scheme="http://www.glmapper.com/tags/%E5%90%88%E8%82%A5/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>SpringBoot Actuator 潜在的 OOM 问题</title>
-    <link href="http://www.glmapper.com/2021/11/29/springboot/springboot-series-actuator-oom/"/>
-    <id>http://www.glmapper.com/2021/11/29/springboot/springboot-series-actuator-oom/</id>
-    <published>2021-11-29T03:37:27.000Z</published>
-    <updated>2022-04-24T03:39:18.474Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;此问题背景产生于近期需要上线的一个功能的埋点；主要表现就是在应用启动之后的一段时间内，内存使用一直呈现递增趋势。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="SpringBoot" scheme="http://www.glmapper.com/categories/SpringBoot/"/>
-    
-    
-    <category term="OOM" scheme="http://www.glmapper.com/tags/OOM/"/>
-    
-    <category term="SpringBoot" scheme="http://www.glmapper.com/tags/SpringBoot/"/>
-    
-    <category term="actuator" scheme="http://www.glmapper.com/tags/actuator/"/>
     
   </entry>
   
