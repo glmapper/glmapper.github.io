@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-09-13T01:06:59.561Z</updated>
+  <updated>2023-11-27T15:03:30.629Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -15,6 +15,54 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>聊一聊 Spring Data JPA 中的那些日常实践</title>
+    <link href="http://www.glmapper.com/2023/11/27/springboot/spring-boot-data-jpa-practice/"/>
+    <id>http://www.glmapper.com/2023/11/27/springboot/spring-boot-data-jpa-practice/</id>
+    <published>2023-11-27T14:58:52.000Z</published>
+    <updated>2023-11-27T15:03:30.629Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span</summary>
+        
+      
+    
+    
+    
+    <category term="SpringBoot" scheme="http://www.glmapper.com/categories/SpringBoot/"/>
+    
+    
+    <category term="SpringBoot" scheme="http://www.glmapper.com/tags/SpringBoot/"/>
+    
+    <category term="JPA" scheme="http://www.glmapper.com/tags/JPA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux 服务器端口不可访问问题排查</title>
+    <link href="http://www.glmapper.com/2023/11/27/linux/linux-port-deny-access/"/>
+    <id>http://www.glmapper.com/2023/11/27/linux/linux-port-deny-access/</id>
+    <published>2023-11-27T14:57:01.000Z</published>
+    <updated>2023-11-27T14:58:12.516Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;问题描述&quot;&gt;&lt;a href=&quot;#问题描述&quot; class=&quot;headerlink&quot; title=&quot;问题描述&quot;&gt;&lt;/a&gt;问题描述&lt;/h2&gt;&lt;p&gt;项目中使用的服务器是物理机，使用 centos 7.6 版本的操作系统， 4 个千兆网口，上架时间 23 年 8  月份。部署在内网机房，并且在内网机房分配的固定IP 是 &lt;code&gt;172.87.7.249&lt;/code&gt;，并在机器上部署了 docker，&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Linux" scheme="http://www.glmapper.com/categories/Linux/"/>
+    
+    
+    <category term="linux" scheme="http://www.glmapper.com/tags/linux/"/>
+    
+    <category term="arping" scheme="http://www.glmapper.com/tags/arping/"/>
+    
+  </entry>
   
   <entry>
     <title>Nginx 转发 404 问题的排查和思考</title>
@@ -424,53 +472,6 @@
     <category term="nacos" scheme="http://www.glmapper.com/tags/nacos/"/>
     
     <category term="config" scheme="http://www.glmapper.com/tags/config/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>1 分钟快速上手 Spring Cache</title>
-    <link href="http://www.glmapper.com/2022/02/21/spring/spring-cache-quick-start/"/>
-    <id>http://www.glmapper.com/2022/02/21/spring/spring-cache-quick-start/</id>
-    <published>2022-02-21T03:43:24.000Z</published>
-    <updated>2022-04-24T03:44:46.723Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;如果你现在有一个现成的工程，你想给你工程的某个接口增加缓存，再不可以分布式缓存的情况下，你可以通过以下两步完成 &lt;code&gt;Spring Cache&lt;/code&gt; 接入:&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="spring" scheme="http://www.glmapper.com/categories/spring/"/>
-    
-    
-    <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
-    
-    <category term="cache" scheme="http://www.glmapper.com/tags/cache/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>2021 年终总结-磊叔的 Work Life Balance</title>
-    <link href="http://www.glmapper.com/2021/12/27/share/shares-2021/"/>
-    <id>http://www.glmapper.com/2021/12/27/share/shares-2021/</id>
-    <published>2021-12-27T03:40:31.000Z</published>
-    <updated>2022-04-24T03:42:42.796Z</updated>
-    
-    
-    <summary type="html">&lt;blockquote&gt;
-&lt;p&gt;生活，在喜怒哀乐间走走停停。不知道会遇见什么，只知道阳光这么好，别辜负了今天&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;抓了一把花生米，开了一罐啤酒，打开新买的台式机，用上被新同事“嫌弃”声音太大的机械键盘，然后以文字的方式来唠一唠我的 2021。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="experience" scheme="http://www.glmapper.com/categories/experience/"/>
-    
-    
-    <category term="SOFA" scheme="http://www.glmapper.com/tags/SOFA/"/>
-    
-    <category term="杭州" scheme="http://www.glmapper.com/tags/%E6%9D%AD%E5%B7%9E/"/>
-    
-    <category term="合肥" scheme="http://www.glmapper.com/tags/%E5%90%88%E8%82%A5/"/>
     
   </entry>
   
