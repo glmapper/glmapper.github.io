@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-11-27T15:03:30.629Z</updated>
+  <updated>2023-11-27T15:27:02.528Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -21,16 +21,10 @@
     <link href="http://www.glmapper.com/2023/11/27/springboot/spring-boot-data-jpa-practice/"/>
     <id>http://www.glmapper.com/2023/11/27/springboot/spring-boot-data-jpa-practice/</id>
     <published>2023-11-27T14:58:52.000Z</published>
-    <updated>2023-11-27T15:03:30.629Z</updated>
+    <updated>2023-11-27T15:27:02.528Z</updated>
     
     
-      
-      
-        
-        
-    <summary type="html">&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span</summary>
-        
-      
+    <summary type="html">&lt;p&gt;一直以来，团队在使用 ORM 框架上都是比较随意的，一开始是鼓励大家使用 mybatis，主要是期望团队同学可以自&lt;br&gt;己写写 SQL，不至于写 SQL 手生；但是从实际工作中来看，我们并不会涉及到很多非常复杂的 SQL 语句，这就导致&lt;br&gt;了大家会消耗相当部分的精力在写一些重复性并且没有什么技术难度的 SQL，对于基于数据库驱动的业务来说，当业务&lt;br&gt;涉及到的表结构越多时，这种问题就越突出。于是我在项目的脚手架中就提供了 mybatis 和 jpa 两种访问数据库的&lt;br&gt;方式，但是在随后的一段时间中发现，团队在使用 jpa 来操作数据库上的代码提交几乎为0，而有相当部分的同学则&lt;br&gt;是引入了 mybatis-plus。&lt;/p&gt;</summary>
     
     
     
