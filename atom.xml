@@ -6,7 +6,7 @@
   <link href="http://www.glmapper.com/atom.xml" rel="self"/>
   
   <link href="http://www.glmapper.com/"/>
-  <updated>2023-11-27T15:27:02.528Z</updated>
+  <updated>2024-01-05T09:59:07.355Z</updated>
   <id>http://www.glmapper.com/</id>
   
   <author>
@@ -15,6 +15,21 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>win 10 部署 langchain-chatchat gpu 版</title>
+    <link href="http://www.glmapper.com/2024/01/05/llm/langchain-chatchat-deploy/"/>
+    <id>http://www.glmapper.com/2024/01/05/llm/langchain-chatchat-deploy/</id>
+    <published>2024-01-05T09:32:34.000Z</published>
+    <updated>2024-01-05T09:59:07.355Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;基于 ChatGLM 等大语言模型与 Langchain 等应用框架实现，开源、可离线部署的检索增强生成(RAG)大模型知识库项目。&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>聊一聊 Spring Data JPA 中的那些日常实践</title>
@@ -445,27 +460,6 @@
     <category term="spring cloud" scheme="http://www.glmapper.com/tags/spring-cloud/"/>
     
     <category term="nacos" scheme="http://www.glmapper.com/tags/nacos/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Spring Cloud Alibaba Nacos Config 是如何读取配置的？</title>
-    <link href="http://www.glmapper.com/2022/03/13/springcloud/spring-cloud-config-nacos-config-locator/"/>
-    <id>http://www.glmapper.com/2022/03/13/springcloud/spring-cloud-config-nacos-config-locator/</id>
-    <published>2022-03-13T03:45:39.000Z</published>
-    <updated>2022-04-24T03:46:42.973Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;nacos 配置最高级别的隔离是 namespace，其后是 group；如果有配置隔离的诉求，建议优先使用 namespace 进行隔离。因为对于 sharedConfigs 和 extensionConfigs 来说，他们使用的是默认的 DEFALUT_GROUP，所以如果你配置了 sharedConfigs 和 extensionConfigs ，期望通过指定 group 进行隔离是做不到的。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="SpringCloud" scheme="http://www.glmapper.com/categories/SpringCloud/"/>
-    
-    
-    <category term="nacos" scheme="http://www.glmapper.com/tags/nacos/"/>
-    
-    <category term="config" scheme="http://www.glmapper.com/tags/config/"/>
     
   </entry>
   
