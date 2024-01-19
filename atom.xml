@@ -193,6 +193,26 @@
   </entry>
   
   <entry>
+    <title>聊一聊 Linux 的起源和发展</title>
+    <link href="http://www.glmapper.com/2023/04/05/linux/linux-history-of-development/"/>
+    <id>http://www.glmapper.com/2023/04/05/linux/linux-history-of-development/</id>
+    <published>2023-04-05T08:35:48.000Z</published>
+    <updated>2024-01-19T08:36:40.377Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;最近在系统性重新整理下关于 linux 的一些知识。linux 对于所有的开发工程师来说都不算是陌生的东西，但往往在面对它时，却又显得那么生疏。关于生疏，对于出入门的同学来说，其过多发行版和指令已经够吃一壶的了。这篇文章主要是看看 linux 自身的一些故事。&lt;/p&gt;
+&lt;p&gt;计算机主机实际上就是一堆硬件，为了更好的、有效率的控制这些硬件资源，于是乎就有了操作系统。操作系统除了负责控制这些硬件资源的分配，还具备提供计算机运行所需的一些基本功能，比如网络功能。当然，如果仅有这些是不够的，对于用户来说，直接面向的并不是硬件或者操作系统，而是软件。因此，操作系统也会为了让工程师更容易开发软件，也提供了一整组系统调用接口；这也是 Unix 或者 Linux 最原始的初心和核心。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Linux" scheme="http://www.glmapper.com/categories/Linux/"/>
+    
+    
+    <category term="linux" scheme="http://www.glmapper.com/tags/linux/"/>
+    
+  </entry>
+  
+  <entry>
     <title>win 系统中使用 gitbash 作为 idea 的默认终端</title>
     <link href="http://www.glmapper.com/2023/03/14/git/tool-config-git-bash-under-win/"/>
     <id>http://www.glmapper.com/2023/03/14/git/tool-config-git-bash-under-win/</id>
@@ -431,35 +451,6 @@
     <category term="api" scheme="http://www.glmapper.com/tags/api/"/>
     
     <category term="yapi" scheme="http://www.glmapper.com/tags/yapi/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Spring Cloud Config Nacos 配置热更新分析</title>
-    <link href="http://www.glmapper.com/2022/04/17/config/spring-cloud-config-nacos/"/>
-    <id>http://www.glmapper.com/2022/04/17/config/spring-cloud-config-nacos/</id>
-    <published>2022-04-17T14:05:36.000Z</published>
-    <updated>2022-04-24T09:32:05.810Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://vspicgo.oss-cn-shanghai.aliyuncs.com/des_structure.jpeg&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="Nacos" scheme="http://www.glmapper.com/categories/Nacos/"/>
-    
-    
-    <category term="spring" scheme="http://www.glmapper.com/tags/spring/"/>
-    
-    <category term="spring cloud" scheme="http://www.glmapper.com/tags/spring-cloud/"/>
-    
-    <category term="nacos" scheme="http://www.glmapper.com/tags/nacos/"/>
     
   </entry>
   
